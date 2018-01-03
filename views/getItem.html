@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+<!-- {% set main_active = "foo" %}
+{% set sub_active = "bar" %} -->
+
+{% block page_title %}
+  {{ app_title }} - {{ title }}
+{% endblock %}
+
+{% block inside_header %}
+  {% include "partials/header.html" %}
+{% endblock %}
+
+{% block content %}
+    <div class="grid-row">
+      <div class="column-full">
+        <h1 class="heading-xlarge">{{ title }}</h1>
+      </div>
+    </div>
+
+
+    <div class="grid-row">
+      <div class="column-full">
+        <h2 class="heading-large">{{ data.datasetName }} - {{ data.itemId }}</h2>
+        <p>The dataset contains the following items.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Value</th>
+              <!-- <th>Manage</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            {% for property in data.properties %}
+              <tr>
+                <td>{{ property.field }}</td>
+                <td>{{ property.value }}</td>
+                <!-- <td>
+                    <a class="button" href="/v1/datasets/{{ data.datasetName }}/items/{{ data.itemId }}/properties/{{ property.field }}/update">Update</a>
+                </td> -->
+              </tr>
+            {% endfor %}
+          <tbody>
+        </table>
+
+      </div>
+    </div>
+
+    <div class="grid-row">
+      <div class="column-full">
+        <div class="error-summary">
+          <h2 class="heading-large">Danger zone</h1>
+          <span class="error-message">
+            You can delete the item here.<br>
+            <br>
+            Only do this if you are absolutely sure!
+          </span>
+          <br>
+          <form method="POST" action="/v1/datasets/{{ data.datasetName }}/items/{{ data.itemId }}/delete">
+            <input type='hidden' name='_csrf' value="{{ _csrf }}">
+            <div class="form-group">
+              <label class="form-label" for="itemId">
+                Item ID
+                <span class="form-hint">Used to verify request (case sensitive)</span>
+              </label>
+              <input class="form-control" id="itemId" type="text" name="itemId">
+            </div>
+            <div class="form-group">
+              <input class="button" type="submit" value="Delete item">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- {% include "partials/pagination.html" %} -->
+{% endblock %}

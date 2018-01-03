@@ -1,0 +1,25 @@
+<div>
+  {% if messages.errors %}
+  <div class="error-summary" role="alert" tabindex="-1">
+    {% for error in messages.errors %}
+      <span class="error-message">{{ error.msg }}</span>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if messages.info %}
+  <div class="info-summary" role="alert" tabindex="-1">
+    {% for info in messages.info %}
+      <span class="info-message">{{ info.msg }}</span>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if messages.success %}
+  <div class="success-summary" role="alert" tabindex="-1">
+    {% for success in messages.success %}
+      <span class="success-message">{{ success.msg }}</span>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>

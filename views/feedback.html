@@ -1,0 +1,136 @@
+{% extends "layout.html" %}
+<!-- {% set main_active = "foo" %}
+{% set sub_active = "bar" %} -->
+
+{% block page_title %}
+  {{ app_title }} - {{ title }}
+{% endblock %}
+
+{% block inside_header %}
+  {% include "partials/header.html" %}
+{% endblock %}
+
+{% block content %}
+  <div class="grid-row">
+    <div class="column-full">
+      <h1 class="heading-xlarge">{{ app_title }}</h1>
+      <h2 class="heading-large">{{ title }}</h1>
+    </div>
+  </div>
+
+  <div class="grid-row">
+    <div class="column-full">
+      <form action="/feedback" method="post" class="form">
+        <input type="hidden" name='_csrf' value={{ _csrf }}>
+        <input type="hidden" name='selected_satisfaction_id'
+               id='selected_satisfaction_id'
+               value="{{ selected_satisfaction_id }}">
+
+        {% if error %}
+          {% include "./form-errors.html" %}
+        {% endif %}
+
+        <div class="form-group">
+          <fieldset{% if error.satisfaction %} class="after-error-summary"{% endif %}>
+
+            <legend {% if error.satisfaction %} id="{{ error.satisfaction.id }}"{% endif %}>
+              <h2 class="heading-medium">
+                Overall, how did you feel about the service you received
+                today?
+              </h2>
+
+              {% if error.satisfaction %}
+                <div class="form-group-error">
+                  <span class="form-hint">Please select one option.</span>
+                  <span class="error-message">
+                            {{ error.satisfaction.message }}
+                          </span>
+                </div>
+              {% endif %}
+            </legend>
+
+
+            <div
+                class="form-group {% if error.satisfaction %}form-group-error{% endif %}">
+              <div class="multiple-choice">
+                <input id="satisfaction-5" type="radio"
+                       class="satisfaction-group"
+                       name="satisfaction"
+                       value="Very satisfied">
+                <label for="satisfaction-5">Very satisfied</label>
+              </div>
+              <div class="multiple-choice">
+                <input id="satisfaction-4" type="radio"
+                       class="satisfaction-group"
+                       name="satisfaction"
+                       value="Satisfied">
+                <label for="satisfaction-4">Satisfied</label>
+              </div>
+              <div class="multiple-choice">
+                <input id="satisfaction-3" type="radio"
+                       class="satisfaction-group"
+                       name="satisfaction"
+                       value="Neither satisfied or dissatisfied">
+                <label for="satisfaction-3">Neither satisfied or
+                  dissatisfied</label>
+              </div>
+              <div class="multiple-choice">
+                <input id="satisfaction-2" type="radio"
+                       class="satisfaction-group"
+                       name="satisfaction"
+                       value="Dissatisfied">
+                <label for="satisfaction-2">Dissatisfied</label>
+              </div>
+              <div class="multiple-choice">
+                <input id="satisfaction-1" type="radio"
+                       class="satisfaction-group"
+                       name="satisfaction"
+                       value="Very dissatisfied">
+                <label for="satisfaction-1">Very dissatisfied</label>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset{% if error.improvement %} class="after-error-summary"{% endif %}>
+
+            <legend {% if error.improvement %} id="{{ error.improvement.id }}"{% endif %}>
+              <h2 class="heading-medium">
+                How could we improve this service?
+              </h2>
+
+              {% if error.improvement %}
+                <div class="form-group-error">
+                  <span class="form-hint">Enter your feedback.</span>
+                  <span class="error-message">
+                            {{ error.improvement.message }}
+                          </span>
+                </div>
+              {% endif %}
+            </legend>
+
+
+            <div
+                class="form-group {% if error.improvement %}form-group-error{% endif %}">
+              <div class="form-group">
+                        <textarea class="form-control form-control-3-4"
+                                  id="improvement"
+                                  name="improvement"
+                                  maxlength="1200">{{ improvement }}</textarea>
+                <p>(Limit is 1200 characters)</p>
+                <p>Please don't include any personal or financial information,
+                  for
+                  example your National Insurance or credit numbers.</p>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+
+        <input class="button" type="submit" value="Send feedback">
+
+      </form>
+
+    </div>
+  </div>
+  <!-- {% include "partials/pagination.html" %} -->
+{% endblock %}

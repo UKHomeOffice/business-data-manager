@@ -1,0 +1,35 @@
+@import "govuk-template";
+@import "govuk-template-print";
+@import "govuk-elements";
+
+#content {
+  @extend %site-width-container;
+  @extend %contain-floats;
+  padding-bottom: $gutter;
+
+  @include media(desktop) {
+    padding-bottom: $gutter * 3;
+  }
+
+  // No Tabindex on #content
+  outline: none;
+}
+
+#nb_feedback {
+  float: right !important;
+}
+
+.success {
+  background-color: lightgreen;
+  color: darkgreen;
+}
+
+.error {
+  background-color: lightcoral;
+  color: darkred;
+}
+
+.info {
+  background-color: lightyellow;
+  color: yellow;
+}

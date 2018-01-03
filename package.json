@@ -1,0 +1,57 @@
+{
+  "name": "business-data-manager",
+  "version": "0.0.1",
+  "description": "A lightweight, flexible business data management solution",
+  "main": "app.js",
+  "scripts": {
+    "setup": "node ./scripts/setup.js",
+    "start": "node app.js",
+    "test": "mocha --reporter spec --timeout 5000 --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akersystems/business-data-manager.git"
+  },
+  "keywords": [
+    "business",
+    "data",
+    "management",
+    "manager"
+  ],
+  "author": "Aker Systems Limited",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/akersystems/business-data-manager/issues"
+  },
+  "homepage": "https://github.com/akersystems/business-data-manager#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "compression": "^1.7.1",
+    "connect-pg-simple": "^4.2.1",
+    "ejs": "^2.5.7",
+    "errorhandler": "^1.5.0",
+    "express": "^4.16.2",
+    "express-flash": "0.0.2",
+    "express-session": "^1.15.6",
+    "express-validator": "^4.3.0",
+    "govuk-elements-sass": "^3.1.2",
+    "govuk_frontend_toolkit": "^7.2.0",
+    "govuk_template_jinja": "^0.23.0",
+    "lusca": "^1.5.2",
+    "mocha": "^4.0.1",
+    "morgan": "^1.9.0",
+    "node-sass-middleware": "^0.11.0",
+    "nunjucks": "^3.0.1",
+    "passport": "^0.4.0",
+    "path": "^0.12.7",
+    "pg": "^7.4.0",
+    "winston": "^3.0.0-rc1"
+  },
+  "devDependencies": {
+    "eslint": "^4.13.0",
+    "eslint-config-homeoffice": "^2.2.0",
+    "jsdoc": "^3.5.5"
+  }
+}

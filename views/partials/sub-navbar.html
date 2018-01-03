@@ -1,0 +1,20 @@
+<nav id="nav">
+  <div class="navbar">
+    <ul class="navbar__list-items">
+      {% for href, id, caption, extra_class, submenu in navbar %}
+        {% if id == main_active %}
+          {% for s_href, s_id, s_caption, s_extra_class in submenu %}
+            {% if s_id == sub_active %}
+              {% set s_class = "active" %}
+            {% else %}
+              {% set s_class = "" %}
+            {% endif %}
+            <li id="{{ s_id }}" class="{{ s_class }}">
+              <a href="{{ href ~ s_href|e }}" class=" {{ s_class ~ ' ' ~ s_extra_class }}">{{ s_caption|e }}</a></li>
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+
+    </ul>
+  </div>
+</nav>

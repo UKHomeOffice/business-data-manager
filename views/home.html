@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+<!-- {% set main_active = "foo" %}
+{% set sub_active = "bar" %} -->
+
+{% block page_title %}
+  {{ app_title }} - {{ title }}
+{% endblock %}
+
+{% block inside_header %}
+  {% include "partials/header.html" %}
+{% endblock %}
+
+{% block content %}
+    <div class="grid-row">
+      <div class="column-full">
+        <h1 class="heading-xlarge">{{ app_title }}</h1>
+        <h2 class="heading-large">{{ title }}</h1>
+      </div>
+    </div>
+
+    <div class="grid-row">
+      <div class="column-full">
+        <p>Some content required...</p>
+        <a href="/v1/datasets">View the datasets</a>
+      </div>
+    </div>
+    <!-- {% include "partials/pagination.html" %} -->
+{% endblock %}

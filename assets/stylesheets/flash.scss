@@ -1,0 +1,141 @@
+@import "frontend-toolkit";
+
+
+// Success messages should be turquoise and bold
+.success-message {
+  @include bold-19;
+  color: $turquoise;
+
+
+  display: block;
+  clear: both;
+
+  margin: 0;
+  padding: 2px 0;
+}
+
+// Summary of multiple success messages
+.success-summary {
+
+  // Success summary has a border on all sides
+  border: 4px solid $turquoise;
+
+  margin-top: $gutter-half;
+  margin-bottom: $gutter-half;
+
+  padding: $gutter-half 10px;
+
+  @include media(tablet) {
+    border: 5px solid $turquoise;
+
+    margin-top: $gutter;
+    margin-bottom: $gutter;
+
+    padding: $gutter-two-thirds $gutter-half $gutter-half;
+  }
+
+  @include ie-lte(6) {
+    zoom: 1;
+  }
+
+  // Use the GOV.UK outline focus style
+  &:focus {
+    outline: 3px solid $focus-colour;
+  }
+
+  .success-summary-heading {
+    margin-top: 0;
+  }
+
+  p {
+    margin-bottom: 10px;
+  }
+
+  .success-summary-list {
+    padding-left: 0;
+
+    li {
+
+      @include media(tablet) {
+        margin-bottom: 5px;
+      }
+    }
+
+    a {
+      color: $turquoise;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+  }
+}
+
+
+
+
+// Info messages should be light blue and bold
+.info-message {
+  @include bold-19;
+  color: $light-blue;
+
+
+  display: block;
+  clear: both;
+
+  margin: 0;
+  padding: 2px 0;
+}
+
+// Summary of multiple info messages
+.info-summary {
+
+  // Info summary has a border on all sides
+  border: 4px solid $light-blue;
+
+  margin-top: $gutter-half;
+  margin-bottom: $gutter-half;
+
+  padding: $gutter-half 10px;
+
+  @include media(tablet) {
+    border: 5px solid $light-blue;
+
+    margin-top: $gutter;
+    margin-bottom: $gutter;
+
+    padding: $gutter-two-thirds $gutter-half $gutter-half;
+  }
+
+  @include ie-lte(6) {
+    zoom: 1;
+  }
+
+  // Use the GOV.UK outline focus style
+  &:focus {
+    outline: 3px solid $focus-colour;
+  }
+
+  .info-summary-heading {
+    margin-top: 0;
+  }
+
+  p {
+    margin-bottom: 10px;
+  }
+
+  .info-summary-list {
+    padding-left: 0;
+
+    li {
+
+      @include media(tablet) {
+        margin-bottom: 5px;
+      }
+    }
+
+    a {
+      color: $light-blue;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+  }
+}

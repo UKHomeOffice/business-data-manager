@@ -1,0 +1,13 @@
+<div class="header-proposition">
+  <div class="content">
+    <a href="#proposition-links" class="js-header-toggle menu">Menu</a>
+    <nav id="proposition-menu">
+      <a href="/" id="proposition-name">{{ app_name }}</a>
+      <ul id="proposition-links">
+        {% for href, id, caption, class in navbar %}
+          <li id="{{ id }}"><a href="{{ href|e }}" class="{% if id == main_active %}active{% endif %} {{ class }}">{{ caption|e }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </div>
+</div>
