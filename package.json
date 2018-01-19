@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/akersystems/business-data-manager.git"
+    "url": "git+https://github.com/ukhomeoffice/business-data-manager.git"
   },
   "keywords": [
     "business",
@@ -21,16 +21,15 @@
   "author": "Aker Systems Limited",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/akersystems/business-data-manager/issues"
+    "url": "https://github.com/ukhomeoffice/business-data-manager/issues"
   },
-  "homepage": "https://github.com/akersystems/business-data-manager#readme",
+  "homepage": "https://github.com/ukhomeoffice/business-data-manager#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "compression": "^1.7.1",
     "connect-pg-simple": "^4.2.1",
-    "ejs": "^2.5.7",
     "errorhandler": "^1.5.0",
     "express": "^4.16.2",
     "express-flash": "0.0.2",

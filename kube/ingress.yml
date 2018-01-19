@@ -1,0 +1,22 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/secure-backends: "true"
+    kubernetes.io/ingress.class: "nginx-external"
+    stable.k8s.psg.io/kcm.class: default
+  name: dq-business-data-manager-ingress
+spec:
+  rules:
+  - host: business-data-manager.notprod.dq.homeoffice.gov.uk
+    http:
+      paths:
+      - backend:
+          serviceName: dq-business-data-manager-service
+          servicePort: https
+        path: /
+  tls:
+  - hosts:
+    - business-data-manager.notprod.dq.homeoffice.gov.uk
+    - www.business-data-manager.notprod.dq.homeoffice.gov.uk
