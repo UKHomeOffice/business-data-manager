@@ -36,6 +36,21 @@ export PGDATABASE=bdm
 export PGPASSWORD=badpassword
 ```
 
+## Building with Drone
+
+We use Drone to automatically build the image and push it to Quay.io
+
+## Running in Kubernetes
+
+The application is designed to be deployed in Kubernetes and expects the
+PostgreSQL database to be provisioned separately to the `kubectl` scripts
+(usually in RDS).
+
+```
+kubectl create -f ./kube/service.yml
+kubectl create -f ./kube/deployment.yml
+kubectl create -f ./kube/ingress.yml
+```
 
 ## Current features
 

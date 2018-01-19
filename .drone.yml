@@ -1,0 +1,29 @@
+pipeline:
+
+  build:
+    environment:
+      - DOCKER_HOST=tcp://172.17.0.1:2375
+    image: registry.hub.docker.com/plugins/docker
+    repo: quay.io/ukhomeofficedigital/business-data-manager
+    secrets: [ DOCKER_USERNAME, DOCKER_PASSWORD ]
+    context: .
+    dockerfile: Dockerfile
+    registry: quay.io
+    force_tag: true
+    tags:
+      - ${DRONE_COMMIT_SHA}
+      - ${DRONE_REPO_BRANCH}
+    when:
+      event: push
+
+  deploy_to_dev:
+    image: quay.io/ukhomeofficedigital/kd:latest
+    environment:
+      - KUBE_SERVER=https://kube-api-notprod.notprod.acp.homeoffice.gov.uk/
+      - KUBE_NAMESPACE=dq-apps-notprod
+      - INSECURE_SKIP_TLS_VERIFY=true
+    commands:
+      - kd -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml
+    secrets: [ KUBE_TOKEN ]
+    when:
+      event: push
