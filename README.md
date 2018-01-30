@@ -46,11 +46,8 @@ The application is designed to be deployed in Kubernetes and expects the
 PostgreSQL database to be provisioned separately to the `kubectl` scripts
 (usually in RDS).
 
-```
-kubectl create -f ./kube/service.yml
-kubectl create -f ./kube/deployment.yml
-kubectl create -f ./kube/ingress.yml
-```
+The `kubenetes` scripts included in this repo are only intended for use in the
+project's Drone CD pipeline.
 
 ## Current features
 

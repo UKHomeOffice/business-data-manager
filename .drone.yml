@@ -19,11 +19,46 @@ pipeline:
   deploy_to_dev:
     image: quay.io/ukhomeofficedigital/kd:latest
     environment:
-      - KUBE_SERVER=https://kube-api-notprod.notprod.acp.homeoffice.gov.uk/
       - KUBE_NAMESPACE=dq-apps-notprod
       - INSECURE_SKIP_TLS_VERIFY=true
     commands:
-      - kd -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml
-    secrets: [ KUBE_TOKEN ]
+      - export HOSTNAME=$$NOTPROD_HOSTNAME
+      - export KEYCLOAK_CLIENT_ID=$$NOTPROD_KEYCLOAK_CLIENT_ID
+      - export KEYCLOAK_CLIENT_SECRET=$$NOTPROD_KEYCLOAK_CLIENT_SECRET
+      - export KEYCLOAK_DISCOVERY=$$NOTPROD_KEYCLOAK_DISCOVERY
+      - export KUBE_SERVER=$$NOTPROD_KUBE_SERVER
+      - export KUBE_TOKEN=$$NOTPROD_KUBE_TOKEN
+      - kd -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml -f kube/secret.yml
+    secrets:
+      - NOTPROD_HOSTNAME
+      - NOTPROD_KEYCLOAK_CLIENT_ID
+      - NOTPROD_KEYCLOAK_CLIENT_SECRET
+      - NOTPROD_KEYCLOAK_DISCOVERY
+      - NOTPROD_KUBE_SERVER
+      - NOTPROD_KUBE_TOKEN
     when:
+      event: push
+
+  deploy_to_prod:
+    image: quay.io/ukhomeofficedigital/kd:latest
+    environment:
+      - KUBE_NAMESPACE=dq-apps
+      - INSECURE_SKIP_TLS_VERIFY=true
+    commands:
+      - export HOSTNAME=$$PROD_HOSTNAME
+      - export KEYCLOAK_CLIENT_ID=$$PROD_KEYCLOAK_CLIENT_ID
+      - export KEYCLOAK_CLIENT_SECRET=$$PROD_KEYCLOAK_CLIENT_SECRET
+      - export KEYCLOAK_DISCOVERY=$$PROD_KEYCLOAK_DISCOVERY
+      - export KUBE_SERVER=$$PROD_KUBE_SERVER
+      - export KUBE_TOKEN=$$PROD_KUBE_TOKEN
+      - kd -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml -f kube/secret.yml
+    secrets:
+      - PROD_HOSTNAME
+      - PROD_KEYCLOAK_CLIENT_ID
+      - PROD_KEYCLOAK_CLIENT_SECRET
+      - PROD_KEYCLOAK_DISCOVERY
+      - PROD_KUBE_SERVER
+      - PROD_KUBE_TOKEN
+    when:
+      branch: master
       event: push
