@@ -3,8 +3,6 @@ LABEL maintainer="thomas.fitzherbert1@homeoffice.gsi.gov.uk"
 
 ENV DOCKER_HOME /usr/src/app
 
-
-
 WORKDIR $DOCKER_HOME
 COPY . ${DOCKER_HOME}
 RUN chown -R node ${DOCKER_HOME}
