@@ -1,13 +1,11 @@
 ![Logo of the project](./documents/images/cube.png)
 
 
-# Aker Systems Business Data Manager
-
-[![Build Status](https://travis-ci.com/akersystems/business-data-manager.svg?token=gzpbKw8cddsJ1WFZ5iqW&branch=initial-build)](https://travis-ci.com/akersystems/business-data-manager)
+# Business Data Manager
 
 > A lightweight, flexible business data management solution
 
-Aker Systems Business Data Manager enables business data to be stored and
+Business Data Manager enables business data to be stored and
 managed through a web application and API. Multiple datasets can be created
 and managed.
 
@@ -46,11 +44,20 @@ The application is designed to be deployed in Kubernetes and expects the
 PostgreSQL database to be provisioned separately to the `kubectl` scripts
 (usually in RDS).
 
-```
-kubectl create -f ./kube/service.yml
-kubectl create -f ./kube/deployment.yml
-kubectl create -f ./kube/ingress.yml
-```
+The `kubernetes` scripts included in this repo are only intended for use with
+`kd` as part of the Drone CI pipeline. As they use variable substitution, if
+using them outside of the Drone CI pipeline you will have to provide valid
+values for several variables:
+
+| Kube file | Variable | Description |
+|-----------|----------|-------------|
+| deployment.yml | DRONE_COMMIT_SHA | The commit sha reference for the docker image to deploy |
+| ingress.yml | HOSTNAME | The URL that the service will be accessed via |
+| secret.yml | KEYCLOAK_CLIENT_ID | The client id for the Keycloak realm |
+| secret.yml | KEYCLOAK_CLIENT_SECRET | The client secret for the Keycloak realm |
+| secret.yml | KEYCLOAK_DISCOVERY | The discovery endpoint for the Keycloak realm |
+
+The Keycloak variables need to be `base64` encoded.
 
 ## Current features
 
