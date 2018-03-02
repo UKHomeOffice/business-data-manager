@@ -87,7 +87,7 @@ spec:
             value: http://127.0.0.1:8080
         args:
           - --resources
-          - uri=/*
+          - uri=/*|roles=bdm
           - --enable-logging
           - --enable-json-logging
           - --verbose
