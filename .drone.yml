@@ -28,7 +28,7 @@ pipeline:
       - export KEYCLOAK_DISCOVERY=$$NOTPROD_KEYCLOAK_DISCOVERY
       - export KUBE_SERVER=$$NOTPROD_KUBE_SERVER
       - export KUBE_TOKEN=$$NOTPROD_KUBE_TOKEN
-      - kd -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml -f kube/secret.yml
+      - kd -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml
     secrets:
       - NOTPROD_HOSTNAME
       - NOTPROD_KEYCLOAK_CLIENT_ID
@@ -51,7 +51,7 @@ pipeline:
       - export KEYCLOAK_DISCOVERY=$$PROD_KEYCLOAK_DISCOVERY
       - export KUBE_SERVER=$$PROD_KUBE_SERVER
       - export KUBE_TOKEN=$$PROD_KUBE_TOKEN
-      - kd -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml -f kube/secret.yml
+      - kd -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml
     secrets:
       - PROD_HOSTNAME
       - PROD_KEYCLOAK_CLIENT_ID
