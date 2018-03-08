@@ -20,11 +20,11 @@ The application requires the following environment variables to be set prior to
 launch:
 
 ```
-export ENV=dev  // setting this to 'production' changes the log format to 'short'
+export ENV=dev  # setting this to 'production' changes the log format to 'short'
 export LOG_LEVEL=info
 export NAME=business-data-manager
 export PORT=8080
-export SESSION_SECRET=psC6bLKZbU68rybz3YSk42Jf5btK9mbS6exJ  // replace with a random string
+export SESSION_SECRET=psC6bLKZbU68rybz3YSk42Jf5btK9mbS6exJ  # replace with a random string
 export TITLE='Business Data Manager'
 
 export PGHOST=localhost

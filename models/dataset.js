@@ -28,9 +28,12 @@ class Dataset {
 
   checkIfExists () {
     return new Promise((resolve, reject) => {
-      let queryString = `SELECT to_regclass('${this.name}');`;
-      logger.debug(queryString);
-      db.query(queryString)
+      let query = {
+        text: 'SELECT to_regclass($1)',
+        values: [this.name],
+      };
+      logger.debug(query);
+      db.query(query)
         .then(result => {
           if (result.rows[0].to_regclass === null) {
             let msg = {statusCode: '404', message: 'Not found'};
@@ -46,25 +49,25 @@ class Dataset {
     });
   }
 
-  createTableQueryString () {
-    let queryString = `CREATE TABLE ${this.name} (`;
-    queryString += ` id ${this.idType} PRIMARY KEY`;
+  createTableQuery () {
+    let query = `CREATE TABLE ${this.name} (`;
+    query += ` id ${this.idType} PRIMARY KEY`;
     for (let i = 0; i < this.fields.length; i++) {
-      queryString += `, "${this.fields[i].name}" ${this.fields[i].datatype}`;
+      query += `, "${this.fields[i].name}" ${this.fields[i].datatype}`;
       if (this.fields[i].notNull === 'Yes') {
-        queryString += ' NOT NULL';
+        query += ' NOT NULL';
       }
       if (this.fields[i].unique === 'Yes') {
-        queryString += ' UNIQUE';
+        query += ' UNIQUE';
       }
     }
-    queryString += ' );';
-    return queryString;
+    query += ' );';
+    return query;
   }
 
   createTable () {
     return new Promise((resolve, reject) => {
-      let queryString = this.createTableQueryString();
+      let queryString = this.createTableQuery();
       logger.debug(queryString);
       db.query(queryString)
         .then(result => {
@@ -83,18 +86,20 @@ class Dataset {
     });
   }
 
-  registerDatasetQueryString () {
+  registerDatasetQuery () {
     // build the query to register the dataset
-    let queryString = 'INSERT INTO datasets (name, idtype, fields) VALUES ' +
-                      `('${this.name}', '${this.idType}', '${JSON.stringify(this.fields)}');`;
-    return queryString;
+    let query = {
+      text: 'INSERT INTO datasets (name, idtype, fields) VALUES ($1, $2, $3)',
+      values: [this.name, this.idType, JSON.stringify(this.fields)],
+    };
+    return query;
   }
 
   registerDataset () {
     return new Promise((resolve, reject) => {
-      let queryString = this.registerDatasetQueryString();
-      logger.debug(queryString);
-      db.query(queryString)
+      let query = this.registerDatasetQuery();
+      logger.debug(query);
+      db.query(query)
         .then(result => {
           // check that result is as expected for a successful create or throw an error/warning
           logger.verbose(`New Dataset registered for ${this.name}`);
@@ -111,17 +116,20 @@ class Dataset {
     });
   }
 
-  unregisterDatasetQueryString () {
+  unregisterDatasetQuery () {
     // build the query to register the dataset
-    let queryString = `DELETE FROM datasets WHERE name = '${this.name}';`;
-    return queryString;
+    let query = {
+      text: 'DELETE FROM datasets WHERE name = $1',
+      values: [this.name],
+    };
+    return query;
   }
 
   unregisterDataset () {
     return new Promise((resolve, reject) => {
-      let queryString = this.unregisterDatasetQueryString();
-      logger.debug(queryString);
-      db.query(queryString)
+      let query = this.unregisterDatasetQuery();
+      logger.debug(query);
+      db.query(query)
         .then(result => {
           // check that result is as expected for a successful create or throw an error/warning
           // result.command === 'DELETE'
@@ -259,11 +267,12 @@ class Dataset {
     // if it fails return 422
     // if it succeeds return 201
     return new Promise((resolve, reject) => {
-      let queryString = 'UPDATE datasets ' +
-                        `SET fields = '${JSON.stringify(this.fields)}' ` +
-                        `WHERE name = '${this.name}';`;
-      logger.debug(queryString);
-      db.query(queryString)
+      let query = {
+        text: 'UPDATE datasets SET fields = $1 WHERE name = $2',
+        values: [JSON.stringify(this.fields), this.name],
+      };
+      logger.debug(query);
+      db.query(query)
         .then(result => {
           // check that result is as expected for a successful create or throw an error/warning
           // result.command === 'DELETE'
@@ -289,9 +298,12 @@ class Dataset {
    */
   getIdType () {
     return new Promise((resolve, reject) => {
-      let queryString = `SELECT idtype FROM datasets WHERE name = '${this.name}';`;
-      logger.debug(queryString);
-      db.query(queryString)
+      let query = {
+        text: 'SELECT idtype FROM datasets WHERE name = $1',
+        values: [this.name],
+      };
+      logger.debug(query);
+      db.query(query)
         .then(result => {
           if (result.rowCount === 1) {
             let msg = {statusCode: '200', message: 'OK', data: result.rows[0].idtype};

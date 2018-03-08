@@ -25,9 +25,8 @@ class Items {
 
   findAll () {
     return new Promise((resolve, reject) => {
-      let queryString = `SELECT * FROM ${this.datasetName};`;
-      // let items = {};
-      db.query(queryString)
+      let query = `SELECT * FROM ${this.datasetName}`;
+      db.query(query)
         .then(result => {
           if (result.command === 'SELECT') {
             logger.verbose(`Getting items from ${this.datasetName}`);

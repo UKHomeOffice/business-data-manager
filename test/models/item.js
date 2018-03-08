@@ -10,22 +10,26 @@ const expect = chai.expect;
 const Item = require('../../models/item');
 
 describe('Item Model', function() {
-  it('should make a valid INSERT ITEM query string (for a dataset with SERIAL idType)', function() {
+  it('should make a valid INSERT ITEM query object (for a dataset with SERIAL idType)', function() {
     let properties = {'bar': 'abc', 'baz': 123};
     let item = new Item('foo', null, properties);
-    let insertItemQuery = item.insertItemQueryString();
-    let expectation = 'INSERT INTO foo (id, bar, baz) VALUES ' +
-                      '(DEFAULT, \'abc\', \'123\') RETURNING id;';
-    expect(insertItemQuery).to.equal(expectation);
+    let result = item.insertItemQuery();
+    let expectation = {
+      text: 'INSERT INTO foo (id, bar, baz) VALUES ($1, $2, $3) RETURNING id',
+      values: ['DEFAULT', 'abc', 123],
+    };
+    expect(result).to.deep.equal(expectation);
   });
 
-  it('should make a valid INSERT ITEM query string (for a dataset with VARCHAR idType)', function() {
+  it('should make a valid INSERT ITEM query object (for a dataset with VARCHAR idType)', function() {
     let properties = {'id': 'xyz', 'bar': 'abc', 'baz': 123};
     let item = new Item('foo', 'VARCHAR', properties);
-    let insertItemQuery = item.insertItemQueryString();
-    let expectation = 'INSERT INTO foo (id, bar, baz) VALUES ' +
-                      '(\'xyz\', \'abc\', \'123\') RETURNING id;';
-    expect(insertItemQuery).to.equal(expectation);
+    let result = item.insertItemQuery();
+    let expectation = {
+      text: 'INSERT INTO foo (id, bar, baz) VALUES ($1, $2, $3) RETURNING id',
+      values: ['xyz', 'abc', 123],
+    };
+    expect(result).to.deep.equal(expectation);
   });
 
 
