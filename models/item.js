@@ -27,8 +27,11 @@ class Item {
 
   findOne () {
     return new Promise((resolve, reject) => {
-      let queryString = `SELECT * FROM ${this.datasetName} WHERE id = '${this.itemId}';`;
-      db.query(queryString)
+      let query = {
+        text: `SELECT * FROM ${this.datasetName} WHERE id = $1`,
+        values: [this.itemId],
+      };
+      db.query(query)
         .then(result => {
           if (result.rows.length === 1) {
             logger.verbose(`Getting properties for ${this.datasetName}.${this.itemId}`);
@@ -60,42 +63,6 @@ class Item {
     });
   }
 
-  // ***************************************************************************
-  // ***************************************************************************
-  // ***************************************************************************
-  //        NEEDS UPDATING TO WORK ON ITEMS
-  // ***************************************************************************
-  // ***************************************************************************
-  // ***************************************************************************
-  // ***************************************************************************
-  // checkIfPropertyExists () {
-  //   // grab the current fields and append them to this.fields[]
-  //   // this makes them available in memory for the next functions
-  //   // return 302 Found or 404 Not found
-  //   return new Promise((resolve, reject) => {
-  //     let queryString = `SELECT fields FROM datasets WHERE name = '${this.itemId}';`;
-  //     db.query(queryString)
-  //       .then(result => {
-  //         for (let i = 0; i < result.rows[0].fields.length; i++) {
-  //           this.fields.push(result.rows[0].fields[i]);
-  //         }
-  //         for (let j = 1; j < this.fields.length; j++) {
-  //           if (this.fields[0].name === this.fields[j].name) {
-  //             logger.verbose(`The property ${this.itemId} already exists in ${this.datasetName}`);
-  //             let msg = {statusCode: '302', message: 'Found'};
-  //             return resolve(msg);
-  //           }
-  //         }
-  //         logger.verbose(`The property ${this.itemId} does not exist in ${this.datasetName}`);
-  //         let msg = {statusCode: '404', message: 'Not found'};
-  //         return resolve(msg);
-  //       })
-  //       .catch(err => {
-  //         logger.error(err);
-  //         return reject(err);
-  //       });
-  //   });
-  // }
 
   checkIfItemExists () {
     return new Promise((resolve, reject) => {
@@ -104,9 +71,12 @@ class Item {
         let msg = {statusCode: '404', message: 'NOT FOUND'};
         return resolve(msg);
       }
-      let queryString = `SELECT id FROM ${this.datasetName} WHERE id = '${this.itemId}';`;
-      logger.debug(queryString);
-      db.query(queryString)
+      let query = {
+        text: `SELECT id FROM ${this.datasetName} WHERE id = $1`,
+        values: [this.itemId],
+      };
+      logger.debug(query);
+      db.query(query)
         .then(result => {
           if (result.rowCount === '1') {
             logger.verbose(`The item ${this.itemId} already exists in ${this.datasetName}`);
@@ -124,31 +94,40 @@ class Item {
     });
   }
 
-  insertItemQueryString () {
+  insertItemQuery () {
     let fields = '';
-    let values = '';
+    let values = [];
     if (this.itemId === null) {
       fields += 'id, ';
-      values += 'DEFAULT, ';
+      values.push('DEFAULT');
     }
     for (let key in this.properties) {
       if (key !== '_csrf') {
         fields += `${key}, `;
-        values += `'${this.properties[key]}', `;
+        values.push(this.properties[key]);
       }
     }
-    // remove the last ', '
     fields = fields.slice(0, -2);
-    values = values.slice(0, -2);
-    let queryString = `INSERT INTO ${this.datasetName} (${fields}) VALUES (${values}) RETURNING id;`;
-    return queryString;
+
+    let valueRefs = '';
+    for (let paramNumber = 1; paramNumber < values.length + 1; paramNumber++) {
+      valueRefs += '$' + paramNumber + ', ';
+    };
+    valueRefs = valueRefs.slice(0, -2);
+
+    let queryText = `INSERT INTO ${this.datasetName} (${fields}) VALUES (${valueRefs}) RETURNING id`;
+    let query = {
+      text: queryText,
+      values: values,
+    };
+    return query;
   }
 
   insertItem () {
     return new Promise((resolve, reject) => {
-      let queryString = this.insertItemQueryString();
-      logger.debug(queryString);
-      db.query(queryString)
+      let query = this.insertItemquery();
+      logger.debug(query);
+      db.query(query)
         .then(result => {
           // check that result is as expected for a successful create
           logger.verbose(`Item ${result.rows[0].id} added to ${this.datasetName} dataset`);
@@ -168,9 +147,12 @@ class Item {
 
   deleteItem () {
     return new Promise((resolve, reject) => {
-      let queryString = `DELETE FROM ${this.datasetName} WHERE (id = '${this.itemId}') RETURNING id`;
-      logger.debug(queryString);
-      db.query(queryString)
+      let query = {
+        text: `DELETE FROM ${this.datasetName} WHERE (id = $1) RETURNING id`,
+        values: [this.itemId],
+      };
+      logger.debug(query);
+      db.query(query)
         .then(result => {
           // check that result is as expected for a successful delete
           logger.verbose(`Item ${result.rows[0].id} deleted from ${this.datasetName} dataset`);
