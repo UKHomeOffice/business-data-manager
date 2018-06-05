@@ -125,7 +125,7 @@ class Item {
 
   insertItem () {
     return new Promise((resolve, reject) => {
-      let query = this.insertItemquery();
+      let query = this.insertItemQuery();
       logger.debug(query);
       db.query(query)
         .then(result => {
