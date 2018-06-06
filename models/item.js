@@ -97,10 +97,6 @@ class Item {
   insertItemQuery () {
     let fields = '';
     let values = [];
-    if (this.itemId === null) {
-      fields += 'id, ';
-      values.push('DEFAULT');
-    }
     for (let key in this.properties) {
       if (key !== '_csrf') {
         fields += `${key}, `;
