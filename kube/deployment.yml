@@ -59,6 +59,7 @@ spec:
                 key: password
       - name: keycloak-proxy
         image: quay.io/ukhomeofficedigital/go-keycloak-proxy:v2.1.0
+        imagePullPolicy: IfNotPresent
         securityContext:
           runAsNonRoot: true
         resources:
