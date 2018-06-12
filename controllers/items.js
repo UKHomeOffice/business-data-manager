@@ -83,8 +83,13 @@ exports.postItems = (req, res) => {
          },
          json: () => {
            logger.verbose('postItems sending JSON response');
-           let uri = `/v1/datasets/${req.params.dataset}/items/${result.itemId}`;
-           res.status(201).json({uri: uri, action: 'Created'});
+           let uri = `/v1/datasets/${req.params.dataset}/items/${item.itemId}`;
+           res.status(201).json({
+               uri: uri,
+               action: 'Created',
+               item: item.properties,
+               itemId: item.itemId
+           });
          },
          default: () => {
            logger.verbose('postItems invalid format requested');
