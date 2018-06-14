@@ -38,8 +38,8 @@ pipeline:
       - NOTPROD_KEYCLOAK_DISCOVERY
       - NOTPROD_KUBE_SERVER
       - NOTPROD_KUBE_TOKEN
-    when:
-      event: push
+#    when:
+#      event: push
 
   deploy_to_prod:
     image: quay.io/ukhomeofficedigital/kd:latest
