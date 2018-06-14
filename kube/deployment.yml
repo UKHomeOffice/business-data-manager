@@ -35,27 +35,27 @@ spec:
           - name: PGHOST
             valueFrom:
               secretKeyRef:
-                name: dq-apps-notprod-postgres-rds
+                name: {{ .RDS_SECRET_NAME }}
                 key: endpoint
           - name: PGPORT
             valueFrom:
               secretKeyRef:
-                name: dq-apps-notprod-postgres-rds
+                name: {{ .RDS_SECRET_NAME }}
                 key: port
           - name: PGUSER
             valueFrom:
               secretKeyRef:
-                name: dq-apps-notprod-postgres-rds
+                name: {{ .RDS_SECRET_NAME }}
                 key: username
           - name: PGDATABASE
             valueFrom:
               secretKeyRef:
-                name: dq-apps-notprod-postgres-rds
-                key: database_name
+                name: {{ .RDS_SECRET_NAME }}
+                key: {{ .DB_ATTRIBUTE }}
           - name: PGPASSWORD
             valueFrom:
               secretKeyRef:
-                name: dq-apps-notprod-postgres-rds
+                name: {{ .RDS_SECRET_NAME }}
                 key: password
       - name: keycloak-proxy
         image: quay.io/ukhomeofficedigital/go-keycloak-proxy:v2.1.0
