@@ -18,6 +18,7 @@ exports.getItems = (req, res) => {
         res.format({
           html: () => {
             logger.verbose('getItems sending HTML response');
+            result.data.rows = []
             res.status(200).render('getItems', {title: 'Items', data: result.data});
           },
           json: () => {
