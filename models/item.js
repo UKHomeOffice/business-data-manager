@@ -128,7 +128,7 @@ class Item {
           // check that result is as expected for a successful create
           logger.verbose(`Item ${result.rows[0].id} added to ${this.datasetName} dataset`);
           let uri = `/v1/datasets/${this.datasetName}/items/${result.rows[0].id}`;
-          let msg = {statusCode: '201', message: 'CREATED', uri: uri};
+          let msg = {statusCode: '201', message: 'CREATED', uri: uri, itemId: result.rows[0].id};
           return resolve(msg);
           // if not then
           // let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'};
