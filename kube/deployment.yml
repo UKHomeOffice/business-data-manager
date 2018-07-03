@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: dq-business-data-manager
-        image: quay.io/ukhomeofficedigital/business-data-manager:latest
+        image: quay.io/ukhomeofficedigital/business-data-manager:master
         imagePullPolicy: Always
         securityContext:
           runAsNonRoot: true
