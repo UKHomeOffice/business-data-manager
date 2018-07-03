@@ -6,7 +6,7 @@ ENV DOCKER_HOME /usr/src/app
 WORKDIR $DOCKER_HOME
 COPY . ${DOCKER_HOME}
 RUN chown -R node ${DOCKER_HOME}
-USER node
+USER 1000
 RUN npm install -q && npm rebuild node-sass
 
 EXPOSE 8080
