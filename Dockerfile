@@ -1,4 +1,4 @@
-FROM node:9.3-alpine
+FROM node:9.11-alpine
 LABEL maintainer="thomas.fitzherbert1@homeoffice.gsi.gov.uk"
 
 ENV DOCKER_HOME /usr/src/app
