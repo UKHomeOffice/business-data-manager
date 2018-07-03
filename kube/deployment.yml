@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: dq-business-data-manager
-        image: quay.io/ukhomeofficedigital/business-data-manager:{{.DRONE_COMMIT_SHA}}
+        image: quay.io/ukhomeofficedigital/business-data-manager:latest
         imagePullPolicy: Always
         securityContext:
           runAsNonRoot: true
