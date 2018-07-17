@@ -18,6 +18,7 @@ exports.getItems = (req, res) => {
         res.format({
           html: () => {
             logger.verbose('getItems sending HTML response');
+            result.data.rows = []
             res.status(200).render('getItems', {title: 'Items', data: result.data});
           },
           json: () => {
@@ -84,7 +85,11 @@ exports.postItems = (req, res) => {
          json: () => {
            logger.verbose('postItems sending JSON response');
            let uri = `/v1/datasets/${req.params.dataset}/items/${result.itemId}`;
-           res.status(201).json({uri: uri, action: 'Created'});
+           res.status(201).json({
+               uri: uri,
+               action: 'Created',
+               itemId: result.itemId
+           });
          },
          default: () => {
            logger.verbose('postItems invalid format requested');

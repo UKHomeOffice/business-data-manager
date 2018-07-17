@@ -97,10 +97,6 @@ class Item {
   insertItemQuery () {
     let fields = '';
     let values = [];
-    if (this.itemId === null) {
-      fields += 'id, ';
-      values.push('DEFAULT');
-    }
     for (let key in this.properties) {
       if (key !== '_csrf') {
         fields += `${key}, `;
@@ -125,14 +121,14 @@ class Item {
 
   insertItem () {
     return new Promise((resolve, reject) => {
-      let query = this.insertItemquery();
+      let query = this.insertItemQuery();
       logger.debug(query);
       db.query(query)
         .then(result => {
           // check that result is as expected for a successful create
           logger.verbose(`Item ${result.rows[0].id} added to ${this.datasetName} dataset`);
           let uri = `/v1/datasets/${this.datasetName}/items/${result.rows[0].id}`;
-          let msg = {statusCode: '201', message: 'CREATED', uri: uri};
+          let msg = {statusCode: '201', message: 'CREATED', uri: uri, itemId: result.rows[0].id};
           return resolve(msg);
           // if not then
           // let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'};
