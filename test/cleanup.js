@@ -1,14 +1,14 @@
-'use strict';
+'use strict'
 
-/* eslint func-names: 0*/
+/* eslint func-names: 0 */
 
-const db = require('../db');
+const db = require('../db')
 
-before(function() {
+before(function () {
   // global pre-test actions
-});
+})
 
-after(function() {
+after(function () {
   // global post-test actions
-  db.end();
-});
+  db.end()
+})

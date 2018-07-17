@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-const logger = require('../logger');
+const logger = require('../logger')
 
 /**
  * GET /
@@ -9,14 +9,14 @@ const logger = require('../logger');
 exports.getHome = (req, res) => {
   res.format({
     html: () => {
-      logger.verbose('Sending HTML response');
+      logger.verbose('Sending HTML response')
       res.status(200).render('home', {
         title: 'Home',
-      });
+      })
     },
     default: () => {
-      logger.verbose('Invalid format requested');
-      res.status(406).send('Invalid response format requested');
+      logger.verbose('Invalid format requested')
+      res.status(406).send('Invalid response format requested')
     }
-  });
-};
+  })
+}

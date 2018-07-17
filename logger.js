@@ -1,10 +1,9 @@
-'use strict';
+'use strict'
 
-const { createLogger, format, transports } = require('winston');
-const { combine, timestamp, label, prettyPrint } = format;
+const { createLogger, format, transports } = require('winston')
+const { combine, timestamp, label, prettyPrint } = format
 
-const config = require('./config.js');
-
+const config = require('./config.js')
 
 const logger = createLogger({
   level: config.logLevel || 'info',
@@ -14,7 +13,6 @@ const logger = createLogger({
     prettyPrint()
   ),
   transports: [new transports.Console()]
-});
+})
 
-
-module.exports = logger;
+module.exports = logger
