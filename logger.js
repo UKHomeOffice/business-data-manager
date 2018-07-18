@@ -3,7 +3,7 @@
 const { createLogger, format, transports } = require('winston')
 const { combine, timestamp, label, prettyPrint } = format
 
-const config = require('./config.js')
+const config = require('./config/core')
 
 const logger = createLogger({
   level: config.logLevel || 'info',

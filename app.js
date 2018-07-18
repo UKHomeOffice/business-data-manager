@@ -23,7 +23,7 @@ const PgSession = require('connect-pg-simple')(session)
 // multer is only need to support file uploads (not currently a feature but likely an enhancement in the future)
 // const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
-const config = require('./config')
+const config = require('./config/core')
 const Datasets = require('./models/datasets')
 const logger = require('./logger')
 const db = require('./db')

@@ -2,7 +2,7 @@
 
 const pg = require('pg')
 
-const config = require('./config')
+const config = require('./config/core')
 
 const pool = new pg.Pool({
   user: config.pg.user,
