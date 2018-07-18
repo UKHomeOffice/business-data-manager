@@ -1,8 +1,8 @@
-'use strict';
+'use strict'
 
-const pg = require('pg');
+const pg = require('pg')
 
-const config = require('./config');
+const config = require('./config/core')
 
 const pool = new pg.Pool({
   user: config.pg.user,
@@ -10,6 +10,6 @@ const pool = new pg.Pool({
   database: config.pg.database,
   password: config.pg.password,
   port: config.pg.port,
-});
+})
 
-module.exports = pool;
+module.exports = pool

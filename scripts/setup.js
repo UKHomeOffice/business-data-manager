@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-const db = require('../db');
+const db = require('../db')
 
 // to make this idempotent, we should drop the session table before creating it
 let queryString = `CREATE TABLE "session" (

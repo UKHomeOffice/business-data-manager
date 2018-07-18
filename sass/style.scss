@@ -1,0 +1,64 @@
+@import "variables";
+@import "flash";
+@import "mixins";
+@import "extends";
+@import "grid_layout";
+@import "govuk-elements";
+@import "navigation";
+@import "buttons";
+@import "pagination";
+@import "tabs";
+@import "icons";
+@import "autocomplete";
+@import "notifications";
+
+// overriding the display: none; setting for mobile media queries
+@media (max-width: 768px) {
+  // .from-v7 class created to show a different variant of the navigation from this version going forward
+  .js-enabled #global-header .header-proposition.from-v7 #proposition-link,
+  .js-enabled #global-header .header-proposition.from-v7 #proposition-links {
+    display: inherit;
+  }
+
+  #global-header .header-proposition.from-v7 #proposition-link li,
+  #global-header .header-proposition.from-v7 #proposition-links li {
+    float: none;
+    width: 100%;
+  }
+}
+
+#content {
+  @extend %site-width-container;
+  @extend %contain-floats;
+  padding-bottom: $gutter;
+
+  @include media(desktop) {
+    padding-bottom: $gutter * 3;
+  }
+
+  // No Tabindex on #content
+  outline: none;
+}
+
+#nb_feedback {
+  float: right !important;
+}
+
+.success {
+  background-color: lightgreen;
+  color: darkgreen;
+}
+
+.error {
+  background-color: lightcoral;
+  color: darkred;
+}
+
+.info {
+  background-color: lightyellow;
+  color: yellow;
+}
+
+.pagination a {
+  color: #424bc1;
+}

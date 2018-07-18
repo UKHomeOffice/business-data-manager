@@ -1,0 +1,59 @@
+.notification {
+  display: flex;
+  border: none;
+  margin: 15px 0;
+  padding: 19px 24px; /* weird totals to compensate for missing 4px border */
+  color: #FFF;
+
+  &.success {
+    border-color: #00823B;
+    background-color: #00823B;
+  }
+
+  &.info {
+    border-color: #005EA5;
+    background-color: #005EA5;
+  }
+
+  &.alert {
+    border-color: #B20D1D;
+    background-color: #B20D1D;
+  }
+
+  .notification-icon {
+    float: left;
+    height: 100%;
+  }
+
+  .notification-content {
+    margin-left: 50px;
+    header {
+      margin-top: 0px !important;
+      margin-bottom: 0px !important;
+    }
+  }
+
+  .icon-medium {
+    flex-grow: 0;
+    max-width: 40px;
+    font-size: 38px;
+  }
+
+
+  .dismiss {
+    flex-grow: 0;
+  }
+
+  a {
+    color: #FFF;
+  }
+
+  &.slim {
+
+    .icon-medium,
+    .notification-content,
+    .dismiss {
+      vertical-align: baseline;
+    }
+  }
+}
