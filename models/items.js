@@ -25,7 +25,7 @@ class Items {
   findAll (offset = 0, limit = null) {
     return new Promise((resolve, reject) => {
       const limiter = Number.isInteger(limit) ? ` LIMIT ${limit} OFFSET ${offset}` : ''
-      let query = `SELECT *, count(*) OVER() AS total_count 
+      let query = `SELECT *, count(*) OVER() AS _total_count 
           FROM ${this.datasetName} 
           ORDER BY 1 
           ${limiter}
@@ -37,14 +37,16 @@ class Items {
             // process fields and rows
             let fields = []
             for (let i = 0; i < result.fields.length; i++) {
-              fields.push(result.fields[i].name)
+              if (result.fields[i].name !== '_total_count') {
+                fields.push(result.fields[i].name)
+              }
             }
             let rows = []
             let count = 0
             for (let j = 0; j < result.rows.length; j++) {
               let row = []
               if (j === 0) {
-                count = result.rows[0]['total_count']
+                count = result.rows[0]['_total_count']
               }
 
               for (let k = 0; k < result.fields.length; k++) {
