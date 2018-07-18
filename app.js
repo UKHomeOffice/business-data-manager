@@ -3,6 +3,7 @@
 /* eslint camelcase: 0 */
 
 const express = require('express')
+const sassMiddleware = require('node-sass-middleware')
 const session = require('express-session')
 
 const bodyParser = require('body-parser')
@@ -19,7 +20,6 @@ const path = require('path')
 const passport = require('passport')
 // const pg = require('pg');
 const PgSession = require('connect-pg-simple')(session)
-const sass = require('node-sass-middleware')
 // multer is only need to support file uploads (not currently a feature but likely an enhancement in the future)
 // const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
@@ -31,8 +31,7 @@ const db = require('./db')
 /**
  * Create Express server.
  */
-let app = require('express')()
-let server = require('http').Server(app)
+let app = express()
 
 /**
  * Express configuration.
@@ -45,28 +44,15 @@ nunjucks.configure(path.join(__dirname, 'views'), {
   express: app,
   noCache: true
 })
-app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'html')
 
-app.use(compression())
-app.use(sass({
-  src: path.join(__dirname, 'assets/'),
-  dest: path.join(__dirname, 'public'),
-  debug: true,
-  outputStyle: 'expanded',
-  includePaths: ['node_modules/govuk_template_jinja/assets/stylesheets',
-    'node_modules/govuk_frontend_toolkit/stylesheets',
-    'node_modules/govuk-elements-sass/public/sass'],
-  sourceComments: 'map',
-}
-))
 if (config.env === 'production') {
   app.use(morgan('short'))
 } else {
   app.use(morgan('dev'))
 }
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({extended: true}))
 app.use(expressValidator())
 app.use(session({
   resave: true,
@@ -93,20 +79,21 @@ app.use((req, res, next) => {
   res.locals.user = req.user
   next()
 })
+app.use(compression())
+
 // app.use((req, res, next) => {
-//   // After successful login, redirect back to /api, /feedback or /
+//   // After successful login, redirect back tox-no-compression /api, /feedback or /
 //   if (/(api)|(feedback)|(^\/$)/i.test(req.path)) {
 //     req.session.returnTo = req.path;
 //   }
 //   next();
 // });
-app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }))
 
 /**
  * local variables required for govuk-template-jinja to work
  */
 app.locals.app_title = config.title
-app.locals.asset_path = '/'
+app.locals.asset_path = '/base/'
 app.locals.homepage_url = '/'
 app.locals.logo_link_title = config.title
 
@@ -145,6 +132,21 @@ app.post('/v1/datasets/:dataset/items/:item/delete', itemsController.deleteItem)
 // app.get('/v1/datasets/:dataset/items/:item/properties/:property', itemsController.getItemProperty);
 // app.put('/v1/datasets/:dataset/items/:item/properties/:property', itemsController.putItemProperty);
 
+app.use(sassMiddleware({
+  src: path.join(__dirname, 'sass'),
+  dest: path.join(__dirname, 'public', 'css'),
+  debug: true,
+  force: true,
+  outputStyle: 'compressed',
+  prefix: '/css',
+  includePaths: ['node_modules/govuk_frontend_toolkit/stylesheets', 'node_modules/govuk-elements-sass/public/sass'],
+  sourceComments: 'map',
+  error: function (severity, key, value) { logger.error(`node-saas-middleware: ${severity}, ${key}, ${value}`) },
+  log: function (severity, key, value) { logger.info(`node-saas-middleware: ${severity}, ${key}, ${value}`) }
+}
+))
+app.use(express.static(path.join(__dirname, 'public/')))
+
 /**
  * Error Handler.
  */
@@ -153,6 +155,7 @@ app.use(errorHandler())
 /**
  * Start Express server.
  */
+let server = require('http').Server(app)
 server.listen(app.get('port'), () => {
   logger.info(`Express server listening on port ${app.get('port')} in ${app.get('env')} mode`)
 })

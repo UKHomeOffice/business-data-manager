@@ -1,0 +1,6 @@
+@mixin base-anchor($color) {
+  display: block;
+  padding: 6px 12px;
+  text-decoration: none;
+  color: $color
+}

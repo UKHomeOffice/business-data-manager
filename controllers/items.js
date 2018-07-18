@@ -1,5 +1,6 @@
 'use strict'
 
+const paginationConfig = require('../config/pagination')
 const Item = require('../models/item')
 const Items = require('../models/items')
 const logger = require('../logger')
@@ -11,14 +12,27 @@ const logger = require('../logger')
  */
 exports.getItems = (req, res) => {
   let items = new Items(req.params.dataset)
-  items.findAll()
+  const page = parseInt(req.sanitize('page').escape()) || false
+  const itemsPerPage = paginationConfig.itemsPerPage
+  const start = page ? (page - 1) * itemsPerPage : 0
+  items.findAll(start, itemsPerPage)
     .then(result => {
       console.log(result)
       if (result.statusCode === '200') {
         res.format({
           html: () => {
             logger.verbose('getItems sending HTML response')
-            result.data.rows = []
+            const midPoint = paginationConfig.midpoint
+            const lastPage = Math.ceil(result.data.pagination.count / itemsPerPage)
+            const firstPage = paginationConfig.firstPage
+            result.data.pagination.midPoint = midPoint
+            result.data.pagination.page = page
+            result.data.pagination.itemsPerPage = itemsPerPage
+            result.data.pagination.firstPage = firstPage
+            result.data.pagination.lastPage = lastPage
+            result.data.pagination.rangeStart = page - midPoint > 0 ? page - midPoint + 1 : firstPage
+            result.data.pagination.rangeEnd = page + midPoint < lastPage ? page < midPoint ? midPoint * 2 : page + midPoint : lastPage + 1
+
             res.status(200).render('getItems', {title: 'Items', data: result.data})
           },
           json: () => {
@@ -36,7 +50,7 @@ exports.getItems = (req, res) => {
           html: () => {
             logger.verbose('getItems sending HTML response')
             // flash notify that dataset could not be found
-            req.flash('errors', { msg: `No dataset found with the name ${req.params.dataset}` })
+            req.flash('errors', {msg: `No dataset found with the name ${req.params.dataset}`})
             res.status(200).redirect('/v1/datasets')
           },
           json: () => {
@@ -78,7 +92,7 @@ exports.postItems = (req, res) => {
         res.format({
           html: () => {
             logger.verbose('postItems sending HTML response')
-            req.flash('success', { msg: 'Item created' })
+            req.flash('success', {msg: 'Item created'})
             res.status(201).redirect(result.uri)
           },
           json: () => {
@@ -101,7 +115,7 @@ exports.postItems = (req, res) => {
         res.format({
           html: () => {
             logger.verbose('postDatasets sending HTML response')
-            req.flash('errors', { msg: `Item could not be created` })
+            req.flash('errors', {msg: `Item could not be created`})
             res.status(422).redirect('/v1/datasets/')
           },
           json: () => {
@@ -116,7 +130,7 @@ exports.postItems = (req, res) => {
         })
       }
     })
-  // other catch an unexpected response code
+    // other catch an unexpected response code
     .catch(err => {
       logger.error(err)
     })
@@ -154,7 +168,7 @@ exports.getItem = (req, res) => {
           html: () => {
             logger.verbose('getItem sending HTML response')
             // flash notify that dataset could not be found
-            req.flash('errors', { msg: `No item found with the id ${req.params.item} in dataset ${req.params.dataset}` })
+            req.flash('errors', {msg: `No item found with the id ${req.params.item} in dataset ${req.params.dataset}`})
             res.status(200).redirect('/v1/datasets')
           },
           json: () => {
@@ -223,7 +237,7 @@ exports.deleteItem = (req, res) => {
             html: () => {
               logger.verbose('deleteItem sending HTML response')
               let flashMsg = 'Deletion failed due to an issue in the database.' +
-                             'Please contact a system administrator.'
+                'Please contact a system administrator.'
               req.flash('errors', {msg: flashMsg})
               res.status(422).redirect(`/v1/datasets/${req.params.dataset}/items`)
             },
@@ -277,7 +291,7 @@ exports.deleteItem = (req, res) => {
 /**
  * PUT /v1/datasets/:dataset/items/:item/properties/:property
  *
-* @returns summary all elements from the dataset
+ * @returns summary all elements from the dataset
  */
 exports.putItemProperty = (req, res) => {
 

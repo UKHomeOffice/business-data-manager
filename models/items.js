@@ -22,9 +22,14 @@ class Items {
     this.datasetName = datasetName
   }
 
-  findAll () {
+  findAll (offset = 0, limit = null) {
     return new Promise((resolve, reject) => {
-      let query = `SELECT * FROM ${this.datasetName}`
+      const limiter = Number.isInteger(limit) ? ` LIMIT ${limit} OFFSET ${offset}` : ''
+      let query = `SELECT *, count(*) OVER() AS total_count 
+          FROM ${this.datasetName} 
+          ORDER BY 1 
+          ${limiter}
+          `
       db.query(query)
         .then(result => {
           if (result.command === 'SELECT') {
@@ -35,8 +40,13 @@ class Items {
               fields.push(result.fields[i].name)
             }
             let rows = []
+            let count = 0
             for (let j = 0; j < result.rows.length; j++) {
               let row = []
+              if (j === 0) {
+                count = result.rows[0]['total_count']
+              }
+
               for (let k = 0; k < result.fields.length; k++) {
                 row.push(result.rows[j][fields[k]])
               }
@@ -45,7 +55,10 @@ class Items {
             let items = {
               datasetName: this.datasetName,
               fields: fields,
-              rows: rows
+              rows: rows,
+              pagination: {
+                count,
+              },
             }
             return items
           }

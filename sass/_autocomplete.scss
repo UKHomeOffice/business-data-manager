@@ -1,0 +1,60 @@
+.tt-menu {
+  background-color: white;
+  width: 100%;
+  border: 1px solid gray;
+  border-top-width: 0px;
+
+  .tt-dataset {
+
+    .tt-cursor {
+      background-color: #7ec5ff;
+    }
+
+    .tt-selectable {
+      cursor: pointer;
+    }
+
+    .tt-suggestion {
+      border-bottom: 1px #5e708c dashed;
+
+      &:last-child {
+        border-bottom: 0px;
+      }
+
+      &:hover {
+        background-color: #1e86ff;
+        color: white
+      }
+      .main {
+        font-weight: bold;
+      }
+      .extra {
+        font-weight: lighter;
+      }
+    }
+  }
+}
+
+.twitter-typeahead {
+  width: 50%;
+
+  .typeahead{
+    width: 100%
+  }
+}
+
+.EmptyMessage {
+  position: relative;
+  padding: 5px;
+  font-size: 15px;
+  text-align: center;
+
+}
+
+.form-group-super {
+  width: 100%;
+}
+
+.form-control-super {
+  width: 50%;
+}
