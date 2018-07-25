@@ -5,7 +5,7 @@
 const chai = require('chai')
 const expect = chai.expect
 
-const config = require('../config.js')
+const config = require('../config/core')
 
 describe('The config set up', function () {
   it('should have set the 7 config values', function (done) {

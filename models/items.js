@@ -22,10 +22,17 @@ class Items {
     this.datasetName = datasetName
   }
 
-  findAll (offset = 0, limit = null) {
+  findAll (offset = 0, limit = null, fetchAll = false) {
     return new Promise((resolve, reject) => {
-      const limiter = Number.isInteger(limit) ? ` LIMIT ${limit} OFFSET ${offset}` : ''
-      let query = `SELECT *, count(*) OVER() AS _total_count 
+      let limiter = ''
+      let totalCount = ''
+
+      if (!fetchAll) {
+        limiter = Number.isInteger(limit) ? ` LIMIT ${limit} OFFSET ${offset}` : ''
+        totalCount = ', count(*) OVER() AS _total_count'
+      }
+
+      let query = `SELECT * ${totalCount}
           FROM ${this.datasetName} 
           ORDER BY 1 
           ${limiter}
