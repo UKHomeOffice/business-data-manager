@@ -12,7 +12,7 @@ const logger = require('../logger')
  */
 exports.getItems = (req, res) => {
   let items = new Items(req.params.dataset)
-  const fetchAll = (req.sanitize('fetch_all').escape() === 'true') || false
+  const fetchAll = (req.get('Accept') === 'application/json') || false
   const page = parseInt(req.sanitize('page').escape()) || false
   const itemsPerPage = paginationConfig.itemsPerPage
   const start = page ? (page - 1) * itemsPerPage : 0
