@@ -5,6 +5,7 @@ metadata:
   name: dq-business-data-manager
 spec:
   replicas: 1
+  revisionHistoryLimit: 3
   template:
     metadata:
       labels:
@@ -16,6 +17,7 @@ spec:
         imagePullPolicy: Always
         securityContext:
           runAsNonRoot: true
+          runAsUser: 1000
         env:
           - name: ENV
             value: 'dev'
@@ -62,6 +64,7 @@ spec:
         imagePullPolicy: IfNotPresent
         securityContext:
           runAsNonRoot: true
+          runAsUser: 1000
         resources:
           limits:
             cpu: 100m
