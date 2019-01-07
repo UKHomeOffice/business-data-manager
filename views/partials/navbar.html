@@ -1,11 +1,15 @@
-<div class="header-proposition">
+<div class="header-proposition proposition-links">
   <div class="content">
     <a href="#proposition-links" class="js-header-toggle menu">Menu</a>
     <nav id="proposition-menu">
       <a href="/" id="proposition-name">{{ app_name }}</a>
       <ul id="proposition-links">
-        {% for href, id, caption, class in navbar %}
-          <li id="{{ id }}"><a href="{{ href|e }}" class="{% if id == main_active %}active{% endif %} {{ class }}">{{ caption|e }}</a></li>
+        {% for urlObj, id, caption, class in navbar %}
+          {% set hrefAll = urlObj | getUrl(false, true) %}
+          {% set href = urlObj | getUrl(false) %}
+          {% if href %}
+            <li id="{{ id }}"><a href="{{ href|e }}" class="{% if reqPath | getReverseSubsetMatch(hrefAll) %}active{% endif %} {{ class }}">{{ caption.label|e }}</a></li>
+          {% endif %}
         {% endfor %}
       </ul>
     </nav>

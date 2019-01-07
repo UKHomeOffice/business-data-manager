@@ -3,6 +3,7 @@
 const Dataset = require('../models/dataset')
 const Datasets = require('../models/datasets')
 const logger = require('../logger')
+const filter = require('../lib/filters')
 
 /**
  * GET /v1/datasets
@@ -17,6 +18,7 @@ exports.getDatasets = (req, res) => {
           html: () => {
             logger.verbose('getDatasets sending HTML response')
             res.status(200).render('getDatasets', {
+              reqPath: req.originalUrl,
               title: 'Current datasets',
               data: result.data
             })
@@ -114,7 +116,11 @@ exports.getDataset = (req, res) => {
         res.format({
           html: () => {
             logger.verbose('getDataset sending HTML response')
-            res.status(200).render('getDataset', {title: 'Dataset', data: result.data})
+            res.status(200).render('getDataset', {
+              title: filter.cCapitalize(req.params.dataset),
+              data: result.data,
+              reqPath: req.originalUrl,
+            })
           },
           json: () => {
             logger.verbose('getDataset sending JSON response')

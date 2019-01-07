@@ -11,7 +11,8 @@ exports.getFeedback = (req, res) => {
     html: () => {
       logger.verbose('Sending HTML response')
       res.status(200).render('feedback', {
-        title: 'Submit feedback'
+        title: 'Submit feedback',
+        reqPath: req.originalUrl,
       })
     },
     default: () => {

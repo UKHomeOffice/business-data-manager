@@ -27,6 +27,10 @@
   }
 }
 
+.header-proposition {
+  width: unset !important;
+}
+
 #content {
   @extend %site-width-container;
   @extend %contain-floats;
