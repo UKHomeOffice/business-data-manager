@@ -4,6 +4,7 @@ const paginationConfig = require('../config/pagination')
 const Item = require('../models/item')
 const Items = require('../models/items')
 const logger = require('../logger')
+const filter = require('../lib/filters')
 
 /**
  * GET /v1/datasets/:dataset/items
@@ -34,7 +35,11 @@ exports.getItems = (req, res) => {
             result.data.pagination.rangeStart = page - midPoint > 0 ? page - midPoint + 1 : firstPage
             result.data.pagination.rangeEnd = page + midPoint < lastPage ? page < midPoint ? midPoint * 2 : page + midPoint : lastPage + 1
 
-            res.status(200).render('getItems', {title: 'Items', data: result.data})
+            res.status(200).render('getItems', {
+              title: filter.cCapitalize(req.params.dataset),
+              data: result.data,
+              reqPath: req.originalUrl,
+            })
           },
           json: () => {
             logger.verbose('getItems sending JSON response')
@@ -66,6 +71,35 @@ exports.getItems = (req, res) => {
         })
       }
       // other catch an unexpected response code
+    })
+    .catch(err => {
+      logger.error(err)
+    })
+}
+
+/**
+ * GET /v1/datasets/:dataset/items/add
+ *
+ * @returns form to add new item
+ */
+exports.addItem = (req, res) => {
+  let items = new Items(req.params.dataset)
+  const fetchAll = (req.get('Accept') === 'application/json') || false
+  const page = parseInt(req.sanitize('page').escape()) || false
+  const itemsPerPage = paginationConfig.itemsPerPage
+  const start = page ? (page - 1) * itemsPerPage : 0
+  items.findAll(start, itemsPerPage, fetchAll)
+    .then(result => {
+      console.log(result)
+      if (result.statusCode === '200') {
+        logger.verbose('getItems sending HTML response')
+
+        res.status(200).render('addItem', {
+          title: filter.cCapitalize(req.params.dataset),
+          data: result.data,
+          reqPath: req.originalUrl,
+        })
+      }
     })
     .catch(err => {
       logger.error(err)
@@ -152,7 +186,10 @@ exports.getItem = (req, res) => {
         res.format({
           html: () => {
             logger.verbose('getItem sending HTML response')
-            res.status(200).render('getItem', {title: 'Item', data: result.data})
+            res.status(200).render('getItem', {
+              title: `${filter.cCapitalize(req.params.dataset)} - ${req.params.item}`,
+              data: result.data
+            })
           },
           json: () => {
             logger.verbose('getItem sending JSON response')

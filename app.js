@@ -15,7 +15,6 @@ const lusca = require('lusca')
 const morgan = require('morgan')
 // multer is only need to support file uploads (not currently a feature but likely an enhancement in the future)
 // const multer = require('multer');
-const nunjucks = require('nunjucks')
 const path = require('path')
 const passport = require('passport')
 // const pg = require('pg');
@@ -27,6 +26,9 @@ const config = require('./config/core')
 const Datasets = require('./models/datasets')
 const logger = require('./logger')
 const db = require('./db')
+const routes = require('./routes')
+const nunjucksConfig = require('./nunjucks.config')
+const production = process.env.NODE_ENV === 'production'
 
 /**
  * Create Express server.
@@ -38,12 +40,8 @@ let app = express()
  */
 app.set('env', config.env)
 app.set('port', config.port)
+nunjucksConfig.register(app, path.join(__dirname, 'views'), production)
 
-nunjucks.configure(path.join(__dirname, 'views'), {
-  autoescape: true,
-  express: app,
-  noCache: true
-})
 app.set('view engine', 'html')
 
 if (config.env === 'production') {
@@ -90,47 +88,18 @@ app.use(compression())
 // });
 
 /**
+ * App routes
+ */
+app.use(routes.router)
+
+/**
  * local variables required for govuk-template-jinja to work
  */
 app.locals.app_title = config.title
 app.locals.asset_path = '/base/'
 app.locals.homepage_url = '/'
 app.locals.logo_link_title = config.title
-
-/**
- * Controllers (route handlers).
- */
-const homeController = require('./controllers/home')
-const feedbackController = require('./controllers/feedback')
-const datasetsController = require('./controllers/datasets')
-const itemsController = require('./controllers/items')
-
-/**
- * Primary app routes.
- */
-// web routes (api clients not expected to request these)
-app.get('/', homeController.getHome)
-app.get('/feedback', feedbackController.getFeedback)
-app.post('/feedback', feedbackController.postFeedback)
-app.get('/v1', (req, res) => { return res.redirect('/') })
-// datasets routes
-app.get('/v1/datasets', datasetsController.getDatasets)
-app.post('/v1/datasets', datasetsController.postDatasets)
-app.get('/v1/datasets/:dataset', datasetsController.getDataset)
-app.delete('/v1/datasets/:dataset', datasetsController.deleteDataset)
-app.post('/v1/datasets/:dataset/delete', datasetsController.deleteDataset)
-// app.get('/v1/datasets/:dataset/properties', datasetsController.getDatasetProperties);
-app.post('/v1/datasets/:dataset/properties', datasetsController.postDatasetProperties)
-// app.get('/v1/datasets/:dataset/properties/:property', datasetsController.getDatasetProperty);
-// items routes
-app.get('/v1/datasets/:dataset/items', itemsController.getItems)
-app.post('/v1/datasets/:dataset/items', itemsController.postItems)
-app.get('/v1/datasets/:dataset/items/:item', itemsController.getItem)
-// app.put('/v1/datasets/:dataset/items/:item', itemsController.putItem);
-app.delete('/v1/datasets/:dataset/items/:item', itemsController.deleteItem)
-app.post('/v1/datasets/:dataset/items/:item/delete', itemsController.deleteItem)
-// app.get('/v1/datasets/:dataset/items/:item/properties/:property', itemsController.getItemProperty);
-// app.put('/v1/datasets/:dataset/items/:item/properties/:property', itemsController.putItemProperty);
+app.locals.navbar = routes.navbar
 
 app.use(sassMiddleware({
   src: path.join(__dirname, 'sass'),
