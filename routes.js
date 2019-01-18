@@ -25,8 +25,8 @@ router.get('/feedback', feedbackController.getFeedback)
 router.get('/v1/datasets', datasetsController.getDatasets)
 router.post('/v1/datasets', datasetsController.postDatasets)
 router.get('/v1/datasets/:dataset', datasetsController.getDataset)
-router.delete('/v1/datasets/:dataset', datasetsController.deleteDataset)
-router.post('/v1/datasets/:dataset/delete', datasetsController.deleteDataset)
+// router.delete('/v1/datasets/:dataset', datasetsController.deleteDataset)
+// router.post('/v1/datasets/:dataset/delete', datasetsController.deleteDataset)
 // router.get('/v1/datasets/:dataset/properties', datasetsController.getDatasetProperties);
 router.post('/v1/datasets/:dataset/properties', datasetsController.postDatasetProperties)
 // router.get('/v1/datasets/:dataset/properties/:property', datasetsController.getDatasetProperty);
@@ -36,8 +36,8 @@ router.get('/v1/datasets/:dataset/items/add', itemsController.addItem)
 router.post('/v1/datasets/:dataset/items', itemsController.postItems)
 router.get('/v1/datasets/:dataset/items/:item', itemsController.getItem)
 // router.put('/v1/datasets/:dataset/items/:item', itemsController.putItem);
-router.delete('/v1/datasets/:dataset/items/:item', itemsController.deleteItem)
-router.post('/v1/datasets/:dataset/items/:item/delete', itemsController.deleteItem)
+// router.delete('/v1/datasets/:dataset/items/:item', itemsController.deleteItem)
+// router.post('/v1/datasets/:dataset/items/:item/delete', itemsController.deleteItem)
 // router.get('/v1/datasets/:dataset/items/:item/properties/:property', itemsController.getItemProperty);
 // router.put('/v1/datasets/:dataset/items/:item/properties/:property', itemsController.putItemProperty);
 

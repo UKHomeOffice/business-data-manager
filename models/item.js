@@ -190,23 +190,23 @@ class Item {
     })
   }
 
-  delete () {
-    return new Promise((resolve, reject) => {
-      this.deleteItem()
-        .then(deleteResult => {
-          if (deleteResult.statusCode === '422') {
-            let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'}
-            return resolve(msg)
-          }
-          let msg = {statusCode: '200', message: 'OK'}
-          return resolve(msg)
-        })
-        .catch(err => {
-          logger.error(err)
-          return reject(err)
-        })
-    })
-  }
+  // delete () {
+  //   return new Promise((resolve, reject) => {
+  //     this.deleteItem()
+  //       .then(deleteResult => {
+  //         if (deleteResult.statusCode === '422') {
+  //           let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'}
+  //           return resolve(msg)
+  //         }
+  //         let msg = {statusCode: '200', message: 'OK'}
+  //         return resolve(msg)
+  //       })
+  //       .catch(err => {
+  //         logger.error(err)
+  //         return reject(err)
+  //       })
+  //   })
+  // }
 }
 
 module.exports = Item
