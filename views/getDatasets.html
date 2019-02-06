@@ -52,49 +52,5 @@
       </div>
     </div>
 
-    <div class="grid-row">
-      <div class="column-full">
-        <h2 class="heading-large">Add a new dataset</h2>
-        <p>You can create a new dataset by entering the dataset's name below
-        and then on the following page set up the dataset's fields.</p>
-        <p>The dataset must have an 'Id' field which is is used to provide a
-        unique reference to each data item. You can choose the type of Id to
-        use here.</p>
-        <form method="POST" action="/v1/datasets">
-          <input type='hidden' name='_csrf' value="{{ _csrf }}">
-          <h3 class="heading-medium">
-            Dataset name
-            <span class="form-hint">Dataset names may only contain lowercase letters and the underscore character ('_')</span>
-          </h3>
-          <div class="form-group">
-            <input class="form-control" id="name" name="name" type="text">
-          </div>
-          <div class="form-group">
-            <fieldset class="inline">
-              <label class="heading-medium" for="idType">
-                Type of Id
-                <span class="form-hint">Chose 'Serial' to have the application manage this with an automatically incrementing serial number</span>
-              </label>
-              <div class="multiple-choice">
-                <input id="idType-1" type="radio" name="idType" value="SERIAL">
-                <label for="idType-1">Serial</label>
-              </div>
-              <div class="multiple-choice">
-                <input id="idType-2" type="radio" name="idType" value="VARCHAR">
-                <label for="idType-2">Text</label>
-              </div>
-              <div class="multiple-choice">
-                <input id="idType-3" type="radio" name="idType" value="INTEGER">
-                <label for="idType-3">Integer</label>
-              </div>
-            </fieldset>
-          </div>
-          <div class="form-group">
-            <input class="button" type="submit" value="Create dataset">
-          </div>
-        </form>
-      </div>
-    </div>
-
     <!-- {% include "partials/pagination.html" %} -->
 {% endblock %}
