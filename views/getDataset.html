@@ -128,34 +128,5 @@
       </div>
     </div>
 
-    {#<div class="grid-row">#}
-      {#<div class="column-full">#}
-        {#<div class="error-summary">#}
-          {#<h2 class="heading-large">Danger zone</h2>#}
-          {#<span class="error-message">#}
-            {#You can delete the dataset here.<br>#}
-            {#This action is irreversable and will delete all data in the dataset#}
-            {#from the database.<br>#}
-            {#<br>#}
-            {#Only do this if you are absolutely sure!#}
-          {#</span>#}
-          {#<br>#}
-          {#<form method="POST" action="/v1/datasets/{{ data.name }}/delete">#}
-            {#<input type='hidden' name='_csrf' value="{{ _csrf }}">#}
-            {#<div class="form-group">#}
-              {#<label class="form-label" for="name">#}
-                {#Dataset name#}
-                {#<span class="form-hint">Used to verify request (case sensitive)</span>#}
-              {#</label>#}
-              {#<input class="form-control" id="name" type="text" name="name">#}
-            {#</div>#}
-            {#<div class="form-group">#}
-              {#<input class="button" type="submit" value="Delete dataset">#}
-            {#</div>#}
-          {#</form>#}
-        {#</div>#}
-      {#</div>#}
-    {#</div>#}
-
     <!-- {% include "partials/pagination.html" %} -->
 {% endblock %}
