@@ -165,88 +165,6 @@ exports.getDataset = (req, res) => {
     })
 }
 
-// /**
-//  * DELETE /v1/datasets/:dataset
-//  * POST /v1/datasets/:dataset/delete
-//  *
-//  * @param dataset (string) extracted from the request URL parameters
-//  * @param name (string) passed in the request body and used for verification
-//  *
-//  * @returns success/failure
-//  */
-// exports.deleteDataset = (req, res) => {
-//   // check the req.body.name matches the req.params.dataset
-//   if (req.body.name === req.params.dataset) {
-//     logger.verbose('Verification check for dataset deletion passed')
-//     let dataset = new Dataset(req.params.dataset)
-//     dataset.delete()
-//       .then(deleteResult => {
-//         if (deleteResult.statusCode === '200') {
-//           res.format({
-//             html: () => {
-//               logger.verbose('deleteDataset sending HTML response')
-//               req.flash('success', {msg: `The ${req.params.dataset} dataset has been deleted.`})
-//               res.status(200).redirect('/v1/datasets/')
-//             },
-//             json: () => {
-//               logger.verbose('deleteDataset sending JSON response')
-//               let uri = `/v1/datasets/${req.body.name}`
-//               res.status(200).json({uri: uri, action: 'Deleted'})
-//             },
-//             default: () => {
-//               logger.verbose('deleteDataset invalid format requested')
-//               res.status(406).send('Invalid response format requested')
-//             }
-//           })
-//         }
-//         if (deleteResult.statusCode === '422') {
-//           res.format({
-//             html: () => {
-//               logger.verbose('deleteDataset sending HTML response')
-//               let flashMsg = 'Deletion failed due to an issue in the database.' +
-//                              'Please contact a system administrator.'
-//               req.flash('errors', {msg: flashMsg})
-//               res.status(200).redirect('/v1/datasets/' + req.params.dataset)
-//             },
-//             json: () => {
-//               logger.verbose('deleteDataset sending JSON response')
-//               res.status(422).json({status: '422', message: 'UNPROCESSABLE ENTITY'})
-//             },
-//             default: () => {
-//               logger.verbose('deleteDataset invalid format requested')
-//               res.status(406).send('Invalid response format requested')
-//             }
-//           })
-//         }
-//         // other catch an unexpected response code
-//       })
-//       .catch(err => {
-//         logger.error(err)
-//       })
-//   } else {
-//     logger.verbose('Verification check for dataset deletion failed')
-//     res.format({
-//       html: () => {
-//         logger.verbose('deleteDataset sending HTML response')
-//         let flashMsg = `The ${req.params.dataset} dataset has not been deleted.
-//                         Verification code (${req.body.name}) supplied does not
-//                         match dataset name (${req.params.dataset})`
-//         req.flash('errors', {msg: flashMsg})
-//         res.status(200).redirect('/v1/datasets/' + req.params.dataset)
-//         logger.verbose('*** got here and ??? ***')
-//       },
-//       json: () => {
-//         logger.verbose('deleteDataset sending JSON response')
-//         res.status(400).json({status: '400', message: 'BAD REQUEST'})
-//       },
-//       default: () => {
-//         logger.verbose('deleteDataset invalid format requested')
-//         res.status(406).send('Invalid response format requested')
-//       }
-//     })
-//   }
-// }
-
 /**
  * GET /v1/datasets/:dataset/properties
  * @returns summary info about the dataset's properties
@@ -314,11 +232,3 @@ exports.postDatasetProperties = (req, res) => {
       logger.error(err)
     })
 }
-
-/**
- * GET /v1/datasets/:dataset/properties/:property
- * @returns detailed info about a single property
- */
-// exports.getDatasetProperty = (req, res) => {
-//   // do something
-// };

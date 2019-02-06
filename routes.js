@@ -26,24 +26,14 @@ router.get('/v1/datasets', datasetsController.getDatasets)
 router.get('/v1/datasets/add', datasetsController.addViewDatasets)
 router.post('/v1/datasets/add', datasetsController.postDatasets)
 router.get('/v1/datasets/:dataset', datasetsController.getDataset)
-// router.delete('/v1/datasets/:dataset', datasetsController.deleteDataset)
-// router.post('/v1/datasets/:dataset/delete', datasetsController.deleteDataset)
-// router.get('/v1/datasets/:dataset/properties', datasetsController.getDatasetProperties);
 router.post('/v1/datasets/:dataset/properties', datasetsController.postDatasetProperties)
-// router.get('/v1/datasets/:dataset/properties/:property', datasetsController.getDatasetProperty);
 // items routes
 router.get('/v1/datasets/:dataset/items', itemsController.getItems)
 router.get('/v1/datasets/:dataset/items/add', itemsController.addItem)
 router.post('/v1/datasets/:dataset/items', itemsController.postItems)
 router.get('/v1/datasets/:dataset/items/:item', itemsController.getItem)
-// router.put('/v1/datasets/:dataset/items/:item', itemsController.putItem);
-// router.delete('/v1/datasets/:dataset/items/:item', itemsController.deleteItem)
-// router.post('/v1/datasets/:dataset/items/:item/delete', itemsController.deleteItem)
-// router.get('/v1/datasets/:dataset/items/:item/properties/:property', itemsController.getItemProperty);
-// router.put('/v1/datasets/:dataset/items/:item/properties/:property', itemsController.putItemProperty);
 
 // [{defaultUrl:'URL', superUrl:'URL'}, 'id', {label: 'label', crumbTitle: ''}, 'extra-class', [[SUB-MENU-ITEMS]]]
-
 const navbar = [
   [{defaultUrl: '/v1/datasets'}, 'nb_dataset', {label: 'Datasets', crumbTitle: 'Datasets'}, '', [
     [{defaultUrl: '/v1/datasets/port'}, 'nb_manage_port', {label: 'Port', crumbTitle: 'Port'}, ''],
