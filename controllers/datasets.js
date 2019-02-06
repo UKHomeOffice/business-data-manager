@@ -41,6 +41,13 @@ exports.getDatasets = (req, res) => {
     })
 }
 
+exports.addViewDatasets = (req, res) => {
+  res.status(200).render('addDataset', {
+    title: filter.cCapitalize(req.params.dataset),
+    reqPath: req.originalUrl,
+  })
+}
+
 /**
  * POST /v1/datasets
  *
