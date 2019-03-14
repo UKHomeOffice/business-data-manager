@@ -4,6 +4,7 @@
   {{ app_title }} - {{ title }}
 {% endblock %}
 
+
 {% block inside_header %}
   {% include "partials/header.html" %}
 {% endblock %}
@@ -22,9 +23,7 @@
           <thead>
             <tr>
               <th>Name</th>
-              <th>Type of Id</th>
               <th>No of fields</th>
-              <th>Fields</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -33,17 +32,11 @@
               <tr>
                 <!-- FIELDS can have: name, datatype, primaryKey, notNull, unique -->
                 <td>{{ dataset.name }}</td>
-                <td>{{ dataset.idType | title }}</td>
                 <td>{{ dataset.fields | length }}</td>
-                <td>
-                  {% for field in dataset.fields %}
-                    {{ field.name }}<br>
-                  {% endfor %}
-                </td>
                 <td>
                     <a class="button" href="/v1/datasets/{{ dataset.name }}">Manage</a>
                     &nbsp;
-                    <a class="button" href="/v1/datasets/{{ dataset.name }}/items">View</a>
+                    <a class="button" href="/v1/datasets/{{ dataset.name }}/items">Data</a>
                 </td>
               </tr>
             {% endfor %}
