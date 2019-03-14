@@ -38,14 +38,13 @@ let app = express()
 /**
  * Express configuration.
  */
-app.set('env', config.env)
 app.set('port', config.port)
 nunjucksConfig.register(app, path.join(__dirname, 'views'), production)
 
 app.set('view engine', 'html')
 
-if (config.env === 'production') {
-  app.use(morgan('short'))
+if (production) {
+  app.use(morgan('combined'))
 } else {
   app.use(morgan('dev'))
 }
@@ -64,13 +63,6 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.use(flash())
 app.use(lusca.csrf())
-// app.use((req, res, next) => {
-//   if (req.path === '/api/upload') {
-//     next();
-//   } else {
-//     lusca.csrf(req, res, next);
-//   }
-// });
 app.use(lusca.xframe('SAMEORIGIN'))
 app.use(lusca.xssProtection(true))
 app.use((req, res, next) => {
@@ -79,13 +71,18 @@ app.use((req, res, next) => {
 })
 app.use(compression())
 
-// app.use((req, res, next) => {
-//   // After successful login, redirect back tox-no-compression /api, /feedback or /
-//   if (/(api)|(feedback)|(^\/$)/i.test(req.path)) {
-//     req.session.returnTo = req.path;
-//   }
-//   next();
-// });
+// Catch errors from being displayed on production with stack traces
+app.use(function (err, req, res, next) {
+  if (err && production) {
+    logger.error(err)
+    req.flash('errors', {msg: `${err.message}`})
+    res.redirect('/')
+  } else if (err) {
+    next(err)
+  } else {
+    next(req, res)
+  }
+})
 
 /**
  * App routes
@@ -101,19 +98,21 @@ app.locals.homepage_url = '/'
 app.locals.logo_link_title = config.title
 app.locals.navbar = routes.navbar
 
-app.use(sassMiddleware({
-  src: path.join(__dirname, 'sass'),
-  dest: path.join(__dirname, 'public', 'css'),
-  debug: true,
-  force: true,
-  outputStyle: 'compressed',
-  prefix: '/css',
-  includePaths: ['node_modules/govuk_frontend_toolkit/stylesheets', 'node_modules/govuk-elements-sass/public/sass'],
-  sourceComments: 'map',
-  error: function (severity, key, value) { logger.error(`node-saas-middleware: ${severity}, ${key}, ${value}`) },
-  log: function (severity, key, value) { logger.info(`node-saas-middleware: ${severity}, ${key}, ${value}`) }
-}
-))
+app.use(
+  sassMiddleware(
+    {
+      src: path.join(__dirname, 'sass'),
+      dest: path.join(__dirname, 'public', 'css'),
+      debug: true,
+      force: true,
+      outputStyle: 'compressed',
+      prefix: '/css',
+      includePaths: ['node_modules/govuk_frontend_toolkit/stylesheets', 'node_modules/govuk-elements-sass/public/sass'],
+      sourceComments: 'map',
+      error: function (severity, key, value) { logger.error(`node-saas-middleware: ${severity}, ${key}, ${value}`) },
+      log: function (severity, key, value) { logger.info(`node-saas-middleware: ${severity}, ${key}, ${value}`) }
+    }
+  ))
 app.use(express.static(path.join(__dirname, 'public/')))
 
 /**
@@ -126,7 +125,7 @@ app.use(errorHandler())
  */
 let server = require('http').Server(app)
 server.listen(app.get('port'), () => {
-  logger.info(`Express server listening on port ${app.get('port')} in ${app.get('env')} mode`)
+  logger.info(`Express server listening on port ${app.get('port')} in ${process.env.NODE_ENV || 'dev'} mode`)
 })
 
 /**

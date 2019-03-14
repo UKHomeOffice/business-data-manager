@@ -5,7 +5,6 @@
 /* eslint camelcase: 0 */
 
 module.exports = {
-  env: process.env.NODE_ENV || 'dev',
   logLevel: process.env.LOG_LEVEL || 'info',
   name: process.env.NAME || 'business-data-manager',
   pg: {
