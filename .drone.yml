@@ -23,6 +23,7 @@ pipeline:
       - INSECURE_SKIP_TLS_VERIFY=true
     commands:
       - export NODE_ENV=$$NODE_ENV
+      - export LOG_LEVEL=$$LOG_LEVEL
       - export HOSTNAME=$$NOTPROD_HOSTNAME
       - export KEYCLOAK_CLIENT_ID=$$NOTPROD_KEYCLOAK_CLIENT_ID
       - export KEYCLOAK_CLIENT_SECRET=$$NOTPROD_KEYCLOAK_CLIENT_SECRET
@@ -35,6 +36,7 @@ pipeline:
     secrets:
       - NOTPROD_HOSTNAME
       - NODE_ENV
+      - LOG_LEVEL
       - NOTPROD_KEYCLOAK_CLIENT_ID
       - NOTPROD_KEYCLOAK_CLIENT_SECRET
       - NOTPROD_KEYCLOAK_DISCOVERY
@@ -50,6 +52,7 @@ pipeline:
       - INSECURE_SKIP_TLS_VERIFY=true
     commands:
       - export NODE_ENV=$$NODE_ENV
+      - export LOG_LEVEL=$$LOG_LEVEL
       - export HOSTNAME=$$PROD_HOSTNAME
       - export KEYCLOAK_CLIENT_ID=$$PROD_KEYCLOAK_CLIENT_ID
       - export KEYCLOAK_CLIENT_SECRET=$$PROD_KEYCLOAK_CLIENT_SECRET
@@ -61,6 +64,7 @@ pipeline:
       - kd -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml
     secrets:
       - NODE_ENV
+      - LOG_LEVEL
       - PROD_HOSTNAME
       - PROD_KEYCLOAK_CLIENT_ID
       - PROD_KEYCLOAK_CLIENT_SECRET
