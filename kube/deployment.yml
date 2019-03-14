@@ -19,10 +19,10 @@ spec:
           runAsNonRoot: true
           runAsUser: 1000
         env:
-          - name: ENV
-            value: 'dev'
+          - name: NODE_ENV
+            value: {{ .NODE_ENV }}
           - name: LOG_LEVEL
-            value: 'info'
+            value: {{ .LOG_LEVEL }}
           - name: NAME
             value: 'business-data-manager'
           - name: PORT
