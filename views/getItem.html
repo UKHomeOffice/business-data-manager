@@ -20,27 +20,37 @@
       <div class="column-full">
         <h2 class="heading-large">{{ data.datasetName }} - {{ data.itemId }}</h2>
         <p>The dataset contains the following items.</p>
-        <table>
-          <thead>
-            <tr>
-              <th>Field</th>
-              <th>Value</th>
-              <!-- <th>Manage</th> -->
-            </tr>
-          </thead>
-          <tbody>
-            {% for property in data.properties %}
+        <form method="POST" action="/v1/datasets/{{data.datasetName}}/items/{{data.itemId}}/update">
+          <table>
+            <thead>
               <tr>
-                <td>{{ property.field }}</td>
-                <td>{{ property.value }}</td>
-                <!-- <td>
-                    <a class="button" href="/v1/datasets/{{ data.datasetName }}/items/{{ data.itemId }}/properties/{{ property.field }}/update">Update</a>
-                </td> -->
+                <th>Field</th>
+                <th>Value</th>
+                <!-- <th>Manage</th> -->
               </tr>
-            {% endfor %}
-          <tbody>
-        </table>
-
+            </thead>
+            <tbody>
+              {% for property in data.properties %}
+                <tr>
+                  <td>{{ property.field }}</td>
+                  {% if property.field == 'id' %}
+                    <td>{{ property.value }}</td>
+                  {% else %}
+                    <td><input class="form-control" id="full-name-f1" type="text" name="{{property.field}}" value="{{ property.value }}"></td>
+                  {% endif %}
+                  <!-- <td>
+                      <a class="button" href="/v1/datasets/{{ data.datasetName }}/items/{{ data.itemId }}/properties/{{ property.field }}/update">Update</a>
+                  </td> -->
+                </tr>
+              {% endfor %}
+            <tbody>
+          </table>
+          <br>
+          <input type='hidden' name='itemId' value="{{data.itemId}}">
+          <input type='hidden' name='datasetName' value="{{data.datasetName}}">
+          <input type='hidden' name='_csrf' value="{{ _csrf }}">
+          <button class="button" type="submit">Save and continue</button>
+        </form>
       </div>
     </div>
 

@@ -24,6 +24,55 @@ class Item {
     this.properties = properties
   }
 
+  /**
+   * Given an object, for each key value pair update the associated entity's attribuets
+   * @param {Object} updateObj An object with key, value pairs reflecting the updated values
+   * @returns {Promise} Resolves with db response
+   */
+  update (updateObj) {
+    return new Promise((resolve, reject) => {
+      const query = this.updateItemQuery(updateObj)
+      logger.verbose(`Executing: ${JSON.stringify(query)}`)
+      db.query(query)
+        .then(result => {
+          if (result.rowCount === 1) {
+            logger.info(`Item id ${this.itemId} of ${this.datasetName} updated`)
+            let msg = { statusCode: '200', message: 'UPDATED' }
+            return resolve(msg)
+          }
+          logger.info(`The requested item does not exist`)
+          let msg = { statusCode: '404', message: 'NOT FOUND' }
+          return resolve(msg)
+        })
+        .catch(err => {
+          logger.error(err)
+          return reject(err)
+        })
+    })
+  }
+
+  /**
+   * Given the updated data, build a sql query
+   * @param {Object} updateObj An object with key, value pairs reflecting the updated values
+   * @returns {Object} An object containing a prepared statement for the update query
+   */
+  updateItemQuery (updateObj) {
+    const properties = Object.keys(updateObj)
+    let updatePartial = ''
+    const values = []
+
+    for (let [index, val] of properties.entries()) {
+      if (values.length !== 0) updatePartial += ', '
+      updatePartial += `${val} = $${index + 1}`
+      values.push(updateObj[val])
+    }
+
+    return {
+      text: `UPDATE ${this.datasetName} SET ${updatePartial} WHERE id = ${this.itemId}`,
+      values,
+    }
+  }
+
   findOne () {
     return new Promise((resolve, reject) => {
       let query = {
