@@ -125,5 +125,7 @@ item to a dataset
 `GET /v1/datasets/{dataset}/items/{item}` - returns a single
 item from a dataset
 
+`PUT /v1/datasets/{dataset}/items/{item}` - update a single item
+
 `DELETE /v1/datasets/{dataset}/items/{item}` - deletes a single
 item from a dataset

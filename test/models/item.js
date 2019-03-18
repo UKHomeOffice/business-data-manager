@@ -86,6 +86,35 @@ describe('Item Model', function () {
         done()
       })
   })
+
+  it('should return a 200 on successful item deletion', (done) => {
+    let item = new Item('foo', null, {})
+    dbStub.query = sinon.stub().resolves({ rowCount: 1 })
+    item.deleteItem()
+      .then((result) => {
+        expect(result.statusCode).to.equal('200')
+        done()
+      })
+  })
+
+  it('should return a 404 when attempting to delete a non-existant item', (done) => {
+    let item = new Item('foo', null, {})
+    dbStub.query = sinon.stub().resolves({ rowCount: 0 })
+    item.deleteItem()
+      .then((result) => {
+        expect(result.statusCode).to.equal('404')
+        done()
+      })
+  })
+
+  it('should reject a failed delete query', (done) => {
+    let item = new Item('foo', null, {})
+    dbStub.query = sinon.stub().rejects()
+    item.deleteItem()
+      .catch(() => {
+        done()
+      })
+  })
 })
 
 // `INSERT INTO ${datasetName} (id, [fields]) VALUES (DEFAULT, '${values go here}');`

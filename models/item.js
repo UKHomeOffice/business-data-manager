@@ -36,11 +36,11 @@ class Item {
       db.query(query)
         .then(result => {
           if (result.rowCount === 1) {
-            logger.info(`Item id ${this.itemId} of ${this.datasetName} updated`)
+            logger.verbose(`Item id ${this.itemId} of ${this.datasetName} updated`)
             let msg = { statusCode: '200', message: 'UPDATED' }
             return resolve(msg)
           }
-          logger.info(`The requested item does not exist`)
+          logger.verbose(`The requested item does not exist`)
           let msg = { statusCode: '404', message: 'NOT FOUND' }
           return resolve(msg)
         })
@@ -188,23 +188,26 @@ class Item {
     })
   }
 
+  /**
+   * Given the item's id, delete it from the dataset
+   * @returns {Promise} Resolves with operation status code and message
+   */
   deleteItem () {
     return new Promise((resolve, reject) => {
       let query = {
         text: `DELETE FROM ${this.datasetName} WHERE (id = $1) RETURNING id`,
         values: [this.itemId],
       }
-      logger.debug(query)
       db.query(query)
         .then(result => {
-          // check that result is as expected for a successful delete
-          logger.verbose(`Item ${result.rows[0].id} deleted from ${this.datasetName} dataset`)
-          let uri = `/v1/datasets/${this.datasetName}/items/${result.rows[0].id}`
-          let msg = {statusCode: '200', message: 'OK', uri: uri}
+          let uri = `/v1/datasets/${this.datasetName}/items`
+          if (result.rowCount === 1) {
+            logger.verbose(`Item ${this.itemId} deleted from ${this.datasetName} dataset`)
+            let msg = { statusCode: '200', message: 'OK', uri }
+            return resolve(msg)
+          }
+          let msg = { statusCode: '404', message: 'NOT FOUND', uri }
           return resolve(msg)
-          // if not then
-          // let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'};
-          // return resolve(msg);
         })
         .catch(err => {
           logger.error(err)

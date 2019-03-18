@@ -105,15 +105,65 @@ exports.addItem = (req, res) => {
 }
 
 /**
+ * DELETE /v1/datasets/:dataset/item/:item
+ * POST /v1/datasets/:dataset/item/:item/delete
+ *
+ * @returns deletes the item with the given id from the given dataset
+ */
+exports.deleteItem = (req, res) => {
+  const item = new Item(req.params.dataset, req.params.item)
+  item.deleteItem()
+    .then((result) => {
+      if (result.statusCode === '200') {
+        res.format({
+          html: () => {
+            logger.verbose('deleteItem sending HTML response')
+            req.flash('success', { msg: 'Item deleted' })
+            res.status(201).redirect(`${result.uri}`)
+          },
+          json: () => {
+            logger.verbose('deleteItem sending JSON response')
+            res.status(200).json({
+              action: 'Deleted',
+              itemId: item.itemId
+            })
+          },
+          default: () => {
+            logger.verbose('deleteItem invalid format requested')
+            res.status(406).send('Invalid response format requested')
+          }
+        })
+      } else if (result.statusCode === '404') {
+        res.format({
+          html: () => {
+            req.flash('errors', { msg: `No item found with the id ${item.itemId} in dataset ${item.datasetName}` })
+            res.status(404).redirect(`${result.uri}`)
+          },
+          json: () => {
+            logger.verbose('deleteItem sending JSON response')
+            res.status(404).json({ status: '404', message: 'NOT FOUND' })
+          },
+          default: () => {
+            logger.verbose('deleteItem invalid format requested')
+            res.status(406).send('Invalid response format requested')
+          }
+        })
+      }
+    })
+    .catch(err => {
+      logger.error(err)
+    })
+}
+
+/**
  * POST /v1/datasets/:dataset/item/:item/update
  * PUT /v1/datasets/:dataset/item/:item
  *
  * @returns updates the given item with the given values
  */
 exports.updateItem = (req, res) => {
-  const { datasetName, itemId } = req.body
-  delete req.body.datasetName
-  delete req.body.itemId
+  const datasetName = req.params.dataset
+  const itemId = req.params.item
   delete req.body._csrf
   let item = new Item(datasetName, itemId)
   item.update(req.body)
@@ -127,9 +177,9 @@ exports.updateItem = (req, res) => {
           },
           json: () => {
             logger.verbose('updateItem sending JSON response')
-            res.status(201).json({
+            res.status(200).json({
               uri: `/v1/datasets/${datasetName}/items/${itemId}`,
-              action: 'Created',
+              action: 'Updated',
               itemId
             })
           },
@@ -142,7 +192,7 @@ exports.updateItem = (req, res) => {
         res.format({
           html: () => {
             req.flash('errors', { msg: `No item found with the id ${itemId} in dataset ${datasetName}` })
-            res.status(200).redirect(`/v1/datasets/${datasetName}`)
+            res.status(404).redirect(`/v1/datasets/${datasetName}`)
           },
           json: () => {
             logger.verbose('updateItem sending JSON response')

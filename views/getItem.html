@@ -46,11 +46,29 @@
             <tbody>
           </table>
           <br>
-          <input type='hidden' name='itemId' value="{{data.itemId}}">
-          <input type='hidden' name='datasetName' value="{{data.datasetName}}">
           <input type='hidden' name='_csrf' value="{{ _csrf }}">
-          <button class="button" type="submit">Save and continue</button>
+          <button class="button" type="submit">Save</button>
+          <br><br>
+          <a href="/v1/datasets/{{data.datasetName}}/items">Exit without saving</a>
         </form>
+        <br>
+        <div class="error-summary" role="alert">
+          <h2 class="heading-large">Danger zone</h2>
+          <span class="error-message">
+            You can delete the item here. 
+          </span>
+          <br>
+          <span class="error-message">
+            Only do this if you are absolutely sure!
+          </span>
+          <br>
+          <form method="POST" action="/v1/datasets/{{data.datasetName}}/items/{{data.itemId}}/delete">
+            <div class="form-group">
+              <input type='hidden' name='_csrf' value="{{ _csrf }}">
+               <a href="#" onclick="document.forms[1].submit();return false;" name="delete-button">Delete</a>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 
