@@ -21,6 +21,7 @@
         <h2 class="heading-large">{{ data.datasetName }} - {{ data.itemId }}</h2>
         <p>The dataset contains the following items.</p>
         <form method="POST" action="/v1/datasets/{{data.datasetName}}/items/{{data.itemId}}/update">
+          <input type='hidden' name='_csrf' value="{{ _csrf }}">
           <table>
             <thead>
               <tr>
@@ -46,7 +47,6 @@
             <tbody>
           </table>
           <br>
-          <input type='hidden' name='_csrf' value="{{ _csrf }}">
           <button class="button" type="submit">Save</button>
           <br><br>
           <a href="/v1/datasets/{{data.datasetName}}/items">Exit without saving</a>
@@ -63,8 +63,8 @@
           </span>
           <br>
           <form method="POST" action="/v1/datasets/{{data.datasetName}}/items/{{data.itemId}}/delete">
+            <input type='hidden' name='_csrf' value="{{ _csrf }}">
             <div class="form-group">
-              <input type='hidden' name='_csrf' value="{{ _csrf }}">
                <a href="#" onclick="document.forms[1].submit();return false;" name="delete-button">Delete</a>
             </div>
           </form>
