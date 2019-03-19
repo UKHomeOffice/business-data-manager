@@ -19,7 +19,6 @@ exports.getItems = (req, res) => {
   const start = page ? (page - 1) * itemsPerPage : 0
   items.findAll(start, itemsPerPage, fetchAll)
     .then(result => {
-      console.log(result)
       if (result.statusCode === '200') {
         res.format({
           html: () => {
@@ -90,7 +89,6 @@ exports.addItem = (req, res) => {
   const start = page ? (page - 1) * itemsPerPage : 0
   items.findAll(start, itemsPerPage, fetchAll)
     .then(result => {
-      console.log(result)
       if (result.statusCode === '200') {
         logger.verbose('getItems sending HTML response')
 
@@ -104,6 +102,110 @@ exports.addItem = (req, res) => {
     .catch(err => {
       logger.error(err)
     })
+}
+
+/**
+ * DELETE /v1/datasets/:dataset/item/:item
+ * POST /v1/datasets/:dataset/item/:item/delete
+ *
+ * @returns deletes the item with the given id from the given dataset
+ */
+exports.deleteItem = async (req, res) => {
+  try {
+    const item = new Item(req.params.dataset, req.params.item)
+    const deleteResponse = await item.deleteItem()
+    if (deleteResponse.statusCode === '200') {
+      res.format({
+        html: () => {
+          logger.verbose('deleteItem sending HTML response')
+          req.flash('success', { msg: 'Item deleted' })
+          res.status(201).redirect(`${deleteResponse.uri}`)
+        },
+        json: () => {
+          logger.verbose('deleteItem sending JSON response')
+          res.status(200).json({
+            action: 'Deleted',
+            itemId: item.itemId
+          })
+        },
+        default: () => {
+          logger.verbose('deleteItem invalid format requested')
+          res.status(406).send('Invalid response format requested')
+        }
+      })
+    } else if (deleteResponse.statusCode === '404') {
+      res.format({
+        html: () => {
+          req.flash('errors', { msg: `No item found with the id ${item.itemId} in dataset ${item.datasetName}` })
+          res.status(404).redirect(`${deleteResponse.uri}`)
+        },
+        json: () => {
+          logger.verbose('deleteItem sending JSON response')
+          res.status(404).json({ status: '404', message: 'NOT FOUND' })
+        },
+        default: () => {
+          logger.verbose('deleteItem invalid format requested')
+          res.status(406).send('Invalid response format requested')
+        }
+      })
+    }
+  } catch (err) {
+    logger.error(err)
+  }
+}
+
+/**
+ * POST /v1/datasets/:dataset/item/:item/update
+ * PUT /v1/datasets/:dataset/item/:item
+ *
+ * @returns updates the given item with the given values
+ */
+exports.updateItem = async (req, res) => {
+  const datasetName = req.params.dataset
+  const itemId = req.params.item
+  delete req.body._csrf
+  let item = new Item(datasetName, itemId)
+  try {
+    const updateResponse = await item.update(req.body)
+    if (updateResponse.statusCode === '200') {
+      res.format({
+        html: () => {
+          logger.verbose('updateItem sending HTML response')
+          req.flash('success', { msg: 'Item updated' })
+          res.status(201).redirect(`/v1/datasets/${datasetName}/items/${itemId}`)
+        },
+        json: () => {
+          logger.verbose('updateItem sending JSON response')
+          res.status(200).json({
+            uri: `/v1/datasets/${datasetName}/items/${itemId}`,
+            action: 'Updated',
+            itemId
+          })
+        },
+        default: () => {
+          logger.verbose('updateItem invalid format requested')
+          res.status(406).send('Invalid response format requested')
+        }
+      })
+    } else if (updateResponse.statusCode === '404') {
+      res.format({
+        html: () => {
+          req.flash('errors', { msg: `No item found with the id ${itemId} in dataset ${datasetName}` })
+          res.status(404).redirect(`/v1/datasets/${datasetName}`)
+        },
+        json: () => {
+          logger.verbose('updateItem sending JSON response')
+          res.status(404).json({ status: '404', message: 'NOT FOUND' })
+        },
+        default: () => {
+          logger.verbose('updateItem invalid format requested')
+          res.status(406).send('Invalid response format requested')
+        }
+      })
+    }
+  } catch (err) {
+    logger.error(err)
+  }
 }
 
 /**

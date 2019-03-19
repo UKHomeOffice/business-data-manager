@@ -24,6 +24,51 @@ class Item {
     this.properties = properties
   }
 
+  /**
+   * Given an object, for each key value pair update the associated entity's attribuets
+   * @param {Object} updateObj An object with key, value pairs reflecting the updated values
+   * @returns {Promise} Resolves with db response
+   */
+  async update (updateObj) {
+    try {
+      const query = this.updateItemQuery(updateObj)
+      const dbResponse = await db.query(query)
+      if (dbResponse.rowCount === 1) {
+        logger.verbose(`Item id ${this.itemId} of ${this.datasetName} updated`)
+        let msg = { statusCode: '200', message: 'UPDATED' }
+        return msg
+      }
+      logger.verbose(`The requested item does not exist`)
+      let msg = { statusCode: '404', message: 'NOT FOUND' }
+      return msg
+    } catch (err) {
+      logger.error(`Failed to update item ${this.itemId} of ${this.datasetName}`)
+      throw err
+    }
+  }
+
+  /**
+   * Given the updated data, build a sql query
+   * @param {Object} updateObj An object with key, value pairs reflecting the updated values
+   * @returns {Object} An object containing a prepared statement for the update query
+   */
+  updateItemQuery (updateObj) {
+    const properties = Object.keys(updateObj)
+    let updatePartial = ''
+    const values = []
+
+    for (let [index, val] of properties.entries()) {
+      updatePartial += values.length !== 0 ? ', ' : ''
+      updatePartial += `${val} = $${index + 1}`
+      values.push(updateObj[val])
+    }
+
+    return {
+      text: `UPDATE ${this.datasetName} SET ${updatePartial} WHERE id = ${this.itemId}`,
+      values,
+    }
+  }
+
   findOne () {
     return new Promise((resolve, reject) => {
       let query = {
@@ -139,29 +184,29 @@ class Item {
     })
   }
 
-  deleteItem () {
-    return new Promise((resolve, reject) => {
+  /**
+   * Given the item's id, delete it from the dataset
+   * @returns {Promise} Resolves with operation status code and message
+   */
+  async deleteItem () {
+    try {
       let query = {
         text: `DELETE FROM ${this.datasetName} WHERE (id = $1) RETURNING id`,
         values: [this.itemId],
       }
-      logger.debug(query)
-      db.query(query)
-        .then(result => {
-          // check that result is as expected for a successful delete
-          logger.verbose(`Item ${result.rows[0].id} deleted from ${this.datasetName} dataset`)
-          let uri = `/v1/datasets/${this.datasetName}/items/${result.rows[0].id}`
-          let msg = {statusCode: '200', message: 'OK', uri: uri}
-          return resolve(msg)
-          // if not then
-          // let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'};
-          // return resolve(msg);
-        })
-        .catch(err => {
-          logger.error(err)
-          return reject(err)
-        })
-    })
+      const dbResponse = await db.query(query)
+      let uri = `/v1/datasets/${this.datasetName}/items`
+      if (dbResponse.rowCount === 1) {
+        logger.verbose(`Item ${this.itemId} deleted from ${this.datasetName} dataset`)
+        let msg = { statusCode: '200', message: 'OK', uri }
+        return msg
+      }
+      let msg = { statusCode: '404', message: 'NOT FOUND', uri }
+      return msg
+    } catch (err) {
+      logger.error(`Failed to delete item ${this.itemId} of ${this.datasetName}`)
+      throw err
+    }
   }
 
   post () {

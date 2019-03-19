@@ -32,6 +32,10 @@ router.get('/v1/datasets/:dataset/items', itemsController.getItems)
 router.get('/v1/datasets/:dataset/items/add', itemsController.addItem)
 router.post('/v1/datasets/:dataset/items', itemsController.postItems)
 router.get('/v1/datasets/:dataset/items/:item', itemsController.getItem)
+router.post('/v1/datasets/:dataset/items/:item/update', itemsController.updateItem)
+router.put('/v1/datasets/:dataset/items/:item', itemsController.updateItem)
+router.post('/v1/datasets/:dataset/items/:item/delete', itemsController.deleteItem)
+router.delete('/v1/datasets/:dataset/items/:item', itemsController.deleteItem)
 
 // [{defaultUrl:'URL', superUrl:'URL'}, 'id', {label: 'label', crumbTitle: ''}, 'extra-class', [[SUB-MENU-ITEMS]]]
 const navbar = [

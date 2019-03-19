@@ -20,27 +20,55 @@
       <div class="column-full">
         <h2 class="heading-large">{{ data.datasetName }} - {{ data.itemId }}</h2>
         <p>The dataset contains the following items.</p>
-        <table>
-          <thead>
-            <tr>
-              <th>Field</th>
-              <th>Value</th>
-              <!-- <th>Manage</th> -->
-            </tr>
-          </thead>
-          <tbody>
-            {% for property in data.properties %}
+        <form method="POST" action="/v1/datasets/{{data.datasetName}}/items/{{data.itemId}}/update">
+          <input type='hidden' name='_csrf' value="{{ _csrf }}">
+          <table>
+            <thead>
               <tr>
-                <td>{{ property.field }}</td>
-                <td>{{ property.value }}</td>
-                <!-- <td>
-                    <a class="button" href="/v1/datasets/{{ data.datasetName }}/items/{{ data.itemId }}/properties/{{ property.field }}/update">Update</a>
-                </td> -->
+                <th>Field</th>
+                <th>Value</th>
+                <!-- <th>Manage</th> -->
               </tr>
-            {% endfor %}
-          <tbody>
-        </table>
-
+            </thead>
+            <tbody>
+              {% for property in data.properties %}
+                <tr>
+                  <td>{{ property.field }}</td>
+                  {% if property.field == 'id' %}
+                    <td>{{ property.value }}</td>
+                  {% else %}
+                    <td><input class="form-control" id="full-name-f1" type="text" name="{{property.field}}" value="{{ property.value }}"></td>
+                  {% endif %}
+                  <!-- <td>
+                      <a class="button" href="/v1/datasets/{{ data.datasetName }}/items/{{ data.itemId }}/properties/{{ property.field }}/update">Update</a>
+                  </td> -->
+                </tr>
+              {% endfor %}
+            <tbody>
+          </table>
+          <br>
+          <button class="button" type="submit">Save</button>
+          <br><br>
+          <a href="/v1/datasets/{{data.datasetName}}/items">Exit without saving</a>
+        </form>
+        <br>
+        <div class="error-summary" role="alert">
+          <h2 class="heading-large">Danger zone</h2>
+          <span class="error-message">
+            You can delete the item here. 
+          </span>
+          <br>
+          <span class="error-message">
+            Only do this if you are absolutely sure!
+          </span>
+          <br>
+          <form method="POST" action="/v1/datasets/{{data.datasetName}}/items/{{data.itemId}}/delete">
+            <input type='hidden' name='_csrf' value="{{ _csrf }}">
+            <div class="form-group">
+               <a href="#" onclick="document.forms[1].submit();return false;" name="delete-button">Delete</a>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 
