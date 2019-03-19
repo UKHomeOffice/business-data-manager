@@ -36,30 +36,6 @@ router.get('/v1/datasets/:dataset/items/:item', itemsController.getItem)
 // [{defaultUrl:'URL', superUrl:'URL'}, 'id', {label: 'label', crumbTitle: ''}, 'extra-class', [[SUB-MENU-ITEMS]]]
 const navbar = [
   [{defaultUrl: '/v1/datasets'}, 'nb_dataset', {label: 'Datasets', crumbTitle: 'Datasets'}, '', [
-    [{defaultUrl: '/v1/datasets/port'}, 'nb_manage_port', {label: 'Port', crumbTitle: 'Port'}, ''],
-    [{defaultUrl: '/v1/datasets/persontype'}, 'nb_manage_persontype', {label: 'Person Type', crumbTitle: 'Person Type'}, ''],
-    [{defaultUrl: '/v1/datasets/region'}, 'nb_manage_region', {label: 'Regions', crumbTitle: 'Regions'}, ''],
-    [{defaultUrl: '/v1/datasets/name'}, 'nb_manage_name', {label: 'Names', crumbTitle: 'Names'}, ''],
-    [{defaultUrl: '/v1/datasets/office'}, 'nb_manage_office', {label: 'Offices', crumbTitle: 'Offices'}, ''],
-    [{defaultUrl: '/v1/datasets/country'}, 'nb_manage_office', {label: 'Countries', crumbTitle: 'Countries'}, ''],
-  ]],
-  [{defaultUrl: '/v1/datasets/port/items'}, 'nb_port_view', {label: 'Ports', crumbTitle: 'Ports'}, '', [
-    [{defaultUrl: '/v1/datasets/port/items/add'}, 'nb_add_port', {label: 'Add Port', crumbTitle: 'Add Port'}, ''],
-  ]],
-  [{defaultUrl: '/v1/datasets/persontype/items'}, 'nb_person_type', {label: 'Person Type', crumbTitle: 'Person Type'}, '', [
-    [{defaultUrl: '/v1/datasets/persontype/items/add'}, 'nb_add_person_type', {label: 'Add Person Type', crumbTitle: 'Add Person Type'}, ''],
-  ]],
-  [{defaultUrl: '/v1/datasets/region/items'}, 'nb_regions', {label: 'Regions', crumbTitle: 'Regions'}, '', [
-    [{defaultUrl: '/v1/datasets/region/items/add'}, 'nb_add_region', {label: 'Add Region', crumbTitle: 'Add Region'}, ''],
-  ]],
-  [{defaultUrl: '/v1/datasets/name/items'}, 'nb_names', {label: 'Names', crumbTitle: 'Names'}, '', [
-    [{defaultUrl: '/v1/datasets/name/items/add'}, 'nb_add_name', {label: 'Add Name', crumbTitle: 'Add Name'}, ''],
-  ]],
-  [{defaultUrl: '/v1/datasets/office/items'}, 'nb_offices', {label: 'Offices', crumbTitle: 'Offices'}, '', [
-    [{defaultUrl: '/v1/datasets/office/items/add'}, 'nb_add_office', {label: 'Add Office', crumbTitle: 'Add Office'}, ''],
-  ]],
-  [{defaultUrl: '/v1/datasets/country/items'}, 'nb_countries', {label: 'Countries', crumbTitle: 'Countries'}, '', [
-    [{defaultUrl: '/v1/datasets/country/items/add'}, 'nb_add_country', {label: 'Add Country', crumbTitle: 'Add Country'}, ''],
   ]],
   [{defaultUrl: '/feedback'}, 'nb_feedback', {label: 'Feedback', crumbTitle: 'Feedback'}, ''],
 ]

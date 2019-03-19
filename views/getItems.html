@@ -9,12 +9,15 @@
 {% endblock %}
 
 {% block main_content %}
+
   <div class="grid-row">
     <div class="column-full">
       <h1 class="heading-xlarge">{{ title }}</h1>
     </div>
   </div>
 
+  <h2 class="heading-large">Add a new {{title | lower}}</h2>
+  <a href="/v1/datasets/{{data.datasetName}}/items/add">Click here to add a new record</a>
 
   <div class="grid-row">
     <div class="column-full">
@@ -37,7 +40,7 @@
               <td>{{ value }}</td>
             {% endfor %}
             <td>
-              <a class="button" href="/v1/datasets/{{ data.datasetName }}/items/{{ row[0] }}">Manage</a>
+              <a class="button" href="/v1/datasets/{{ data.datasetName }}/items/{{ row[0] }}">Edit</a>
             </td>
           </tr>
         {% endfor %}
