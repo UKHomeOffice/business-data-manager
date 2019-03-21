@@ -46,7 +46,7 @@
       <table>
         <thead>
         <tr>
-          {% for field in data.fields %}
+          {% for field in data.fields[:6] %}
             <th>{{ field }}</th>
           {% endfor %}
           <th>Actions</th>
@@ -55,7 +55,7 @@
         <tbody>
         {% for row in data.rows %}
           <tr>
-            {% for value in row %}
+            {% for value in row[:6] %}
               <td>{{ value }}</td>
             {% endfor %}
             <td>
