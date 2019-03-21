@@ -3,77 +3,93 @@
 const paginationConfig = require('../config/pagination')
 const Item = require('../models/item')
 const Items = require('../models/items')
+const Dataset = require('../models/dataset')
 const logger = require('../logger')
 const filter = require('../lib/filters')
+
+function hasNonPageQuery (req) {
+  if (Object.keys(req.query).length !== 0) {
+    return !(req.query.hasOwnProperty('page') && Object.keys(req.query).length === 1)
+  }
+}
 
 /**
  * GET /v1/datasets/:dataset/items
  *
  * @returns summary all items from the dataset
  */
-exports.getItems = (req, res) => {
+exports.getItems = async (req, res) => {
+  let dataset = new Dataset(req.params.dataset)
+  const datasetObj = await dataset.findOne()
   let items = new Items(req.params.dataset)
   const fetchAll = (req.get('Accept') === 'application/json') || false
   const page = parseInt(req.sanitize('page').escape()) || false
   const itemsPerPage = paginationConfig.itemsPerPage
   const start = page ? (page - 1) * itemsPerPage : 0
-  items.findAll(start, itemsPerPage, fetchAll)
-    .then(result => {
-      if (result.statusCode === '200') {
-        res.format({
-          html: () => {
-            logger.verbose('getItems sending HTML response')
-            const midPoint = paginationConfig.midpoint
-            const lastPage = Math.ceil(result.data.pagination.count / itemsPerPage)
-            const firstPage = paginationConfig.firstPage
-            result.data.pagination.midPoint = midPoint
-            result.data.pagination.page = page
-            result.data.pagination.itemsPerPage = itemsPerPage
-            result.data.pagination.firstPage = firstPage
-            result.data.pagination.lastPage = lastPage
-            result.data.pagination.rangeStart = page - midPoint > 0 ? page - midPoint + 1 : firstPage
-            result.data.pagination.rangeEnd = page + midPoint < lastPage ? page < midPoint ? midPoint * 2 : page + midPoint : lastPage + 1
+  let result
+  try {
+    if (hasNonPageQuery(req)) {
+      delete req.query.page
+      result = await items.findAll(start, itemsPerPage, fetchAll, items.searchQuery(req.query, datasetObj.data.fields, fetchAll, start, itemsPerPage))
+    } else {
+      result = await items.findAll(start, itemsPerPage, fetchAll)
+    }
+    if (result.statusCode === '200') {
+      res.format({
+        html: () => {
+          logger.verbose('getItems sending HTML response')
+          const midPoint = paginationConfig.midpoint
+          const lastPage = Math.ceil(result.data.pagination.count / itemsPerPage)
+          const firstPage = paginationConfig.firstPage
+          result.data.pagination.midPoint = midPoint
+          result.data.pagination.page = page
+          result.data.pagination.itemsPerPage = itemsPerPage
+          result.data.pagination.firstPage = firstPage
+          result.data.pagination.lastPage = lastPage
+          result.data.pagination.rangeStart = page - midPoint > 0 ? page - midPoint + 1 : firstPage
+          result.data.pagination.rangeEnd = page + midPoint < lastPage ? page < midPoint ? midPoint * 2 : page + midPoint : lastPage + 1
 
-            res.status(200).render('getItems', {
-              title: filter.cCapitalize(req.params.dataset),
-              data: result.data,
-              reqPath: req.originalUrl,
-            })
-          },
-          json: () => {
-            logger.verbose('getItems sending JSON response')
-            res.status(200).json(result.data)
-          },
-          default: () => {
-            logger.verbose('getItems invalid format requested')
-            res.status(406).send('Invalid response format requested')
-          }
-        })
-      }
-      if (result.statusCode === '404') {
-        res.format({
-          html: () => {
-            logger.verbose('getItems sending HTML response')
-            // flash notify that dataset could not be found
-            req.flash('errors', {msg: `No dataset found with the name ${req.params.dataset}`})
-            res.status(200).redirect('/v1/datasets')
-          },
-          json: () => {
-            logger.verbose('getItems sending JSON response')
-            // respond that dataset could not be created
-            res.status(404).json({status: '404', message: 'NOT FOUND'})
-          },
-          default: () => {
-            logger.verbose('getItem invalid format requested')
-            res.status(406).send('Invalid response format requested')
-          }
-        })
-      }
-      // other catch an unexpected response code
-    })
-    .catch(err => {
-      logger.error(err)
-    })
+          res.status(200).render('getItems', {
+            title: filter.cCapitalize(req.params.dataset),
+            data: result.data,
+            reqPath: req.originalUrl,
+            datasetFields: datasetObj.data.fields,
+          })
+        },
+        json: () => {
+          logger.verbose('getItems sending JSON response')
+          res.status(200).json(result.data)
+        },
+        default: () => {
+          logger.verbose('getItems invalid format requested')
+          res.status(406).send('Invalid response format requested')
+        }
+      })
+    }
+    if (result.statusCode === '404') {
+      res.format({
+        html: () => {
+          logger.verbose('getItems sending HTML response')
+          // flash notify that dataset could not be found
+          req.flash('errors', {msg: `No dataset found with the name ${req.params.dataset}`})
+          res.status(200).redirect('/v1/datasets')
+        },
+        json: () => {
+          logger.verbose('getItems sending JSON response')
+          // respond that dataset could not be created
+          res.status(404).json({status: '404', message: 'NOT FOUND'})
+        },
+        default: () => {
+          logger.verbose('getItem invalid format requested')
+          res.status(406).send('Invalid response format requested')
+        }
+      })
+    }
+  } catch (err) {
+    logger.error(err)
+    req.flash('errors', { msg: `Search failed` })
+    res.redirect(req.path)
+  }
 }
 
 /**

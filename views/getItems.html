@@ -16,6 +16,25 @@
     </div>
   </div>
 
+  <details>
+    <summary><span class="summary">Search</span></summary>
+
+    <div class="panel panel-border-narrow">
+      <form method="GET">
+      {% for field in datasetFields %}
+        <label class="form-label" for="search-{{field.name}}">{{field.name}}</label>
+        {% if field.datatype == 'INTEGER' %}
+          <input class="form-control" id="search-{{field.name}}" type="number" name="{{field.name}}"> <br>
+        {% else %}
+          <input class="form-control" id="search-{{field.name}}" type="text" name="{{field.name}}"> <br>
+        {% endif %}
+      {% endfor %}
+      <br>
+      <button class="button" type="submit">Search</button>
+      </form>
+    </div>
+  </details>
+
   <h2 class="heading-large">Add a new {{title | lower}}</h2>
   <a href="/v1/datasets/{{data.datasetName}}/items/add">Click here to add a new record</a>
 
