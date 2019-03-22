@@ -30,6 +30,7 @@ exports.getItems = async (req, res) => {
   try {
     if (hasNonPageQuery(req)) {
       delete req.query.page
+      delete req.query.nginxId
       result = await items.findAll(start, itemsPerPage, fetchAll, items.searchQuery(req.query, datasetObj.data.fields, fetchAll, start, itemsPerPage))
     } else {
       result = await items.findAll(start, itemsPerPage, fetchAll)
