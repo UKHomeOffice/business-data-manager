@@ -37,7 +37,11 @@ class Items {
           ORDER BY 1 
           ${limiter}
           `
-      query = searchQuery || query
+      try {
+        query = searchQuery.values.length > 0 ? searchQuery : query
+      } catch (err) {
+        logger.verbose('Empty search query found. Using default query instead')
+      }
 
       db.query(query)
         .then(result => {
@@ -114,7 +118,7 @@ class Items {
     const searchObj = {}
     properties.forEach(property => {
       const column = datasetTypeList.find(column => column.name === property)
-      if (searchQuery[property] !== '') {
+      if (searchQuery[property] !== '' && column) {
         try {
           searchObj[property] = { searchParam: searchQuery[property], columnType: column.datatype }
         } catch (err) {
