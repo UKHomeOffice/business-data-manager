@@ -118,7 +118,7 @@ class Items {
     const searchObj = {}
     properties.forEach(property => {
       const column = datasetTypeList.find(column => column.name === property)
-      if (searchQuery[property] !== '' && column !== undefined) {
+      if (searchQuery[property] !== '' && column) {
         try {
           searchObj[property] = { searchParam: searchQuery[property], columnType: column.datatype }
         } catch (err) {
