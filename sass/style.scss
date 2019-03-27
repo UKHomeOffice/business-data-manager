@@ -66,3 +66,17 @@
 .pagination a {
   color: #424bc1;
 }
+
+.error-help {
+  .description {
+    ul {
+      list-style-type: disc;
+    }
+
+    margin-left: 40px;
+  }
+}
+
+.bottom-spacer {
+  margin-bottom: 50px;
+}

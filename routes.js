@@ -9,6 +9,7 @@ function getControllerPath (name) {
 /**
  * Controllers (route handlers).
  */
+const errorController = require(getControllerPath('error'))
 const feedbackController = require(getControllerPath('feedback'))
 const datasetsController = require(getControllerPath('datasets'))
 const itemsController = require(getControllerPath('items'))
@@ -16,6 +17,7 @@ const itemsController = require(getControllerPath('items'))
 /**
  * Primary app routes.
  */
+router.get('/error', errorController.error)
 // web routes (api clients not expected to request these)
 router.get('/', (req, res) => { return res.redirect('/v1/datasets') })
 router.get('/v1', (req, res) => { return res.redirect('/v1/datasets') })

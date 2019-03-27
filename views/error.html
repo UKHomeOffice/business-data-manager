@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% set main_active = "nb_error" %}
+
+{% block page_title %}
+  Error | {{ app_title }}
+{% endblock %}
+
+{% block content %}
+
+  <main id="content" role="main">
+    <div class="grid-row">
+      <div class="column-two-thirds">
+        <h1 class="heading-xlarge">
+          </span><span>Well, this is embarrassing...</span>
+        </h1>
+
+        <h3 class="error-info bold-medium bottom-spacer">
+          An error occurred{{ ', with status code ' ~ errorCode if errorCode else '' }}, whilst completing your request.
+          We now know about this and are working on a fix for it.
+        </h3>
+
+        <div class="error-help">
+          <div class="summary bold bottom-spacer">In the mean while, you could do one of the following:</div>
+          <div class="description">
+            <ul>
+              <li>Go to <a href="/">home page</a> and try again</li>
+              <li>Email us <a
+                  href="mailto:gaitsupport@digital.homeoffice.gov.uk">gaitsupport@digital.homeoffice.gov.uk</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+{% endblock %}
+
