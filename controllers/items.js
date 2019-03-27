@@ -117,6 +117,8 @@ exports.addItem = (req, res) => {
     })
     .catch(err => {
       logger.error(err)
+      req.flash('errors', { msg: `Failed to add item` })
+      res.redirect(`/v1/datasets/${req.params.dataset}/items`)
     })
 }
 
@@ -221,6 +223,8 @@ exports.updateItem = async (req, res) => {
     }
   } catch (err) {
     logger.error(err)
+    req.flash('errors', { msg: `Update failed` })
+    res.redirect(`/v1/datasets/${datasetName}/items/${itemId}`)
   }
 }
 
@@ -286,6 +290,8 @@ exports.postItems = (req, res) => {
     // other catch an unexpected response code
     .catch(err => {
       logger.error(err)
+      req.flash('errors', { msg: `Failed to add item` })
+      res.redirect(`/v1/datasets/${req.params.dataset}/items`)
     })
 }
 
@@ -296,53 +302,50 @@ exports.postItems = (req, res) => {
  *
  * @returns a single item from the dataset
  */
-exports.getItem = (req, res) => {
+exports.getItem = async (req, res) => {
   let item = new Item(req.params.dataset, req.params.item)
-  item.findOne()
-    .then(result => {
-      if (result.statusCode === '200') {
-        res.format({
-          html: () => {
-            logger.verbose('getItem sending HTML response')
-            res.status(200).render('getItem', {
-              title: `${filter.cCapitalize(req.params.dataset)} - ${req.params.item}`,
-              data: result.data
-            })
-          },
-          json: () => {
-            logger.verbose('getItem sending JSON response')
-            res.status(200).json(result.data)
-          },
-          default: () => {
-            logger.verbose('getItem invalid format requested')
-            res.status(406).send('Invalid response format requested')
-          }
+  let dataset = new Dataset(req.params.dataset)
+  const datasetObj = await dataset.findOne()
+  const result = await item.findOne()
+  if (result.statusCode === '200') {
+    res.format({
+      html: () => {
+        logger.verbose('getItem sending HTML response')
+        res.status(200).render('getItem', {
+          title: `${filter.cCapitalize(req.params.dataset)} - ${req.params.item}`,
+          data: result.data,
+          datasetFields: datasetObj.data.fields,
         })
+      },
+      json: () => {
+        logger.verbose('getItem sending JSON response')
+        res.status(200).json(result.data)
+      },
+      default: () => {
+        logger.verbose('getItem invalid format requested')
+        res.status(406).send('Invalid response format requested')
       }
-      if (result.statusCode === '404') {
-        res.format({
-          html: () => {
-            logger.verbose('getItem sending HTML response')
-            // flash notify that dataset could not be found
-            req.flash('errors', {msg: `No item found with the id ${req.params.item} in dataset ${req.params.dataset}`})
-            res.status(200).redirect('/v1/datasets')
-          },
-          json: () => {
-            logger.verbose('getItem sending JSON response')
-            // respond that dataset could not be created
-            res.status(404).json({status: '404', message: 'NOT FOUND'})
-          },
-          default: () => {
-            logger.verbose('getItem invalid format requested')
-            res.status(406).send('Invalid response format requested')
-          }
-        })
+    })
+  }
+  if (result.statusCode === '404') {
+    res.format({
+      html: () => {
+        logger.verbose('getItem sending HTML response')
+        // flash notify that dataset could not be found
+        req.flash('errors', { msg: `No item found with the id ${req.params.item} in dataset ${req.params.dataset}` })
+        res.status(200).redirect('/v1/datasets')
+      },
+      json: () => {
+        logger.verbose('getItem sending JSON response')
+        // respond that dataset could not be created
+        res.status(404).json({ status: '404', message: 'NOT FOUND' })
+      },
+      default: () => {
+        logger.verbose('getItem invalid format requested')
+        res.status(406).send('Invalid response format requested')
       }
-      // other catch an unexpected response code
     })
-    .catch(err => {
-      logger.error(err)
-    })
+  }
 }
 
 /**

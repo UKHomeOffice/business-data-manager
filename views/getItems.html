@@ -22,10 +22,11 @@
     <div class="panel panel-border-narrow">
       <form method="GET">
       {% for field in datasetFields %}
-        <label class="form-label" for="search-{{field.name}}">{{field.name}}</label>
         {% if field.datatype == 'INTEGER' %}
+          <label class="form-label" for="search-{{field.name}}">{{field.name}}</label>
           <input class="form-control" id="search-{{field.name}}" type="number" name="{{field.name}}"> <br>
-        {% else %}
+        {% elif field.datatype == 'VARCHAR' %}
+          <label class="form-label" for="search-{{field.name}}">{{field.name}}</label>
           <input class="form-control" id="search-{{field.name}}" type="text" name="{{field.name}}"> <br>
         {% endif %}
       {% endfor %}

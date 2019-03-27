@@ -48,7 +48,7 @@ class Item {
   }
 
   /**
-   * Given the updated data, build a sql query
+   * Given the updated data, build a sql parameterized query
    * @param {Object} updateObj An object with key, value pairs reflecting the updated values
    * @returns {Object} An object containing a prepared statement for the update query
    */
@@ -59,12 +59,12 @@ class Item {
 
     for (let [index, val] of properties.entries()) {
       updatePartial += values.length !== 0 ? ', ' : ''
-      updatePartial += `${val} = $${index + 1}`
-      values.push(updateObj[val])
+      updatePartial += `"${val}" = $${values.length + 1}`
+      updateObj[val] === '' ? values.push(null) : values.push(updateObj[val])
     }
 
     return {
-      text: `UPDATE ${this.datasetName} SET ${updatePartial} WHERE id = ${this.itemId}`,
+      text: `UPDATE ${this.datasetName} SET ${updatePartial} WHERE id = '${this.itemId}'`,
       values,
     }
   }
@@ -84,7 +84,8 @@ class Item {
             for (let i = 0; i < result.fields.length; i++) {
               let property = {
                 field: result.fields[i].name,
-                value: result.rows[0][result.fields[i].name]
+                value: result.rows[0][result.fields[i].name],
+                columnType: this._columnIdToType(result.fields[i].dataTypeID)
               }
               properties.push(property)
             }
@@ -142,8 +143,8 @@ class Item {
     let values = []
     for (let key in this.properties) {
       if (key !== '_csrf') {
-        fields += `${key}, `
-        values.push(this.properties[key])
+        fields += `"${key}", `
+        this.properties[key] === '' ? values.push(null) : values.push(`${this.properties[key]}`)
       }
     }
     fields = fields.slice(0, -2)
@@ -153,7 +154,6 @@ class Item {
       valueRefs += '$' + paramNumber + ', '
     };
     valueRefs = valueRefs.slice(0, -2)
-
     let queryText = `INSERT INTO ${this.datasetName} (${fields}) VALUES (${valueRefs}) RETURNING id`
     let query = {
       text: queryText,
@@ -227,12 +227,25 @@ class Item {
               }
               return resolve(insertResult)
             })
+            .catch((err) => {
+              logger.error(err)
+              return reject(err)
+            })
         })
         .catch(err => {
           logger.error(err)
           return reject(err)
         })
     })
+  }
+
+  _columnIdToType (columnId) {
+    const idValueMap = {
+      1043: 'VARCHAR',
+      23: 'INTEGER',
+      1082: 'DATE'
+    }
+    return idValueMap[columnId]
   }
 }
 
