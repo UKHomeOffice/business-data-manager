@@ -71,12 +71,12 @@ app.use((req, res, next) => {
 })
 app.use(compression())
 
-// Catch errors from being displayed on production with stack traces
+// Catch errors from being displayed
 app.use(function (err, req, res, next) {
-  if (err && production) {
+  if (err) {
     logger.error(err)
     req.flash('errors', {msg: `${err.message}`})
-    res.redirect('/')
+    res.redirect(`/error?code=${err.code || res.statusCode || 500}`)
   } else if (err) {
     next(err)
   } else {
