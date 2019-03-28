@@ -151,11 +151,11 @@ class Items {
     for (let [index, property] of properties.entries()) {
       (index !== 0 && index < properties.length) ? searchStr += ' AND ' : searchStr += ''
       if (searchObj[`${property}`].columnType === 'VARCHAR') {
-        searchStr += `LOWER(${property}) LIKE LOWER($${index + 1})`
+        searchStr += `LOWER("${property}") LIKE LOWER($${index + 1})`
         values.push(`%${searchObj[`${property}`].searchParam}%`)
       }
       if (searchObj[`${property}`].columnType === 'INTEGER') {
-        searchStr += `${property} = $${index + 1}`
+        searchStr += `"${property}" = $${index + 1}`
         values.push(parseInt(searchObj[`${property}`].searchParam))
       }
     }

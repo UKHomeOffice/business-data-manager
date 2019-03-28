@@ -29,7 +29,7 @@ describe('Items Model', function () {
       const query = items.searchQuery({ firstName: { searchParam: 'Shinobu', columnType: 'VARCHAR' } }, datasetTypeList, false, 5, 10)
       expect(query.text)
         .to
-        .equal('SELECT * , count(*) OVER() AS _total_count FROM foo WHERE LOWER(firstName) LIKE LOWER($1) ORDER BY 1  LIMIT 10 OFFSET 5')
+        .equal('SELECT * , count(*) OVER() AS _total_count FROM foo WHERE LOWER("firstName") LIKE LOWER($1) ORDER BY 1  LIMIT 10 OFFSET 5')
       expect(query.values).to.have.length(1)
     })
 
@@ -38,7 +38,7 @@ describe('Items Model', function () {
       const query = items.searchQuery({ age: { searchParam: 29, columnType: 'INTEGER' } }, datasetTypeList, false, 10, 5)
       expect(query.text)
         .to
-        .equal('SELECT * , count(*) OVER() AS _total_count FROM foo WHERE age = $1 ORDER BY 1  LIMIT 5 OFFSET 10')
+        .equal('SELECT * , count(*) OVER() AS _total_count FROM foo WHERE "age" = $1 ORDER BY 1  LIMIT 5 OFFSET 10')
       expect(query.values).to.have.length(1)
     })
 
@@ -50,7 +50,7 @@ describe('Items Model', function () {
       }, datasetTypeList, false, 5, 5)
       expect(query.text)
         .to
-        .equal('SELECT * , count(*) OVER() AS _total_count FROM foo WHERE age = $1 AND LOWER(firstName) LIKE LOWER($2) ORDER BY 1  LIMIT 5 OFFSET 5')
+        .equal('SELECT * , count(*) OVER() AS _total_count FROM foo WHERE "age" = $1 AND LOWER("firstName") LIKE LOWER($2) ORDER BY 1  LIMIT 5 OFFSET 5')
       expect(query.values).to.have.length(2)
     })
 
@@ -59,7 +59,7 @@ describe('Items Model', function () {
       const query = items.searchQuery({ age: { searchParam: 29, columnType: 'INTEGER' } }, datasetTypeList, true)
       expect(query.text)
         .to
-        .equal('SELECT *  FROM foo WHERE age = $1 ORDER BY 1 ')
+        .equal('SELECT *  FROM foo WHERE "age" = $1 ORDER BY 1 ')
       expect(query.values).to.have.length(1)
     })
   })
