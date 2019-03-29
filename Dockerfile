@@ -1,4 +1,4 @@
-FROM node:9.11-alpine
+FROM quay.io/ukhomeofficedigital/node-10
 LABEL maintainer="thomas.fitzherbert1@homeoffice.gsi.gov.uk"
 
 ENV USERMAP_UID 1000
