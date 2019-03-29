@@ -1,4 +1,4 @@
-FROM node:9.11-alpine
+FROM node:10.15.1-alpine
 LABEL maintainer="thomas.fitzherbert1@homeoffice.gsi.gov.uk"
 
 ENV USERMAP_UID 1000
