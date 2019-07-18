@@ -3,6 +3,9 @@ LABEL maintainer="thomas.fitzherbert1@homeoffice.gsi.gov.uk"
 
 ENV USERMAP_UID 1000
 ENV DOCKER_HOME /usr/src/app
+
+# Intrim solution for error related to `uid/id being unavailable`
+RUN npm config set unsafe-perm true
 RUN npm install -gs yarn
 
 WORKDIR $DOCKER_HOME
