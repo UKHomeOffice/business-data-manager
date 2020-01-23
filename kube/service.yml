@@ -9,7 +9,7 @@ spec:
   ports:
   - name: https
     port: 443
-    targetPort: https
+    targetPort: https-nginx
   - name: dq-business-data-manager
     port: 8080
     targetPort: 8080

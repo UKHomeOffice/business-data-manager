@@ -60,7 +60,7 @@ spec:
                 name: {{ .RDS_SECRET_NAME }}
                 key: password
       - name: keycloak-proxy
-        image: quay.io/keycloak/keycloak-gatekeeper:8.0.0
+        image: quay.io/keycloak/keycloak-gatekeeper:8.0.1
         imagePullPolicy: IfNotPresent
         securityContext:
           runAsNonRoot: true
@@ -69,32 +69,26 @@ spec:
           limits:
             cpu: 100m
             memory: 100Mi
-        env:
-          - name: PROXY_CLIENT_ID
-            valueFrom:
-              secretKeyRef:
-                name: dq-business-data-manager
-                key: KEYCLOAK_CLIENT_ID
-          - name: PROXY_CLIENT_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: dq-business-data-manager
-                key: KEYCLOAK_CLIENT_SECRET
-          - name: PROXY_LISTEN
-            value: 0.0.0.0:8081
-          - name: PROXY_DISCOVERY_URL
-            valueFrom:
-              secretKeyRef:
-                name: dq-business-data-manager
-                key: KEYCLOAK_DISCOVERY
-          - name: PROXY_UPSTREAM_URL
-            value: http://127.0.0.1:8080
         args:
-          - --resources
-          - uri=/*|roles=bdm
-          - --enable-logging
-          - --enable-json-logging
-          - --verbose
+          - --client-id={{.DECODED_KEYCLOAK_CLIENT_ID}}
+          - --client-secret={{.DECODED_KEYCLOAK_CLIENT_SECRET}}
+          - --discovery-url={{.DECODED_KEYCLOAK_DISCOVERY}}
+          - --listen=0.0.0.0:8081
+          - --upstream-url=http://127.0.0.1:8080
+          - --enable-logging=true
+          - --enable-json-logging=true
+          - --verbose=true
+          - --enable-default-deny=false
+          - --enable-login-handler=true
+          - --secure-cookie=true
+          - --http-only-cookie=true
+          - --preserve-host=true
+          - --upstream-keepalives=true
+          - --enable-request-id=true
+          - --resources=uri=/v1/*|roles=bdm
+        ports:
+          - name: https-keycloak
+            containerPort: 8081
       - name: proxy
         image: quay.io/ukhomeofficedigital/nginx-proxy
         securityContext:
@@ -108,6 +102,8 @@ spec:
             value: 'json'
           - name: NAXSI_USE_DEFAULT_RULES
             value: 'FALSE'
+          - name: ENABLE_UUID_PARAM
+            value: HEADER
         ports:
-          - name: https
+          - name: https-nginx
             containerPort: 10443

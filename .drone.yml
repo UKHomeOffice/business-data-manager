@@ -32,6 +32,9 @@ pipeline:
       - export KUBE_TOKEN=$$NOTPROD_KUBE_TOKEN
       - export RDS_SECRET_NAME=dq-apps-notprod-postgres-rds
       - export DB_ATTRIBUTE=database_name
+      - export DECODED_KEYCLOAK_CLIENT_ID=$$(echo $$NOTPROD_KEYCLOAK_CLIENT_ID | base64 -d)
+      - export DECODED_KEYCLOAK_CLIENT_SECRET=$$(echo $$NOTPROD_KEYCLOAK_CLIENT_SECRET | base64 -d)
+      - export DECODED_KEYCLOAK_DISCOVERY=$$(echo $$NOTPROD_KEYCLOAK_DISCOVERY | base64 -d)
       - kd -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml
     secrets:
       - NOTPROD_HOSTNAME
@@ -61,6 +64,9 @@ pipeline:
       - export KUBE_TOKEN=$$PROD_KUBE_TOKEN
       - export RDS_SECRET_NAME=dq-apps-bdm-prod-rds
       - export DB_ATTRIBUTE=db_name
+      - export DECODED_KEYCLOAK_CLIENT_ID=$$(echo $$PROD_KEYCLOAK_CLIENT_ID | base64 -d)
+      - export DECODED_KEYCLOAK_CLIENT_SECRET=$$(echo $$PROD_KEYCLOAK_CLIENT_SECRET | base64 -d)
+      - export DECODED_KEYCLOAK_DISCOVERY=$$(echo $$PROD_KEYCLOAK_DISCOVERY | base64 -d)
       - kd -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml
     secrets:
       - NODE_ENV

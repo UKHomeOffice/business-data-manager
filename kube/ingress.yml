@@ -18,7 +18,7 @@ spec:
       paths:
       - backend:
           serviceName: dq-business-data-manager-service
-          servicePort: https
+          servicePort: https-nginx
         path: /
   tls:
   - hosts:
