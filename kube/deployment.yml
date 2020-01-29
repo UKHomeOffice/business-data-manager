@@ -85,7 +85,8 @@ spec:
 #          - --preserve-host=true
 #          - --upstream-keepalives=true
 #          - --enable-request-id=true
-          - --resources=uri=/*|roles=bdm
+#          - --resources=uri=/*|roles=bdm
+          - --resources=uri=/*
         ports:
           - name: https-keycloak
             containerPort: 8081
