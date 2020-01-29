@@ -80,7 +80,7 @@ spec:
           - --verbose=true
           - --enable-default-deny=false
 #          - --enable-login-handler=true
-#          - --secure-cookie=true
+          - --secure-cookie=true
 #          - --http-only-cookie=true
 #          - --preserve-host=true
 #          - --upstream-keepalives=true
