@@ -79,13 +79,13 @@ spec:
           - --enable-json-logging=true
           - --verbose=true
           - --enable-default-deny=false
-          - --enable-login-handler=true
-          - --secure-cookie=true
-          - --http-only-cookie=true
-          - --preserve-host=true
-          - --upstream-keepalives=true
-          - --enable-request-id=true
-          - --resources=uri=/v1z/*|roles=bdm
+#          - --enable-login-handler=true
+#          - --secure-cookie=true
+#          - --http-only-cookie=true
+#          - --preserve-host=true
+#          - --upstream-keepalives=true
+#          - --enable-request-id=true
+          - --resources=uri=/*|roles=bdm
         ports:
           - name: https-keycloak
             containerPort: 8081
