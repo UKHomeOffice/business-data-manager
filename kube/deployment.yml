@@ -78,7 +78,7 @@ spec:
           - --enable-logging=true
           - --enable-json-logging=true
           - --verbose=true
-          - --enable-default-deny=false
+#          - --enable-default-deny=false
 #          - --enable-login-handler=true
 #          - --secure-cookie=true
 #          - --http-only-cookie=true
