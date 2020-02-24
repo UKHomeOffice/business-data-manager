@@ -1,5 +1,4 @@
-FROM quay.io/ukhomeofficedigital/node-10
-LABEL maintainer="thomas.fitzherbert1@homeoffice.gsi.gov.uk"
+FROM quay.io/ukhomeofficedigital/node-10:build_id_7
 
 ENV USERMAP_UID 1000
 ENV DOCKER_HOME /usr/src/app
