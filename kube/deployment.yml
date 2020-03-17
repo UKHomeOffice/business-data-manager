@@ -60,7 +60,7 @@ spec:
                 name: {{ .RDS_SECRET_NAME }}
                 key: password
       - name: keycloak-proxy
-        image: quay.io/keycloak/keycloak-gatekeeper:8.0.0
+        image: quay.io/keycloak/keycloak-gatekeeper:9.0.0
         imagePullPolicy: IfNotPresent
         securityContext:
           runAsNonRoot: true
@@ -96,7 +96,7 @@ spec:
           - --enable-json-logging
           - --verbose
       - name: proxy
-        image: quay.io/ukhomeofficedigital/nginx-proxy
+        image: quay.io/ukhomeofficedigital/dq-nginx-proxy-redirect:b54
         securityContext:
           runAsNonRoot: true
         env:
