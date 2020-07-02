@@ -7,9 +7,9 @@ metadata:
   name: dq-business-data-manager-service
 spec:
   ports:
-  - name: https
+  - name: keycloak
     port: 443
-    targetPort: https
+    targetPort: 8081
   - name: dq-business-data-manager
     port: 8080
     targetPort: 8080

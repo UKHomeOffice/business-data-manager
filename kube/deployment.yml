@@ -63,7 +63,7 @@ spec:
                 name: {{ .RDS_SECRET_NAME }}
                 key: password
       - name: keycloak-proxy
-        image: quay.io/keycloak/keycloak-gatekeeper:9.0.0
+        image: quay.io/keycloak/keycloak-gatekeeper:8.0.2
         imagePullPolicy: IfNotPresent
         securityContext:
           runAsNonRoot: true
@@ -72,45 +72,16 @@ spec:
           limits:
             cpu: 100m
             memory: 100Mi
-        env:
-          - name: PROXY_CLIENT_ID
-            valueFrom:
-              secretKeyRef:
-                name: dq-business-data-manager
-                key: KEYCLOAK_CLIENT_ID
-          - name: PROXY_CLIENT_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: dq-business-data-manager
-                key: KEYCLOAK_CLIENT_SECRET
-          - name: PROXY_LISTEN
-            value: 0.0.0.0:8081
-          - name: PROXY_DISCOVERY_URL
-            valueFrom:
-              secretKeyRef:
-                name: dq-business-data-manager
-                key: KEYCLOAK_DISCOVERY
-          - name: PROXY_UPSTREAM_URL
-            value: http://127.0.0.1:8080
         args:
-          - --resources
-          - uri=/*|roles=bdm
+          - --client-id={{ .KEYCLOAK_ID }}
+          - --client-secret={{ .KEYCLOAK_SECRET }}
+          - --discovery-url={{ .KEYCLOAK_DISCOVERY_URL }}
+          - --listen=0.0.0.0:8081
+          - --upstream-url=http://127.0.0.1:8080
+          - --resource=uri=/*|roles=bdm
           - --enable-logging
           - --enable-json-logging
           - --verbose
-      - name: proxy
-        image: quay.io/ukhomeofficedigital/dq-nginx-proxy-redirect:b54
-        securityContext:
-          runAsNonRoot: true
-        env:
-          - name: PROXY_SERVICE_HOST
-            value: 'http://127.0.0.1'
-          - name: PROXY_SERVICE_PORT
-            value: '8081'
-          - name: LOG_FORMAT_NAME
-            value: 'json'
-          - name: NAXSI_USE_DEFAULT_RULES
-            value: 'FALSE'
         ports:
-          - name: https
-            containerPort: 10443
+          - name: keycloak
+            containerPort: 8081
