@@ -78,7 +78,6 @@ spec:
           - --discovery-url={{ .KEYCLOAK_DISCOVERY_URL }}
           - --listen=0.0.0.0:8081
           - --upstream-url=http://127.0.0.1:8080
-          - --resource=uri=/*|roles=bdm
           - --enable-logging
           - --enable-json-logging
           - --verbose
