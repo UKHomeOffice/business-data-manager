@@ -63,6 +63,9 @@ pipeline:
       - export KEYCLOAK_CLIENT_ID=$$PROD_KEYCLOAK_CLIENT_ID
       - export KEYCLOAK_CLIENT_SECRET=$$PROD_KEYCLOAK_CLIENT_SECRET
       - export KEYCLOAK_DISCOVERY=$$PROD_KEYCLOAK_DISCOVERY
+      - export KEYCLOAK_ID=$${PROD_KEYCLOAK_ID}
+      - export KEYCLOAK_SECRET=$${PROD_KEYCLOAK_SECRET}
+      - export KEYCLOAK_DISCOVERY_URL=$${PROD_KEYCLOAK_DISCOVERY_URL}
       - export KUBE_SERVER=$$PROD_KUBE_SERVER
       - export KUBE_TOKEN=$$PROD_KUBE_TOKEN
       - export RDS_SECRET_NAME=dq-apps-bdm-prod-rds
@@ -77,6 +80,9 @@ pipeline:
       - PROD_KEYCLOAK_DISCOVERY
       - PROD_KUBE_SERVER
       - PROD_KUBE_TOKEN
+      - PROD_KEYCLOAK_ID
+      - PROD_KEYCLOAK_SECRET
+      - PROD_KEYCLOAK_DISCOVERY_URL
     when:
       environment: production
       event: deployment
