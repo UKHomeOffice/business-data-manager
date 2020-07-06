@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "setup": "node ./scripts/setup.js",
-    "start": "node app.js",
+    "start": "node --max-http-header-size=256000 app.js",
     "test": "eslint . && mocha --reporter spec --timeout 5000 --recursive",
     "lint": "eslint .",
     "setup-cleanup": "rm -rf public/base && rm -rf views/base",
