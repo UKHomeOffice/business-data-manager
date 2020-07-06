@@ -80,9 +80,9 @@ pipeline:
       - PROD_KEYCLOAK_DISCOVERY
       - PROD_KUBE_SERVER
       - PROD_KUBE_TOKEN
-      - NOTPROD_KEYCLOAK_ID
-      - NOTPROD_KEYCLOAK_SECRET
-      - NOTPROD_KEYCLOAK_DISCOVERY_URL
+      - PROD_KEYCLOAK_ID
+      - PROD_KEYCLOAK_SECRET
+      - PROD_KEYCLOAK_DISCOVERY_URL
     when:
       environment: production
       event: deployment
