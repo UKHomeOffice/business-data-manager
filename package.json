@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "setup": "node ./scripts/setup.js",
-    "start": "node app.js",
+    "start": "node --max-http-header-size=256000 app.js",
     "test": "eslint . && mocha --reporter spec --timeout 5000 --recursive",
     "lint": "eslint .",
     "setup-cleanup": "rm -rf public/base && rm -rf views/base",
@@ -65,8 +65,8 @@
     "jsdoc": "^3.5.5",
     "marked": "^0.6.2",
     "mocha": "^5.2.0",
-    "node-pre-gyp": "^0.13.0",
     "node-gyp": "^5.0.3",
+    "node-pre-gyp": "^0.13.0",
     "proxyquire": "^2.1.0",
     "sinon": "^7.2.7"
   }
