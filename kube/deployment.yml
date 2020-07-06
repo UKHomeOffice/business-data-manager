@@ -81,6 +81,7 @@ spec:
           - --enable-logging
           - --enable-json-logging
           - --verbose
+          - --resources=uri=/*|roles=bdm
         ports:
           - name: keycloak
             containerPort: 8081
