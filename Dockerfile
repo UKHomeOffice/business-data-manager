@@ -3,6 +3,9 @@ FROM quay.io/ukhomeofficedigital/node-10:build_id_7
 ENV USERMAP_UID 1000
 ENV DOCKER_HOME /usr/src/app
 
+# Temporary solution to dump and restore database
+RUN apk add --no-cache --update postgresql-client
+
 # Intrim solution for error related to `uid/id being unavailable`
 RUN npm config set unsafe-perm true
 RUN npm install -gs yarn
