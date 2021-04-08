@@ -12,7 +12,7 @@ steps:
   pull: if-not-exists
   image: plugins/docker
   settings:
-    dockerfile: app/monitor/Dockerfile
+    dockerfile: app/Dockerfile
     force_tag: true
     registry: quay.io
     repo: quay.io/ukhomeofficedigital/business-data-manager
