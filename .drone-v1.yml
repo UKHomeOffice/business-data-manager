@@ -1,0 +1,147 @@
+---
+kind: pipeline
+name: default
+type: kubernetes
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build_monitor_image
+  pull: if-not-exists
+  image: plugins/docker
+  settings:
+    dockerfile: app/monitor/Dockerfile
+    force_tag: true
+    registry: quay.io
+    repo: quay.io/ukhomeofficedigital/business-data-manager
+    tags:
+    - latest
+    - ${DRONE_COMMIT_SHA}
+    - b${DRONE_BUILD_NUMBER}
+  environment:
+    DOCKER_PASSWORD:
+      from_secret: docker_password
+    DOCKER_USERNAME:
+      from_secret: docker_username
+  when:
+    event:
+    - push
+
+- name: trivy_scan
+  pull: if-not-exists
+  image: aquasec/trivy
+  commands:
+  - trivy --ignore-unfixed --exit-code 1 --no-progress quay.io/ukhomeofficedigital/business-data-manager:${DRONE_COMMIT_SHA}
+  when:
+    branch:
+      exclude:
+      - master
+    event:
+    - push
+
+# 
+# - name: deploy_to_dev
+#   pull: if-not-exists
+#   image: plugins/docker
+#   commands:
+#   - export NODE_ENV=$$NODE_ENV
+#   - export LOG_LEVEL=$$LOG_LEVEL
+#   - export HOSTNAME=$$NOTPROD_HOSTNAME
+#   - export KEYCLOAK_CLIENT_ID=$$NOTPROD_KEYCLOAK_CLIENT_ID
+#   - export KEYCLOAK_CLIENT_SECRET=$$NOTPROD_KEYCLOAK_CLIENT_SECRET
+#   - export KEYCLOAK_DISCOVERY=$$NOTPROD_KEYCLOAK_DISCOVERY
+#   - export KEYCLOAK_ID=$${NOTPROD_KEYCLOAK_ID}
+#   - export KEYCLOAK_SECRET=$${NOTPROD_KEYCLOAK_SECRET}
+#   - export KEYCLOAK_DISCOVERY_URL=$${NOTPROD_KEYCLOAK_DISCOVERY_URL}
+#   - export KUBE_SERVER=$$NOTPROD_KUBE_SERVER
+#   - export KUBE_TOKEN=$$NOTPROD_KUBE_TOKEN
+#   - export RDS_SECRET_NAME=dq-apps-notprod-postgres-rds
+#   - export DB_ATTRIBUTE=database_name
+#   - kd -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml
+#   environment:
+#   - ENV=notprod
+#   - KUBE_NAMESPACE=dq-apps-notprod
+#   - INSECURE_SKIP_TLS_VERIFY=true
+#     NOTPROD_HOSTNAME:
+#       from secret: NOTPROD_HOSTNAME
+#     NODE_ENV:
+#       from_secret: NODE_ENV
+#     NODE_ENV:
+#       from_secret: NODE_ENV
+#     LOG_LEVEL:
+#       from_secret: LOG_LEVEL
+#     NOTPROD_KEYCLOAK_CLIENT_ID:
+#       from_secret: NOTPROD_KEYCLOAK_CLIENT_ID
+#     NOTPROD_KEYCLOAK_CLIENT_SECRET:
+#       from_secret: NOTPROD_KEYCLOAK_CLIENT_SECRET
+#     NOTPROD_KEYCLOAK_DISCOVERY:
+#       from_secret: NOTPROD_KEYCLOAK_DISCOVERY
+#     NOTPROD_KUBE_SERVER:
+#       from_secret: NOTPROD_KUBE_SERVER
+#     NOTPROD_KUBE_TOKEN:
+#       from_secret: NOTPROD_KUBE_TOKEN
+#     NOTPROD_KEYCLOAK_ID:
+#       from_secret: NOTPROD_KEYCLOAK_ID
+#     NOTPROD_KEYCLOAK_SECRET:
+#       from_secret: NOTPROD_KEYCLOAK_SECRET
+#     NOTPROD_KEYCLOAK_DISCOVERY_URL:
+#       from_secret: NOTPROD_KEYCLOAK_DISCOVERY_URL
+#   when:
+#     event:
+#     - push
+#
+# - name: deploy_to_prod
+#   pull: if-not-exists
+#   image: plugins/docker
+#   commands:
+#   environment:
+#     - ENV=prod
+#     - KUBE_NAMESPACE=dq-apps
+#     - INSECURE_SKIP_TLS_VERIFY=true
+#   commands:
+#     - export NODE_ENV=$$NODE_ENV
+#     - export LOG_LEVEL=$$LOG_LEVEL
+#     - export HOSTNAME=$$PROD_HOSTNAME
+#     - export KEYCLOAK_CLIENT_ID=$$PROD_KEYCLOAK_CLIENT_ID
+#     - export KEYCLOAK_CLIENT_SECRET=$$PROD_KEYCLOAK_CLIENT_SECRET
+#     - export KEYCLOAK_DISCOVERY=$$PROD_KEYCLOAK_DISCOVERY
+#     - export KEYCLOAK_ID=$${PROD_KEYCLOAK_ID}
+#     - export KEYCLOAK_SECRET=$${PROD_KEYCLOAK_SECRET}
+#     - export KEYCLOAK_DISCOVERY_URL=$${PROD_KEYCLOAK_DISCOVERY_URL}
+#     - export KUBE_SERVER=$$PROD_KUBE_SERVER
+#     - export KUBE_TOKEN=$$PROD_KUBE_TOKEN
+#     - export RDS_SECRET_NAME=dq-apps-bdm-prod-rds
+#     - export DB_ATTRIBUTE=db_name
+#     - kd -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml
+#   secrets:
+#     NODE_ENV:
+#       from_secret: NODE_ENV
+#     LOG_LEVEL:
+#       from_secret: LOG_LEVEL
+#     PROD_HOSTNAME:
+#       from_secret: PROD_HOSTNAME
+#     PROD_KEYCLOAK_CLIENT_ID:
+#       from_secret: PROD_KEYCLOAK_CLIENT_ID
+#     PROD_KEYCLOAK_CLIENT_SECRET:
+#       from_secret: PROD_KEYCLOAK_CLIENT_SECRET
+#     PROD_KEYCLOAK_DISCOVERY:
+#       from_secret: PROD_KEYCLOAK_DISCOVERY
+#     PROD_KUBE_SERVER:
+#       from_secret: PROD_KUBE_SERVER
+#     PROD_KUBE_TOKEN:
+#       from_secret: PROD_KUBE_TOKEN
+#     PROD_KEYCLOAK_ID:
+#       from_secret: PROD_KEYCLOAK_ID
+#     PROD_KEYCLOAK_SECRET:
+#       from_secret: PROD_KEYCLOAK_SECRET
+#     PROD_KEYCLOAK_DISCOVERY_URL:
+#       from_secret: PROD_KEYCLOAK_DISCOVERY_URL
+#   when:
+#     event:
+#     - promote
+#     target:
+#     - production
+
+...
