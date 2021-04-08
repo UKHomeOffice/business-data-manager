@@ -41,7 +41,7 @@ steps:
     event:
     - push
 
-# 
+#
 # - name: deploy_to_dev
 #   pull: if-not-exists
 #   image: plugins/docker
@@ -143,5 +143,9 @@ steps:
 #     - promote
 #     target:
 #     - production
+
+services:
+  - name: docker
+    image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind
 
 ...
