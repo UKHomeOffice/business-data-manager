@@ -34,6 +34,46 @@ export PGDATABASE=bdm
 export PGPASSWORD=badpassword
 ```
 
+## Setting up locally
+
+> Run `yarn install`
+> Install postgres 9.6 `brew search postgresql && brew install postgresql@9.6`
+> 
+> Add the following lines to your .bashrc or .zshrc file (which ever shell you use)
+>
+```
+export PATH="/usr/local/opt/postgresql@9.6/bin:$PATH"
+export LDFLAGS="-L/usr/local/opt/postgresql@9.6/lib"
+export CPPFLAGS="-I/usr/local/opt/postgresql@9.6/include"
+export PKG_CONFIG_PATH="/usr/local/opt/postgresql@9.6/lib/pkgconfig"
+```
+>
+> Create user bdm (change admin with your current username)
+> `psql -U admin -d postgres -c 'CREATE USER bdm; ALTER USER bdm WITH SUPERUSER;'`
+> 
+> Create database bdm
+> `psql -U admin -d postgres -c 'CREATE DATABASE bdm;'`
+>
+> Modify `/usr/local/var/postgresql@9.6/postgresql.conf`
+> to change the line containing `listen_addresses = ` to read `listen_addresses = '*'`
+>
+> Then reload the shell to load new settings and finally run this command to start psql service
+>
+> `brew services start postgresql@9.6`
+>
+> Now run the following commands
+> 
+> `yarn install`
+> `yarn build`
+> `yarn setup`
+> 
+> Then to start the project we run: 
+
+> `yarn start`
+> 
+> Note: You might have to restart the laptop if postgress is refusing the connection.
+> 
+
 ## Building with Drone
 
 We use Drone to automatically build the image and push it to Quay.io
