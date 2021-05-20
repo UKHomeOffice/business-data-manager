@@ -41,9 +41,9 @@ router.delete('/v1/datasets/:dataset/items/:item', itemsController.deleteItem)
 
 // [{defaultUrl:'URL', superUrl:'URL'}, 'id', {label: 'label', crumbTitle: ''}, 'extra-class', [[SUB-MENU-ITEMS]]]
 const navbar = [
-  [{defaultUrl: '/v1/datasets'}, 'nb_dataset', {label: 'Datasets', crumbTitle: 'Datasets'}, '', [
+  [{ defaultUrl: '/v1/datasets' }, 'nb_dataset', { label: 'Datasets', crumbTitle: 'Datasets' }, '', [
   ]],
-  [{defaultUrl: '/feedback'}, 'nb_feedback', {label: 'Feedback', crumbTitle: 'Feedback'}, ''],
+  [{ defaultUrl: '/feedback' }, 'nb_feedback', { label: 'Feedback', crumbTitle: 'Feedback' }, ''],
 ]
 
-module.exports = {router, navbar}
+module.exports = { router, navbar }
