@@ -19,9 +19,9 @@ function hasNonPageQuery (req) {
  * @returns summary all items from the dataset
  */
 exports.getItems = async (req, res) => {
-  let dataset = new Dataset(req.params.dataset)
+  const dataset = new Dataset(req.params.dataset)
   const datasetObj = await dataset.findOne()
-  let items = new Items(req.params.dataset)
+  const items = new Items(req.params.dataset)
   const fetchAll = (req.get('Accept') === 'application/json') || false
   const page = parseInt(req.sanitize('page').escape()) || false
   const itemsPerPage = paginationConfig.itemsPerPage
@@ -71,13 +71,13 @@ exports.getItems = async (req, res) => {
         html: () => {
           logger.verbose('getItems sending HTML response')
           // flash notify that dataset could not be found
-          req.flash('errors', {msg: `No dataset found with the name ${req.params.dataset}`})
+          req.flash('errors', { msg: `No dataset found with the name ${req.params.dataset}` })
           res.status(200).redirect('/v1/datasets')
         },
         json: () => {
           logger.verbose('getItems sending JSON response')
           // respond that dataset could not be created
-          res.status(404).json({status: '404', message: 'NOT FOUND'})
+          res.status(404).json({ status: '404', message: 'NOT FOUND' })
         },
         default: () => {
           logger.verbose('getItem invalid format requested')
@@ -87,7 +87,7 @@ exports.getItems = async (req, res) => {
     }
   } catch (err) {
     logger.error(err)
-    req.flash('errors', { msg: `Search failed` })
+    req.flash('errors', { msg: 'Search failed' })
     res.redirect(req.path)
   }
 }
@@ -98,7 +98,7 @@ exports.getItems = async (req, res) => {
  * @returns form to add new item
  */
 exports.addItem = (req, res) => {
-  let items = new Items(req.params.dataset)
+  const items = new Items(req.params.dataset)
   const fetchAll = (req.get('Accept') === 'application/json') || false
   const page = parseInt(req.sanitize('page').escape()) || false
   const itemsPerPage = paginationConfig.itemsPerPage
@@ -117,7 +117,7 @@ exports.addItem = (req, res) => {
     })
     .catch(err => {
       logger.error(err)
-      req.flash('errors', { msg: `Failed to add item` })
+      req.flash('errors', { msg: 'Failed to add item' })
       res.redirect(`/v1/datasets/${req.params.dataset}/items`)
     })
 }
@@ -182,7 +182,7 @@ exports.updateItem = async (req, res) => {
   const datasetName = req.params.dataset
   const itemId = req.params.item
   delete req.body._csrf
-  let item = new Item(datasetName, itemId)
+  const item = new Item(datasetName, itemId)
   try {
     const updateResponse = await item.update(req.body)
     if (updateResponse.statusCode === '200') {
@@ -223,7 +223,7 @@ exports.updateItem = async (req, res) => {
     }
   } catch (err) {
     logger.error(err)
-    req.flash('errors', { msg: `Update failed` })
+    req.flash('errors', { msg: 'Update failed' })
     res.redirect(`/v1/datasets/${datasetName}/items/${itemId}`)
   }
 }
@@ -249,12 +249,12 @@ exports.postItems = (req, res) => {
         res.format({
           html: () => {
             logger.verbose('postItems sending HTML response')
-            req.flash('success', {msg: 'Item created'})
+            req.flash('success', { msg: 'Item created' })
             res.status(201).redirect(result.uri)
           },
           json: () => {
             logger.verbose('postItems sending JSON response')
-            let uri = `/v1/datasets/${req.params.dataset}/items/${result.itemId}`
+            const uri = `/v1/datasets/${req.params.dataset}/items/${result.itemId}`
             res.status(201).json({
               uri: uri,
               action: 'Created',
@@ -272,13 +272,13 @@ exports.postItems = (req, res) => {
         res.format({
           html: () => {
             logger.verbose('postDatasets sending HTML response')
-            req.flash('errors', {msg: `Item could not be created`})
+            req.flash('errors', { msg: 'Item could not be created' })
             res.status(422).redirect('/v1/datasets/')
           },
           json: () => {
             logger.verbose('postDatasets sending JSON response')
-            let uri = `/v1/datasets/${req.params.dataset}`
-            res.status(422).json({uri: uri, action: 'Unprocessable Entity'})
+            const uri = `/v1/datasets/${req.params.dataset}`
+            res.status(422).json({ uri: uri, action: 'Unprocessable Entity' })
           },
           default: () => {
             logger.verbose('postDatasets invalid format requested')
@@ -290,7 +290,7 @@ exports.postItems = (req, res) => {
     // other catch an unexpected response code
     .catch(err => {
       logger.error(err)
-      req.flash('errors', { msg: `Failed to add item` })
+      req.flash('errors', { msg: 'Failed to add item' })
       res.redirect(`/v1/datasets/${req.params.dataset}/items`)
     })
 }
@@ -303,8 +303,8 @@ exports.postItems = (req, res) => {
  * @returns a single item from the dataset
  */
 exports.getItem = async (req, res) => {
-  let item = new Item(req.params.dataset, req.params.item)
-  let dataset = new Dataset(req.params.dataset)
+  const item = new Item(req.params.dataset, req.params.item)
+  const dataset = new Dataset(req.params.dataset)
   const datasetObj = await dataset.findOne()
   const result = await item.findOne()
   if (result.statusCode === '200') {

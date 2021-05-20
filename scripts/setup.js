@@ -3,7 +3,7 @@
 const db = require('../db')
 
 // to make this idempotent, we should drop the session table before creating it
-let queryString = `CREATE TABLE "session" (
+const queryString = `CREATE TABLE "session" (
                     "sid" varchar NOT NULL COLLATE "default",
                     "sess" json NOT NULL,
                     "expire" timestamp(6) NOT NULL

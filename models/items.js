@@ -48,18 +48,18 @@ class Items {
           if (result.command === 'SELECT') {
             logger.verbose(`Getting items from ${this.datasetName}`)
             // process fields and rows
-            let fields = []
+            const fields = []
             for (let i = 0; i < result.fields.length; i++) {
               if (result.fields[i].name !== '_total_count') {
                 fields.push(result.fields[i].name)
               }
             }
-            let rows = []
+            const rows = []
             let count = 0
             for (let j = 0; j < result.rows.length; j++) {
-              let row = []
+              const row = []
               if (j === 0) {
-                count = result.rows[0]['_total_count']
+                count = result.rows[0]._total_count
               }
 
               for (let k = 0; k < result.fields.length; k++) {
@@ -67,7 +67,7 @@ class Items {
               }
               rows.push(row)
             }
-            let items = {
+            const items = {
               datasetName: this.datasetName,
               fields: fields,
               rows: rows,
@@ -78,21 +78,21 @@ class Items {
             return items
           }
           logger.verbose(`The requested dataset (${this.datasetName}) doesn't exist`)
-          let msg = {statusCode: '404', message: 'NOT FOUND'}
+          const msg = { statusCode: '404', message: 'NOT FOUND' }
           return msg
         })
         .then(items => {
-          let dataset = new Dataset(this.datasetName)
+          const dataset = new Dataset(this.datasetName)
           logger.verbose(`Getting idType for the ${this.datasetName} dataset`)
           dataset.getIdType()
             .then(idTypeResult => {
               if (idTypeResult.statusCode === '200') {
                 items.idType = idTypeResult.data
-                let msg = {statusCode: '200', message: 'OK', data: items}
+                const msg = { statusCode: '200', message: 'OK', data: items }
                 return resolve(msg)
               }
               logger.verbose(`Unable to get idType for dataset (${this.datasetName})`)
-              let msg = {statusCode: '404', message: 'NOT FOUND'}
+              const msg = { statusCode: '404', message: 'NOT FOUND' }
               return resolve(msg)
             })
             .catch(err => {
@@ -108,7 +108,7 @@ class Items {
   }
 
   /**
-   * Given a search query and an array of column data, generate an object collating this data 
+   * Given a search query and an array of column data, generate an object collating this data
    * @param {Object} searchQuery An object in the form { columnName: query , }
    * @param {Array} datasetTypeList An array in the form [ { columnName, datatype } ]
    * @returns {Object} Object in the form { columnName: { query, columnType } }
@@ -117,7 +117,7 @@ class Items {
     const properties = Object.keys(searchQuery)
     const searchObj = {}
     properties.forEach(property => {
-      const column = datasetTypeList.find(column => column.name === property)
+      const column = datasetTypeList.find(column => { return column.name === property })
       if (searchQuery[property] !== '' && column) {
         try {
           searchObj[property] = { searchParam: searchQuery[property], columnType: column.datatype }
@@ -147,8 +147,8 @@ class Items {
     let searchStr = `SELECT * ${totalCount} FROM ${this.datasetName} `
     searchStr += Object.values(searchQuery).join('') === '' ? '' : 'WHERE '
 
-    let values = []
-    for (let [index, property] of properties.entries()) {
+    const values = []
+    for (const [index, property] of properties.entries()) {
       (index !== 0 && index < properties.length) ? searchStr += ' AND ' : searchStr += ''
       if (searchObj[`${property}`].columnType === 'VARCHAR') {
         searchStr += `LOWER("${property}") LIKE LOWER($${index + 1})`

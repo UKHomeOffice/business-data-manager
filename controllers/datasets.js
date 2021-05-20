@@ -10,7 +10,7 @@ const filter = require('../lib/filters')
  * @returns summary info about the current datasets
  */
 exports.getDatasets = (req, res) => {
-  let datasets = new Datasets()
+  const datasets = new Datasets()
   datasets.findAll()
     .then(result => {
       if (result.statusCode === '200') {
@@ -60,7 +60,7 @@ exports.addViewDatasets = (req, res) => {
 exports.postDatasets = (req, res) => {
   // pre-process the fields to set id correctly
 
-  let dataset = new Dataset(req.body.name, req.body.idType, req.body.fields)
+  const dataset = new Dataset(req.body.name, req.body.idType, req.body.fields)
   dataset.post()
     .then(result => {
       // check the result for successful creation
@@ -75,8 +75,8 @@ exports.postDatasets = (req, res) => {
           },
           json: () => {
             logger.verbose('postDatasets sending JSON response')
-            let uri = `/v1/datasets/${req.body.name}`
-            res.status(201).json({uri: uri, action: 'Created'})
+            const uri = `/v1/datasets/${req.body.name}`
+            res.status(201).json({ uri: uri, action: 'Created' })
           },
           default: () => {
             logger.verbose('postDatasets invalid format requested')
@@ -94,8 +94,8 @@ exports.postDatasets = (req, res) => {
           },
           json: () => {
             logger.verbose('postDatasets sending JSON response')
-            let uri = `/v1/datasets/${req.body.name}`
-            res.status(422).json({uri: uri, action: 'Unprocessable Entity'})
+            const uri = `/v1/datasets/${req.body.name}`
+            res.status(422).json({ uri: uri, action: 'Unprocessable Entity' })
           },
           default: () => {
             logger.verbose('postDatasets invalid format requested')
@@ -116,7 +116,7 @@ exports.postDatasets = (req, res) => {
  * @param {String} dataset - name of the dataset, used to name the table
  */
 exports.getDataset = (req, res) => {
-  let dataset = new Dataset(req.params.dataset)
+  const dataset = new Dataset(req.params.dataset)
   dataset.findOne()
     .then(result => {
       if (result.statusCode === '200') {
@@ -150,7 +150,7 @@ exports.getDataset = (req, res) => {
           json: () => {
             logger.verbose('getDataset sending JSON response')
             // respond that dataset could not be created
-            res.status(404).json({status: '404', message: 'NOT FOUND'})
+            res.status(404).json({ status: '404', message: 'NOT FOUND' })
           },
           default: () => {
             logger.verbose('getDataset invalid format requested')
@@ -179,13 +179,13 @@ exports.getDataset = (req, res) => {
  */
 exports.postDatasetProperties = (req, res) => {
   // add one or more new fields to the dataset's field (using json operation)
-  let fields = [{
+  const fields = [{
     name: req.body.name,
     datatype: req.body.datatype,
     notNull: req.body.notNull,
     unique: req.body.unique
   }]
-  let dataset = new Dataset(req.params.dataset, '', fields)
+  const dataset = new Dataset(req.params.dataset, '', fields)
   dataset.postProperty()
     .then(result => {
       // check the result for successful creation
@@ -200,7 +200,7 @@ exports.postDatasetProperties = (req, res) => {
           },
           json: () => {
             logger.verbose('postDatasets sending JSON response')
-            res.status(201).json({name: req.body.name, action: 'Created'})
+            res.status(201).json({ name: req.body.name, action: 'Created' })
           },
           default: () => {
             logger.verbose('postDatasets invalid format requested')

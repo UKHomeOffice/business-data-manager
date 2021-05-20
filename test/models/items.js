@@ -25,7 +25,7 @@ describe('Items Model', function () {
 
   describe('Search', () => {
     it('should generate a valid search query with pagination params for a single varchar column search', () => {
-      let items = new Items('foo')
+      const items = new Items('foo')
       const query = items.searchQuery({ firstName: { searchParam: 'Shinobu', columnType: 'VARCHAR' } }, datasetTypeList, false, 5, 10)
       expect(query.text)
         .to
@@ -34,7 +34,7 @@ describe('Items Model', function () {
     })
 
     it('should generate a valid search query with pagination params for a single integer column search', () => {
-      let items = new Items('foo')
+      const items = new Items('foo')
       const query = items.searchQuery({ age: { searchParam: 29, columnType: 'INTEGER' } }, datasetTypeList, false, 10, 5)
       expect(query.text)
         .to
@@ -43,7 +43,7 @@ describe('Items Model', function () {
     })
 
     it('should generate a valid search query with pagination params for a varchar and integer column search', () => {
-      let items = new Items('foo')
+      const items = new Items('foo')
       const query = items.searchQuery({
         age: { searchParam: 29, columnType: 'INTEGER' },
         firstName: { searchParam: 'Shinobu', columnType: 'VARCHAR' }
@@ -55,7 +55,7 @@ describe('Items Model', function () {
     })
 
     it('should generate a valid search query without pagination params for a single integer column search', () => {
-      let items = new Items('foo')
+      const items = new Items('foo')
       const query = items.searchQuery({ age: { searchParam: 29, columnType: 'INTEGER' } }, datasetTypeList, true)
       expect(query.text)
         .to

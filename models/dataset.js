@@ -27,7 +27,7 @@ class Dataset {
 
   checkIfExists () {
     return new Promise((resolve, reject) => {
-      let query = {
+      const query = {
         text: 'SELECT to_regclass($1)',
         values: [this.name],
       }
@@ -35,10 +35,10 @@ class Dataset {
       db.query(query)
         .then(result => {
           if (result.rows[0].to_regclass === null) {
-            let msg = {statusCode: '404', message: 'Not found'}
+            const msg = { statusCode: '404', message: 'Not found' }
             return resolve(msg)
           }
-          let msg = {statusCode: '302', message: 'Found'}
+          const msg = { statusCode: '302', message: 'Found' }
           return resolve(msg)
         })
         .catch(err => {
@@ -66,13 +66,13 @@ class Dataset {
 
   createTable () {
     return new Promise((resolve, reject) => {
-      let queryString = this.createTableQuery()
+      const queryString = this.createTableQuery()
       logger.debug(queryString)
       db.query(queryString)
         .then(result => {
           // check that result is as expected for a successful create
           logger.verbose(`New Dataset table created for ${this.name}`)
-          let msg = {statusCode: '200', message: 'OK'}
+          const msg = { statusCode: '200', message: 'OK' }
           return resolve(msg)
           // if not then
           // let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'};
@@ -87,7 +87,7 @@ class Dataset {
 
   registerDatasetQuery () {
     // build the query to register the dataset
-    let query = {
+    const query = {
       text: 'INSERT INTO datasets (name, idtype, fields) VALUES ($1, $2, $3)',
       values: [this.name, this.idType, JSON.stringify(this.fields)],
     }
@@ -96,13 +96,13 @@ class Dataset {
 
   registerDataset () {
     return new Promise((resolve, reject) => {
-      let query = this.registerDatasetQuery()
+      const query = this.registerDatasetQuery()
       logger.debug(query)
       db.query(query)
         .then(result => {
           // check that result is as expected for a successful create or throw an error/warning
           logger.verbose(`New Dataset registered for ${this.name}`)
-          let msg = {statusCode: '200', message: 'OK'}
+          const msg = { statusCode: '200', message: 'OK' }
           return resolve(msg)
           // if not then
           // let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'};
@@ -117,7 +117,7 @@ class Dataset {
 
   unregisterDatasetQuery () {
     // build the query to register the dataset
-    let query = {
+    const query = {
       text: 'DELETE FROM datasets WHERE name = $1',
       values: [this.name],
     }
@@ -126,14 +126,14 @@ class Dataset {
 
   unregisterDataset () {
     return new Promise((resolve, reject) => {
-      let query = this.unregisterDatasetQuery()
+      const query = this.unregisterDatasetQuery()
       logger.debug(query)
       db.query(query)
         .then(result => {
           // check that result is as expected for a successful create or throw an error/warning
           // result.command === 'DELETE'
           logger.verbose(`Dataset unregistered for ${this.name}`)
-          let msg = {statusCode: '200', message: 'OK'}
+          const msg = { statusCode: '200', message: 'OK' }
           return resolve(msg)
           // if not then
           // let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'};
@@ -148,14 +148,14 @@ class Dataset {
 
   dropTable () {
     return new Promise((resolve, reject) => {
-      let queryString = `DROP TABLE IF EXISTS ${this.name};`
+      const queryString = `DROP TABLE IF EXISTS ${this.name};`
       logger.debug(queryString)
       db.query(queryString)
         .then(result => {
           // check the result
           // result.command === 'DROP'
           logger.verbose(`Removed table for ${this.name} dataset`)
-          let msg = {statusCode: '200', message: 'OK'}
+          const msg = { statusCode: '200', message: 'OK' }
           return resolve(msg)
         })
         .catch(err => {
@@ -167,22 +167,22 @@ class Dataset {
 
   findOne () {
     return new Promise((resolve, reject) => {
-      let queryString = `SELECT name, idtype, fields FROM datasets WHERE name = '${this.name}';`
+      const queryString = `SELECT name, idtype, fields FROM datasets WHERE name = '${this.name}';`
       logger.debug(queryString)
       db.query(queryString)
         .then(result => {
           if (result.rows.length === 1) {
             logger.verbose(`Processing info for ${this.name}`)
-            let dataset = {
+            const dataset = {
               name: result.rows[0].name,
               idType: result.rows[0].idtype,
               fields: result.rows[0].fields
             }
-            let msg = {statusCode: '200', message: 'OK', data: dataset}
+            const msg = { statusCode: '200', message: 'OK', data: dataset }
             return resolve(msg)
           }
           logger.verbose(`The requested dataset (${this.name}) doesn't exist`)
-          let msg = {statusCode: '404', message: 'NOT FOUND'}
+          const msg = { statusCode: '404', message: 'NOT FOUND' }
           return resolve(msg)
         })
         .catch(err => {
@@ -197,7 +197,7 @@ class Dataset {
     // this makes them available in memory for the next functions
     // return 302 Found or 404 Not found
     return new Promise((resolve, reject) => {
-      let queryString = `SELECT fields FROM datasets WHERE name = '${this.name}';`
+      const queryString = `SELECT fields FROM datasets WHERE name = '${this.name}';`
       logger.debug(queryString)
       db.query(queryString)
         .then(result => {
@@ -208,12 +208,12 @@ class Dataset {
             // console.log(`Comparing ${this.fields[0].name} to ${this.fields[j].name}`);
             if (this.fields[0].name === this.fields[j].name) {
               logger.verbose(`The property ${this.fields[0].name} already exists`)
-              let msg = {statusCode: '302', message: 'Found'}
+              const msg = { statusCode: '302', message: 'Found' }
               return resolve(msg)
             }
           }
           logger.verbose(`The property ${this.fields[0].name} does not exist in the ${this.name} dataset`)
-          let msg = {statusCode: '404', message: 'Not found'}
+          const msg = { statusCode: '404', message: 'Not found' }
           return resolve(msg)
         })
         .catch(err => {
@@ -241,14 +241,14 @@ class Dataset {
     // if it fails return 422
     // if it succeeds return 201
     return new Promise((resolve, reject) => {
-      let queryString = this.addPropertyQueryString()
+      const queryString = this.addPropertyQueryString()
       logger.debug(queryString)
       db.query(queryString)
         .then(result => {
           // check that result is as expected for a successful create or throw an error/warning
           // result.command === 'DELETE'
           logger.verbose(`Added property to ${this.name} table`)
-          let msg = {statusCode: '201', message: 'Created'}
+          const msg = { statusCode: '201', message: 'Created' }
           return resolve(msg)
           // if not then
           // let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'};
@@ -266,7 +266,7 @@ class Dataset {
     // if it fails return 422
     // if it succeeds return 201
     return new Promise((resolve, reject) => {
-      let query = {
+      const query = {
         text: 'UPDATE datasets SET fields = $1 WHERE name = $2',
         values: [JSON.stringify(this.fields), this.name],
       }
@@ -276,7 +276,7 @@ class Dataset {
           // check that result is as expected for a successful create or throw an error/warning
           // result.command === 'DELETE'
           logger.verbose(`Added property to ${this.name} table`)
-          let msg = {statusCode: '201', message: 'Created'}
+          const msg = { statusCode: '201', message: 'Created' }
           return resolve(msg)
           // if not then
           // let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'};
@@ -297,7 +297,7 @@ class Dataset {
    */
   getIdType () {
     return new Promise((resolve, reject) => {
-      let query = {
+      const query = {
         text: 'SELECT idtype FROM datasets WHERE name = $1',
         values: [this.name],
       }
@@ -305,11 +305,11 @@ class Dataset {
       db.query(query)
         .then(result => {
           if (result.rowCount === 1) {
-            let msg = {statusCode: '200', message: 'OK', data: result.rows[0].idtype}
+            const msg = { statusCode: '200', message: 'OK', data: result.rows[0].idtype }
             return resolve(msg)
           }
           logger.verbose(`The dataset ${this.datasetName} does not exist`)
-          let msg = {statusCode: '422', message: 'Unprocessable Entity'}
+          const msg = { statusCode: '422', message: 'Unprocessable Entity' }
           return resolve(msg)
         })
         .catch(err => {
@@ -325,22 +325,22 @@ class Dataset {
       this.checkIfExists()
         .then(tableExists => {
           if (tableExists.statusCode === '302') {
-            let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'}
+            const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
             return resolve(msg)
           }
           this.registerDataset()
             .then(registrationResult => {
               if (registrationResult.statusCode === '422') {
-                let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'}
+                const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
                 return resolve(msg)
               }
               this.createTable()
                 .then(creationResult => {
                   if (creationResult.statusCode === '422') {
-                    let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'}
+                    const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
                     return resolve(msg)
                   }
-                  let msg = {statusCode: '201', message: 'CREATED'}
+                  const msg = { statusCode: '201', message: 'CREATED' }
                   return resolve(msg)
                 })
             })
@@ -373,16 +373,16 @@ class Dataset {
       this.unregisterDataset()
         .then(unregistrationResult => {
           if (unregistrationResult.statusCode === '422') {
-            let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'}
+            const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
             return resolve(msg)
           }
           this.dropTable()
             .then(dropResult => {
               if (dropResult.statusCode === '422') {
-                let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'}
+                const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
                 return resolve(msg)
               }
-              let msg = {statusCode: '200', message: 'OK'}
+              const msg = { statusCode: '200', message: 'OK' }
               return resolve(msg)
             })
             .catch(err => {
@@ -404,14 +404,14 @@ class Dataset {
         .then(propertyExists => {
           logger.verbose('postProperty has checked if the property already exists')
           if (propertyExists.statusCode === '302') {
-            let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'}
+            const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
             return resolve(msg)
           }
           this.registerProperty()
             .then(registrationResult => {
               if (registrationResult.statusCode === '422') {
                 logger.verbose('postProperty failed to registered the property')
-                let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'}
+                const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
                 return resolve(msg)
               }
               logger.verbose('postProperty has registered the property')
@@ -419,11 +419,11 @@ class Dataset {
                 .then(addPropertyResult => {
                   if (addPropertyResult.statusCode === '422') {
                     logger.verbose('postProperty failed to alter the table')
-                    let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'}
+                    const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
                     return resolve(msg)
                   }
                   logger.verbose('postProperty has altered the table')
-                  let msg = {statusCode: '201', message: 'CREATED'}
+                  const msg = { statusCode: '201', message: 'CREATED' }
                   return resolve(msg)
                 })
                 .catch(err => {

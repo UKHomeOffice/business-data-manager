@@ -33,7 +33,7 @@ const production = process.env.NODE_ENV === 'production'
 /**
  * Create Express server.
  */
-let app = express()
+const app = express()
 
 /**
  * Express configuration.
@@ -49,7 +49,7 @@ if (production) {
   app.use(morgan('dev'))
 }
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(expressValidator())
 app.use(session({
   resave: true,
@@ -75,7 +75,7 @@ app.use(compression())
 app.use(function (err, req, res, next) {
   if (err) {
     logger.error(err)
-    req.flash('errors', {msg: `${err.message}`})
+    req.flash('errors', { msg: `${err.message}` })
     res.redirect(`/error?code=${err.code || res.statusCode || 500}`)
   } else if (err) {
     next(err)
@@ -123,7 +123,7 @@ app.use(errorHandler())
 /**
  * Start Express server.
  */
-let server = require('http').Server(app)
+const server = require('http').Server(app)
 server.listen(app.get('port'), () => {
   logger.info(`Express server listening on port ${app.get('port')} in ${process.env.NODE_ENV || 'dev'} mode`)
 })
@@ -132,7 +132,7 @@ server.listen(app.get('port'), () => {
  * Run some startup checks; including making sure that the datasets table
  * exists
  */
-let datasets = new Datasets()
+const datasets = new Datasets()
 datasets.dbChecks()
   .then(result => {
     if (result.statusCode === '200') {
