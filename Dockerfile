@@ -1,4 +1,4 @@
-FROM quay.io/ukhomeofficedigital/node-10:build_id_7
+FROM quay.io/ukhomeofficedigital/ga-node:14-alpine
 
 ENV USERMAP_UID 1000
 ENV DOCKER_HOME /usr/src/app
