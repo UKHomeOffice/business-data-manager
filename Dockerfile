@@ -10,7 +10,6 @@ RUN apk add --no-cache --update postgresql-client
 
 # Intrim solution for error related to `uid/id being unavailable`
 RUN npm config set unsafe-perm true
-RUN npm install -gs yarn
 
 WORKDIR $DOCKER_HOME
 COPY . ${DOCKER_HOME}
