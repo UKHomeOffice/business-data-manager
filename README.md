@@ -37,15 +37,15 @@ export PGPASSWORD=badpassword
 ## Setting up locally
 
 > Run `yarn install`
-> Install postgres 9.6 `brew search postgresql && brew install postgresql@9.6`
+> Install postgres 13.x `brew search postgresql && brew install postgresql`
 > 
 > Add the following lines to your .bashrc or .zshrc file (which ever shell you use)
 >
 ```
-export PATH="/usr/local/opt/postgresql@9.6/bin:$PATH"
-export LDFLAGS="-L/usr/local/opt/postgresql@9.6/lib"
-export CPPFLAGS="-I/usr/local/opt/postgresql@9.6/include"
-export PKG_CONFIG_PATH="/usr/local/opt/postgresql@9.6/lib/pkgconfig"
+export PATH="/usr/local/opt/postgresql/bin:$PATH"
+export LDFLAGS="-L/usr/local/opt/postgresql/lib"
+export CPPFLAGS="-I/usr/local/opt/postgresql/include"
+export PKG_CONFIG_PATH="/usr/local/opt/postgresql/lib/pkgconfig"
 ```
 >
 > Create user bdm (change admin with your current username)
@@ -54,12 +54,12 @@ export PKG_CONFIG_PATH="/usr/local/opt/postgresql@9.6/lib/pkgconfig"
 > Create database bdm
 > `psql -U admin -d postgres -c 'CREATE DATABASE bdm;'`
 >
-> Modify `/usr/local/var/postgresql@9.6/postgresql.conf`
+> Modify `/usr/local/var/postgresql/postgresql.conf`
 > to change the line containing `listen_addresses = ` to read `listen_addresses = '*'`
 >
 > Then reload the shell to load new settings and finally run this command to start psql service
 >
-> `brew services start postgresql@9.6`
+> `brew services start postgresql`
 >
 > Now run the following commands
 > 
@@ -131,8 +131,7 @@ format please set the `Accept` header to `application/json`.
 
 ## Supported backends
 
-Currently only PostgreSQL version `9.6.5` is supported (other versions may
-work, but they are not supported).
+Currently PostgreSQL version `13.x` is supported (other versions may work, but they are not supported).
 
 > Other backends may be supported in the future.
 

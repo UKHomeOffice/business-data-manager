@@ -1,4 +1,4 @@
-FROM quay.io/ukhomeofficedigital/node-10:build_id_7
+FROM quay.io/ukhomeofficedigital/ga-node:14-alpine
 
 ENV USERMAP_UID 1000
 ENV DOCKER_HOME /usr/src/app
@@ -10,7 +10,6 @@ RUN apk add --no-cache --update postgresql-client
 
 # Intrim solution for error related to `uid/id being unavailable`
 RUN npm config set unsafe-perm true
-RUN npm install -gs yarn
 
 WORKDIR $DOCKER_HOME
 COPY . ${DOCKER_HOME}
