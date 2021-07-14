@@ -31,6 +31,7 @@ router.get('/v1/datasets/:dataset', datasetsController.getDataset)
 router.post('/v1/datasets/:dataset/properties', datasetsController.postDatasetProperties)
 // items routes
 router.get('/v1/datasets/:dataset/items', itemsController.getItems)
+router.get('/v1/datasets/:dataset/items/export', itemsController.exportItems)
 router.get('/v1/datasets/:dataset/items/add', itemsController.addItem)
 router.post('/v1/datasets/:dataset/items', itemsController.postItems)
 router.get('/v1/datasets/:dataset/items/:item', itemsController.getItem)

@@ -69,5 +69,11 @@
     </div>
   </div>
 
+  <div class="grid-row">
+    <div class="column-full">
+      <a class="button" href="/v1/datasets/{{ data.datasetName }}/items/export" content="text/csv" type="text/csv" download="{{ data.datasetName }}.csv">Download csv</a>
+    </div>
+  </div>
+
   {% include "partials/pagination.html" %}
 {% endblock %}

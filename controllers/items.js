@@ -93,6 +93,40 @@ exports.getItems = async (req, res) => {
 }
 
 /**
+ * GET /v1/datasets/:dataset/items/export
+ *
+ * @returns summary all items from the dataset
+ */
+exports.exportItems = async (req, res) => {
+  // const dataset = new Dataset(req.params.dataset)
+  const items = new Items(req.params.dataset)
+  try {
+    const result = await items.findAll(0, null, true)
+    if (result.statusCode === '200') {
+      res.status(200).csv([result.data.fields].concat(result.data.rows))
+    }
+    if (result.statusCode === '404') {
+      res.format({
+        html: () => {
+          logger.verbose('getItems sending HTML response')
+          // flash notify that dataset could not be found
+          req.flash('errors', { msg: `No dataset found with the name ${req.params.dataset}` })
+          res.status(200).redirect('/v1/datasets')
+        },
+        default: () => {
+          logger.verbose('getItem invalid format requested')
+          res.status(406).send('Invalid response format requested')
+        }
+      })
+    }
+  } catch (err) {
+    logger.error(err)
+    req.flash('errors', { msg: 'Search failed' })
+    res.redirect(req.path)
+  }
+}
+
+/**
  * GET /v1/datasets/:dataset/items/add
  *
  * @returns form to add new item
