@@ -33,6 +33,12 @@ spec:
             value: 'business-data-manager'
           - name: PORT
             value: '8080'
+          - name: BDM_SUPERUSER_ROLE
+            value: 'BDM-SUPERUSER'
+          - name: BDM_STANDARD_ROLE
+            value: 'BDM-STANDARD-USER'
+          - name: BDM_READONLY_ROLE
+            value: 'BDM-READONLY-USER'
           - name: SESSION_SECRET
             valueFrom:
               secretKeyRef:
@@ -84,7 +90,7 @@ spec:
           - --enable-logging
           - --enable-json-logging
           - --verbose
-          - --resources=uri=/*|roles=bdm
+          - --resources=uri=/*|roles=bdm,BDM-SUPERUSER,BDM-STANDARD-USER,BDM-READONLY-USER|require-any-role=true
         ports:
           - name: keycloak
             containerPort: 8081

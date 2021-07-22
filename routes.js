@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const path = require('path')
+const routeAuthenticator = require('./auth/route-authenticator').routeAuthenticator
 
 function getControllerPath (name) {
   return path.join(__dirname, 'controllers', name)
