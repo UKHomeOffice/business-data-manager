@@ -16,6 +16,11 @@
       </div>
     </div>
 
+    {% if Authenticator.authorise('dataset', 'write') %}
+      <h2 class="heading-large">Add a new {{title | lower}}</h2>
+      <a href="/v1/datasets/add">Click here to add a new dataset</a>
+    {% endif %}
+
     <div class="grid-row">
       <div class="column-full">
         <p>There are currently the following datasets:</p>

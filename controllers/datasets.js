@@ -232,3 +232,48 @@ exports.postDatasetProperties = (req, res) => {
       logger.error(err)
     })
 }
+
+
+exports.deleteDataset = async (req, res) => {
+  try {
+    const dataset = new Dataset(req.params.dataset)
+    const deleteResponse = await dataset.delete()
+    if (deleteResponse.statusCode === '200') {
+      res.format({
+        html: () => {
+          logger.verbose('deleteDataset sending HTML response')
+          req.flash('success', { msg: 'Dataset deleted' })
+          res.status(201).redirect(`${deleteResponse.uri}`)
+        },
+        json: () => {
+          logger.verbose('deleteDataset sending JSON response')
+          res.status(200).json({
+            action: 'Deleted',
+            name: dataset.name
+          })
+        },
+        default: () => {
+          logger.verbose('deleteDataset invalid format requested')
+          res.status(406).send('Invalid response format requested')
+        }
+      })
+    } else if (deleteResponse.statusCode === '404') {
+      res.format({
+        html: () => {
+          req.flash('errors', { msg: `No dataset found with the id ${dataset.name} in dataset ${dataset.name}` })
+          res.status(404).redirect(`${deleteResponse.uri}`)
+        },
+        json: () => {
+          logger.verbose('deleteDataset sending JSON response')
+          res.status(404).json({ status: '404', message: 'NOT FOUND' })
+        },
+        default: () => {
+          logger.verbose('deleteDataset invalid format requested')
+          res.status(406).send('Invalid response format requested')
+        }
+      })
+    }
+  } catch (err) {
+    logger.error(err)
+  }
+}

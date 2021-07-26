@@ -36,8 +36,10 @@
     </div>
   </details>
 
-  <h2 class="heading-large">Add a new {{title | lower}}</h2>
-  <a href="/v1/datasets/{{data.datasetName}}/items/add">Click here to add a new record</a>
+  {% if Authenticator.authorise('item', 'write') %}
+    <h2 class="heading-large">Add a new {{title | lower}}</h2>
+    <a href="/v1/datasets/{{data.datasetName}}/items/add">Click here to add a new record</a>
+  {% endif %}
 
   <div class="grid-row">
     <div class="column-full">
@@ -59,11 +61,11 @@
             {% for value in row[:6] %}
               <td>{{ value }}</td>
             {% endfor %}
-            {% if Authenticator.authorise('item', 'write') %}
             <td>
-              <a class="button" href="/v1/datasets/{{ data.datasetName }}/items/{{ row[0] }}">Edit</a>
+              {% if Authenticator.authorise('item', 'write') %}
+                <a class="button" href="/v1/datasets/{{ data.datasetName }}/items/{{ row[0] }}">Edit</a>
+              {% endif %}
             </td>
-            {% endif %}
           </tr>
         {% endfor %}
         <tbody>

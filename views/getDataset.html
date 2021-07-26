@@ -129,5 +129,25 @@
         </div>
     {% endif %}
 
+    {% if Authenticator.authorise('dataset', 'delete') %}
+    <div class="error-summary" role="alert">
+      <h2 class="heading-large">Danger zone</h2>
+      <span class="error-message">
+        You can delete the dataset here.
+      </span>
+      <br>
+      <span class="error-message">
+        Only do this if you are absolutely sure!
+      </span>
+      <br>
+      <form method="POST" action="/v1/datasets/{{data.datasetName}}/delete">
+        <input type='hidden' name='_csrf' value="{{ _csrf }}">
+        <div class="form-group">
+           <a href="#" onclick="document.forms[1].submit();return false;" name="delete-button">Delete</a>
+        </div>
+      </form>
+    </div>
+    {% endif %}
+
     <!-- {% include "partials/pagination.html" %} -->
 {% endblock %}
