@@ -49,16 +49,19 @@
               {% endfor %}
             <tbody>
           </table>
+          {% if Authenticator.authorise('item', 'write') %}
           <br>
           <button class="button" type="submit">Save</button>
+          {% endif %}
           <br><br>
-          <a href="/v1/datasets/{{data.datasetName}}/items">Exit without saving</a>
+          <a href="/v1/datasets/{{data.datasetName}}/items">Exit{% if Authenticator.authorise('item', 'write') %} without saving{% endif %}</a>
         </form>
         <br>
+        {% if Authenticator.authorise('item', 'delete') %}
         <div class="error-summary" role="alert">
           <h2 class="heading-large">Danger zone</h2>
           <span class="error-message">
-            You can delete the item here. 
+            You can delete the item here.
           </span>
           <br>
           <span class="error-message">
@@ -72,6 +75,7 @@
             </div>
           </form>
         </div>
+        {% endif %}
       </div>
     </div>
 

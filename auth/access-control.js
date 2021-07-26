@@ -27,7 +27,7 @@ let grantsObject = {
   [roles.standardUserRole]: {
     grants: [
       {
-        resource: 'dataset', action: 'write', attributes: ['*']
+        resource: 'dataset', action: 'read', attributes: ['*']
       },
       {
         resource: 'item', action: 'write', attributes: ['*']

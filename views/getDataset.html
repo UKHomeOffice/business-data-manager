@@ -44,89 +44,90 @@
       </div>
     </div>
 
+    {% if Authenticator.authorise('dataset', 'write') %}
+        <div class="grid-row">
+          <div class="column-full">
+            <h2 class="heading-large">Add a field</h2>
+            <p>You can add fields to the {{ data.name }} dataset by completing the form below.</p>
 
-    <div class="grid-row">
-      <div class="column-full">
-        <h2 class="heading-large">Add a field</h2>
-        <p>You can add fields to the {{ data.name }} dataset by completing the form below.</p>
+            <form method="POST" action="/v1/datasets/{{ data.name }}/properties">
+              <input type='hidden' name='_csrf' value="{{ _csrf }}">
+              <h3 class="heading-medium">Field name</h3>
+              <div class="form-group">
+                <input class="form-control" id="name" name="name" type="text">
+              </div>
+              <div class="form-group">
+                <fieldset class="inline">
+                  <legend>
+                    <h3 class="heading-medium">Field data type</h3>
+                  </legend>
+                  <div class="multiple-choice">
+                    <input id="datatype-1" type="radio" name="datatype" value="VARCHAR">
+                    <label for="datatype-1">Text</label>
+                  </div>
+                  <div class="multiple-choice">
+                    <input id="datatype-2" type="radio" name="datatype" value="DATE">
+                    <label for="datatype-2">Date</label>
+                  </div>
+                  <div class="multiple-choice">
+                    <input id="datatype-3" type="radio" name="datatype" value="INTEGER">
+                    <label for="datatype-3">Integer</label>
+                  </div>
+                </fieldset>
+              </div>
+              <!-- <div class="form-group">
+                <fieldset class="inline">
+                  <legend>
+                    <h3 class="heading-medium">Primary key</h3>
+                  </legend>
+                  <div class="multiple-choice">
+                    <input id="primaryKey-1" type="radio" name="primaryKey" value="Yes">
+                    <label for="primaryKey-1">Yes</label>
+                  </div>
+                  <div class="multiple-choice">
+                    <input id="primaryKey-2" type="radio" name="primaryKey" value="No">
+                    <label for="primaryKey-2">No</label>
+                  </div>
+                </fieldset>
+              </div> -->
+              <div class="form-group">
+                <fieldset class="inline">
+                  <legend>
+                    <h3 class="heading-medium">Not null</h3>
+                  </legend>
+                  <div class="multiple-choice">
+                    <input id="notNull-1" type="radio" name="notNull" value="Yes">
+                    <label for="notNull-1">Yes</label>
+                  </div>
+                  <div class="multiple-choice">
+                    <input id="notNull-2" type="radio" name="notNull" value="No">
+                    <label for="notNull-2">No</label>
+                  </div>
+                </fieldset>
+              </div>
+              <div class="form-group">
+                <fieldset class="inline">
+                  <legend>
+                    <h3 class="heading-medium">Unique</h3>
+                  </legend>
+                  <div class="multiple-choice">
+                    <input id="unique-1" type="radio" name="unique" value="Yes">
+                    <label for="unique-1">Yes</label>
+                  </div>
+                  <div class="multiple-choice">
+                    <input id="unique-2" type="radio" name="unique" value="No">
+                    <label for="unique-2">No</label>
+                  </div>
+                </fieldset>
+              </div>
 
-        <form method="POST" action="/v1/datasets/{{ data.name }}/properties">
-          <input type='hidden' name='_csrf' value="{{ _csrf }}">
-          <h3 class="heading-medium">Field name</h3>
-          <div class="form-group">
-            <input class="form-control" id="name" name="name" type="text">
+              <div class="form-group">
+                <input class="button" type="submit" value="Add field">
+              </div>
+            </form>
           </div>
-          <div class="form-group">
-            <fieldset class="inline">
-              <legend>
-                <h3 class="heading-medium">Field data type</h3>
-              </legend>
-              <div class="multiple-choice">
-                <input id="datatype-1" type="radio" name="datatype" value="VARCHAR">
-                <label for="datatype-1">Text</label>
-              </div>
-              <div class="multiple-choice">
-                <input id="datatype-2" type="radio" name="datatype" value="DATE">
-                <label for="datatype-2">Date</label>
-              </div>
-              <div class="multiple-choice">
-                <input id="datatype-3" type="radio" name="datatype" value="INTEGER">
-                <label for="datatype-3">Integer</label>
-              </div>
-            </fieldset>
-          </div>
-          <!-- <div class="form-group">
-            <fieldset class="inline">
-              <legend>
-                <h3 class="heading-medium">Primary key</h3>
-              </legend>
-              <div class="multiple-choice">
-                <input id="primaryKey-1" type="radio" name="primaryKey" value="Yes">
-                <label for="primaryKey-1">Yes</label>
-              </div>
-              <div class="multiple-choice">
-                <input id="primaryKey-2" type="radio" name="primaryKey" value="No">
-                <label for="primaryKey-2">No</label>
-              </div>
-            </fieldset>
-          </div> -->
-          <div class="form-group">
-            <fieldset class="inline">
-              <legend>
-                <h3 class="heading-medium">Not null</h3>
-              </legend>
-              <div class="multiple-choice">
-                <input id="notNull-1" type="radio" name="notNull" value="Yes">
-                <label for="notNull-1">Yes</label>
-              </div>
-              <div class="multiple-choice">
-                <input id="notNull-2" type="radio" name="notNull" value="No">
-                <label for="notNull-2">No</label>
-              </div>
-            </fieldset>
-          </div>
-          <div class="form-group">
-            <fieldset class="inline">
-              <legend>
-                <h3 class="heading-medium">Unique</h3>
-              </legend>
-              <div class="multiple-choice">
-                <input id="unique-1" type="radio" name="unique" value="Yes">
-                <label for="unique-1">Yes</label>
-              </div>
-              <div class="multiple-choice">
-                <input id="unique-2" type="radio" name="unique" value="No">
-                <label for="unique-2">No</label>
-              </div>
-            </fieldset>
-          </div>
-
-          <div class="form-group">
-            <input class="button" type="submit" value="Add field">
-          </div>
-        </form>
-      </div>
-    </div>
+        </div>
+    {% endif %}
 
     <!-- {% include "partials/pagination.html" %} -->
 {% endblock %}

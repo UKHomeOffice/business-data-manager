@@ -59,9 +59,11 @@
             {% for value in row[:6] %}
               <td>{{ value }}</td>
             {% endfor %}
+            {% if Authenticator.authorise('item', 'write') %}
             <td>
               <a class="button" href="/v1/datasets/{{ data.datasetName }}/items/{{ row[0] }}">Edit</a>
             </td>
+            {% endif %}
           </tr>
         {% endfor %}
         <tbody>
