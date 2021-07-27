@@ -16,6 +16,17 @@ const datasetsController = require(getControllerPath('datasets'))
 const itemsController = require(getControllerPath('items'))
 
 /**
+ * Permissions
+ */
+const datasetAll = routeAuthenticator('dataset', '*')
+const datasetWrite = routeAuthenticator('dataset', 'write')
+const datasetRead = routeAuthenticator('dataset', 'read')
+
+const itemAll = routeAuthenticator('item', '*')
+const itemWrite = routeAuthenticator('item', 'write')
+const itemRead = routeAuthenticator('item', 'read')
+
+/**
  * Primary app routes.
  */
 router.get('/error', errorController.error)
@@ -25,20 +36,21 @@ router.get('/v1', (req, res) => { return res.redirect('/v1/datasets') })
 router.post('/feedback', feedbackController.postFeedback)
 router.get('/feedback', feedbackController.getFeedback)
 // datasets routes
-router.get('/v1/datasets', datasetsController.getDatasets)
-router.get('/v1/datasets/add', datasetsController.addViewDatasets)
-router.post('/v1/datasets/add', datasetsController.postDatasets)
-router.get('/v1/datasets/:dataset', datasetsController.getDataset)
-router.post('/v1/datasets/:dataset/properties', datasetsController.postDatasetProperties)
+router.get('/v1/datasets', datasetRead, datasetsController.getDatasets)
+router.get('/v1/datasets/add', datasetWrite, datasetsController.addViewDatasets)
+router.post('/v1/datasets/add', datasetWrite, datasetsController.postDatasets)
+router.get('/v1/datasets/:dataset', datasetRead, datasetsController.getDataset)
+router.post('/v1/datasets/:dataset/delete', datasetAll, datasetsController.deleteDataset)
+router.post('/v1/datasets/:dataset/properties', datasetWrite, datasetsController.postDatasetProperties)
 // items routes
-router.get('/v1/datasets/:dataset/items', itemsController.getItems)
-router.get('/v1/datasets/:dataset/items/add', itemsController.addItem)
-router.post('/v1/datasets/:dataset/items', itemsController.postItems)
-router.get('/v1/datasets/:dataset/items/:item', itemsController.getItem)
-router.post('/v1/datasets/:dataset/items/:item/update', itemsController.updateItem)
-router.put('/v1/datasets/:dataset/items/:item', itemsController.updateItem)
-router.post('/v1/datasets/:dataset/items/:item/delete', itemsController.deleteItem)
-router.delete('/v1/datasets/:dataset/items/:item', itemsController.deleteItem)
+router.get('/v1/datasets/:dataset/items', itemRead, itemsController.getItems)
+router.get('/v1/datasets/:dataset/items/add', itemWrite, itemsController.addItem)
+router.post('/v1/datasets/:dataset/items', itemWrite, itemsController.postItems)
+router.get('/v1/datasets/:dataset/items/:item', itemRead, itemsController.getItem)
+router.post('/v1/datasets/:dataset/items/:item/update', itemRead, itemWrite, itemsController.updateItem)
+router.put('/v1/datasets/:dataset/items/:item',itemWrite, itemsController.updateItem)
+router.post('/v1/datasets/:dataset/items/:item/delete', itemAll, itemsController.deleteItem)
+router.delete('/v1/datasets/:dataset/items/:item', itemAll, itemsController.deleteItem)
 
 // [{defaultUrl:'URL', superUrl:'URL'}, 'id', {label: 'label', crumbTitle: ''}, 'extra-class', [[SUB-MENU-ITEMS]]]
 const navbar = [

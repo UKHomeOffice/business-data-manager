@@ -16,6 +16,11 @@
       </div>
     </div>
 
+    {% if Authenticator.authorise('dataset', 'write') %}
+      <h2 class="heading-large">Add a new {{title | lower}}</h2>
+      <a href="/v1/datasets/add">Click here to add a new dataset</a>
+    {% endif %}
+
     <div class="grid-row">
       <div class="column-full">
         <p>There are currently the following datasets:</p>
@@ -34,7 +39,9 @@
                 <td>{{ dataset.name }}</td>
                 <td>{{ dataset.fields | length }}</td>
                 <td>
-                    <a class="button" href="/v1/datasets/{{ dataset.name }}">Manage</a>
+                    {% if Authenticator.authorise('dataset', 'write') %}
+                        <a class="button" href="/v1/datasets/{{ dataset.name }}">Manage</a>
+                    {% endif %}
                     &nbsp;
                     <a class="button" href="/v1/datasets/{{ dataset.name }}/items">Data</a>
                 </td>
