@@ -43,7 +43,7 @@ steps:
 
 - name: deploy_to_dev
   pull: if-not-exists
-  image: plugins/docker
+  image: quay.io/ukhomeofficedigital/kd
   commands:
   - export NODE_ENV=$$NODE_ENV
   - export LOG_LEVEL=$$LOG_LEVEL
@@ -91,7 +91,7 @@ steps:
 
 - name: deploy_to_prod
   pull: if-not-exists
-  image: plugins/docker
+  image: quay.io/ukhomeofficedigital/kd
   commands:
     - export NODE_ENV=$$NODE_ENV
     - export LOG_LEVEL=$$LOG_LEVEL
@@ -143,7 +143,7 @@ steps:
     - production
 
 services:
-  - name: docker
-    image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind
+- name: docker
+  image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind
 
 ...
