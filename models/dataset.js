@@ -19,10 +19,11 @@ class Dataset {
    * create the data structure. This ensures that the data structures aren't
    * touched every time that the class is instanciated.
    */
-  constructor (name, idType, fields = []) {
+  constructor (name, idType, fields = [], org = null) {
     this.name = name
     this.idType = idType
     this.fields = fields
+    this.org = org
   }
 
   checkIfExists () {
@@ -88,8 +89,8 @@ class Dataset {
   registerDatasetQuery () {
     // build the query to register the dataset
     const query = {
-      text: 'INSERT INTO datasets (name, idtype, fields) VALUES ($1, $2, $3)',
-      values: [this.name, this.idType, JSON.stringify(this.fields)],
+      text: 'INSERT INTO datasets (name, idtype, fields, org) VALUES ($1, $2, $3, $4)',
+      values: [this.name, this.idType, JSON.stringify(this.fields), this.org],
     }
     return query
   }
