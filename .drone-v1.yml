@@ -60,13 +60,11 @@ steps:
   - export DB_ATTRIBUTE=database_name
   - kd -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml
   environment:
-  - ENV=notprod
-  - KUBE_NAMESPACE=dq-apps-notprod
-  - INSECURE_SKIP_TLS_VERIFY=true
+    ENV: notprod
+    KUBE_NAMESPACE: dq-apps-notprod
+    INSECURE_SKIP_TLS_VERIFY: true
     NOTPROD_HOSTNAME:
       from secret: NOTPROD_HOSTNAME
-    NODE_ENV:
-      from_secret: NODE_ENV
     NODE_ENV:
       from_secret: NODE_ENV
     LOG_LEVEL:
@@ -95,11 +93,6 @@ steps:
   pull: if-not-exists
   image: plugins/docker
   commands:
-  environment:
-    - ENV=prod
-    - KUBE_NAMESPACE=dq-apps
-    - INSECURE_SKIP_TLS_VERIFY=true
-  commands:
     - export NODE_ENV=$$NODE_ENV
     - export LOG_LEVEL=$$LOG_LEVEL
     - export HOSTNAME=$$PROD_HOSTNAME
@@ -114,7 +107,10 @@ steps:
     - export RDS_SECRET_NAME=dq-apps-bdm-prod-rds
     - export DB_ATTRIBUTE=db_name
     - kd -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml
-  secrets:
+  envirnoment:
+    ENV: prod
+    KUBE_NAMESPACE: dq-apps
+    INSECURE_SKIP_TLS_VERIFY: true
     NODE_ENV:
       from_secret: NODE_ENV
     LOG_LEVEL:
@@ -138,6 +134,9 @@ steps:
     PROD_KEYCLOAK_DISCOVERY_URL:
       from_secret: PROD_KEYCLOAK_DISCOVERY_URL
   when:
+    branch:
+    - master
+    - hotfix/*
     event:
     - promote
     target:
