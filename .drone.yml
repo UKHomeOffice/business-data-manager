@@ -63,6 +63,7 @@ steps:
   - export DB_ATTRIBUTE=database_name
   - echo $${NOTPROD_HOSTNAME}
   - echo $${ENV}
+  - echo "x"
   - kd -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml
   environment:
     ENV: notprod
