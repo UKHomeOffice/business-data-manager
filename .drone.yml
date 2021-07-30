@@ -61,8 +61,6 @@ steps:
   - export KUBE_TOKEN=$$NOTPROD_KUBE_TOKEN
   - export RDS_SECRET_NAME=dq-apps-notprod-postgres-rds
   - export DB_ATTRIBUTE=database_name
-  - echo $${NOTPROD_HOSTNAME}
-  - echo $${NODE_ENV}
   - kd -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml
   environment:
     ENV: notprod
