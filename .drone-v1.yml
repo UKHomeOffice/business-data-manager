@@ -29,17 +29,17 @@ steps:
     event:
     - push
 
-- name: trivy_scan
-  pull: if-not-exists
-  image: aquasec/trivy
-  commands:
-  - trivy --ignore-unfixed --exit-code 1 --no-progress quay.io/ukhomeofficedigital/business-data-manager:${DRONE_COMMIT_SHA}
-  when:
-    branch:
-      exclude:
-      - master
-    event:
-    - push
+#- name: trivy_scan
+#  pull: if-not-exists
+#  image: aquasec/trivy
+#  commands:
+#  - trivy --ignore-unfixed --exit-code 1 --no-progress quay.io/ukhomeofficedigital/business-data-manager:${DRONE_COMMIT_SHA}
+#  when:
+#    branch:
+#      exclude:
+#      - master
+#    event:
+#    - push
 
 - name: deploy_to_dev
   pull: if-not-exists
