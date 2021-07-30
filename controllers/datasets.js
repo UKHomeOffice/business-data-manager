@@ -17,10 +17,16 @@ exports.getDatasets = (req, res) => {
         res.format({
           html: () => {
             logger.verbose('getDatasets sending HTML response')
+            const data = result.data.filter(dataset => {
+              if (dataset.org) {
+                return req.app.locals.orgs.includes(dataset.org)
+              }
+              return true
+            })
             res.status(200).render('getDatasets', {
               reqPath: req.originalUrl,
               title: 'Current datasets',
-              data: result.data
+              data: data
             })
           },
           json: () => {
@@ -60,7 +66,7 @@ exports.addViewDatasets = (req, res) => {
 exports.postDatasets = (req, res) => {
   // pre-process the fields to set id correctly
 
-  const dataset = new Dataset(req.body.name, req.body.idType, req.body.fields)
+  const dataset = new Dataset(req.body.name, req.body.idType, req.body.fields, req.body.org)
   dataset.post()
     .then(result => {
       // check the result for successful creation

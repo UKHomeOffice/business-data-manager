@@ -80,6 +80,22 @@ class Datasets {
           if (result.rows[0].to_regclass === null) {
             return resolve(this.createDatasetsTable())
           }
+          return resolve(this.alterDatasetTable())
+        })
+        .catch(err => {
+          logger.error(err)
+          return reject(err)
+        })
+    })
+  }
+
+  alterDatasetTable () {
+    return new Promise((resolve, reject) => {
+      logger.info('Updating datasets table')
+      const queryString = 'alter table datasets add column if not exists org varchar;'
+      logger.debug(queryString)
+      db.query(queryString)
+        .then(result => {
           const msg = { statusCode: '200', message: 'OK' }
           return resolve(msg)
         })
@@ -95,7 +111,8 @@ class Datasets {
       const queryString = 'CREATE TABLE datasets ( ' +
                         'name varchar NOT NULL PRIMARY KEY, ' +
                         'idtype varchar NOT NULL, ' +
-                        'fields jsonb NOT NULL );'
+                        'fields jsonb NOT NULL, ' +
+                        'org varchar );'
       logger.debug(queryString)
       db.query(queryString)
         .then(result => {
@@ -126,7 +143,8 @@ class Datasets {
               const dataset = {
                 name: result.rows[i].name,
                 idType: result.rows[i].idtype,
-                fields: result.rows[i].fields
+                fields: result.rows[i].fields,
+                org: result.rows[i].org
               }
               datasets.push(dataset)
             }

@@ -33,6 +33,18 @@
                 <div class="form-group">
                     <input class="form-control" id="name" name="name" type="text">
                 </div>
+                <h3 class="heading-medium">
+                    Dataset organisation
+                    <span class="form-hint">Which organisation does this dataset belong to. </span>
+                </h3>
+                <div class="form-group">
+                    <select class="form-control" id="org" name="org">
+                      <option value="">All</option>
+                      {% for org in orgs %}
+                        <option value="{{ org }}">{{ org }}</option>
+                      {% endfor %}
+                    </select>
+                </div>
                 <div class="form-group">
                     <fieldset class="inline">
                         <label class="heading-medium" for="idType">
