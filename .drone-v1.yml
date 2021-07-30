@@ -7,6 +7,9 @@ platform:
   os: linux
   arch: amd64
 
+workspace:
+  path: /go/src/gitlab.digital.homeoffice.gov.uk/${DRONE_REPO}
+
 steps:
 - name: build_monitor_image
   pull: if-not-exists
