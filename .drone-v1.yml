@@ -58,7 +58,7 @@ steps:
   - export KUBE_TOKEN=$$NOTPROD_KUBE_TOKEN
   - export RDS_SECRET_NAME=dq-apps-notprod-postgres-rds
   - export DB_ATTRIBUTE=database_name
-  - echo $HOSTNAME
+  - echo $NOTPROD_HOSTNAME
   - kd -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml
   environment:
     ENV: notprod
@@ -86,9 +86,6 @@ steps:
       from_secret: NOTPROD_KEYCLOAK_SECRET
     NOTPROD_KEYCLOAK_DISCOVERY_URL:
       from_secret: NOTPROD_KEYCLOAK_DISCOVERY_URL
-  when:
-    event:
-    - push
 
 - name: deploy_to_prod
   pull: if-not-exists
