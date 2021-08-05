@@ -20,7 +20,7 @@
             <h2 class="heading-large">Add a new item</h2>
             <p>You can add an new item to the dataset below.</p>
             <form method="POST" action="/v1/datasets/{{ data.datasetName }}/items">
-                <input type='hidden' name='_csrf' value="{{ _csrf }}">
+                <input type='hidden' name="_csrf" value="{{ _csrf }}">
                 {% for field in data.fields %}
                     <div class="form-group">
                         {% if field === 'id' and data.idType === 'SERIAL' %}
