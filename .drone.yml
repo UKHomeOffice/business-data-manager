@@ -88,16 +88,16 @@ steps:
       from_secret: NOTPROD_KEYCLOAK_SECRET
     NOTPROD_KEYCLOAK_DISCOVERY_URL:
       from_secret: NOTPROD_KEYCLOAK_DISCOVERY_URL
-#  when:
-#    branch:
-#    - master
-#    - hotfix/*
-#    event:
-#    - promote
-#    - push
-#    target:
-#      exclude:
-#      - production
+  when:
+    branch:
+    - master
+    - hotfix/*
+    event:
+    - promote
+    - push
+    target:
+      exclude:
+      - production
 
 - name: deploy_to_prod
   pull: if-not-exists
