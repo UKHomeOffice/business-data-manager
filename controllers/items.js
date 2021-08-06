@@ -239,9 +239,9 @@ exports.updateItem = async (req, res) => {
 exports.postItems = (req, res) => {
   let item
   if (typeof req.body.id !== 'undefined') {
-    item = new Item(req.params.dataset, req.body.id, req.body)
+    item = new Item(req.params.dataset, req.body.id, req.body, req.app.locals.email)
   } else {
-    item = new Item(req.params.dataset, null, req.body)
+    item = new Item(req.params.dataset, null, req.body, req.app.locals.email)
   }
   item.post()
     .then(result => {

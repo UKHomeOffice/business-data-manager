@@ -18,10 +18,11 @@ class Item {
    * create the data structure. This ensures that the data structures aren't
    * touched every time that the class is instanciated.
    */
-  constructor (datasetName, itemId, properties = []) {
+  constructor (datasetName, itemId, properties = [], userId = '') {
     this.datasetName = datasetName
     this.itemId = itemId
     this.properties = properties
+    this.userId = userId
   }
 
   /**
@@ -63,6 +64,10 @@ class Item {
       updatePartial += `"${val}" = $${values.length + 1}`
       updateObj[val] === '' ? values.push(null) : values.push(updateObj[val])
     }
+    updatePartial += `, "updated_at" = $${values.length + 1}`
+    values.push('NOW()')
+    updatePartial += `, "updated_by" = $${values.length + 1}`
+    values.push(this.userId)
 
     return {
       text: `UPDATE ${this.datasetName} SET ${updatePartial} WHERE id = '${this.itemId}'`,
@@ -148,13 +153,15 @@ class Item {
         this.properties[key] === '' ? values.push(null) : values.push(`${this.properties[key]}`)
       }
     }
-    fields = fields.slice(0, -2)
-
+    fields += '"created_by"'
     let valueRefs = ''
+    let valNum = 0
     for (let paramNumber = 1; paramNumber < values.length + 1; paramNumber++) {
       valueRefs += '$' + paramNumber + ', '
+      valNum = paramNumber
     };
-    valueRefs = valueRefs.slice(0, -2)
+    valueRefs += `$${valNum + 1}`
+    values.push(this.userId)
     const queryText = `INSERT INTO ${this.datasetName} (${fields}) VALUES (${valueRefs}) RETURNING id`
     const query = {
       text: queryText,

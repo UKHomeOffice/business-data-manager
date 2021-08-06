@@ -92,17 +92,26 @@ class Datasets {
   alterDatasetTable () {
     return new Promise((resolve, reject) => {
       logger.info('Updating datasets table')
-      const queryString = 'alter table datasets add column if not exists org varchar;'
-      logger.debug(queryString)
-      db.query(queryString)
-        .then(result => {
-          const msg = { statusCode: '200', message: 'OK' }
-          return resolve(msg)
+      let queryString = 'alter table datasets add column if not exists org varchar;'
+      this.findAll().then(result => {
+        result.data.forEach(dataset => {
+          queryString += `
+                alter table ${dataset.name} add column if not exists created_at timestamp default current_timestamp;
+                alter table ${dataset.name} add column if not exists updated_at timestamp;
+                alter table ${dataset.name} add column if not exists created_by varchar;
+                alter table ${dataset.name} add column if not exists updated_by varchar;`
         })
-        .catch(err => {
-          logger.error(err)
-          return reject(err)
-        })
+        logger.debug(queryString)
+        db.query(queryString)
+          .then(result => {
+            const msg = { statusCode: '200', message: 'OK' }
+            return resolve(msg)
+          })
+          .catch(err => {
+            logger.error(err)
+            return reject(err)
+          })
+      })
     })
   }
 
