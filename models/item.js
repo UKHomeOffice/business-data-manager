@@ -19,6 +19,13 @@ class Item {
    * touched every time that the class is instanciated.
    */
   constructor (datasetName, itemId, properties = [], userId = '') {
+    this.nonFields = [
+      '_total_count',
+      'created_at',
+      'created_by',
+      'updated_at',
+      'updated_by',
+    ]
     this.datasetName = datasetName
     this.itemId = itemId
     this.properties = properties
@@ -88,12 +95,14 @@ class Item {
             // process fields and rows
             const properties = []
             for (let i = 0; i < result.fields.length; i++) {
-              const property = {
-                field: result.fields[i].name,
-                value: result.rows[0][result.fields[i].name],
-                columnType: this._columnIdToType(result.fields[i].dataTypeID)
+              if (!this.nonFields.includes(result.fields[i].name)) {
+                const property = {
+                  field: result.fields[i].name,
+                  value: result.rows[0][result.fields[i].name],
+                  columnType: this._columnIdToType(result.fields[i].dataTypeID)
+                }
+                properties.push(property)
               }
-              properties.push(property)
             }
             const item = {
               datasetName: this.datasetName,

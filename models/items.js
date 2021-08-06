@@ -20,6 +20,13 @@ class Items {
    */
   constructor (datasetName) {
     this.datasetName = datasetName
+    this.nonFields = [
+      '_total_count',
+      'created_at',
+      'created_by',
+      'updated_at',
+      'updated_by',
+    ]
   }
 
   findAll (offset = 0, limit = null, fetchAll = false, searchQuery = false) {
@@ -50,7 +57,7 @@ class Items {
             // process fields and rows
             const fields = []
             for (let i = 0; i < result.fields.length; i++) {
-              if (result.fields[i].name !== '_total_count') {
+              if (!this.nonFields.includes(result.fields[i].name)) {
                 fields.push(result.fields[i].name)
               }
             }

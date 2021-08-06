@@ -43,7 +43,7 @@
                   {% elif property.columnType == 'DATE' and property.value is none %}
                     <td><input class="form-control" type="text" name="{{property.field}}" value=""></td>
                   {% else %}
-                    <td><input class="form-control" type="text" name="{{property.field}}" value="{{property.value.toISOString().slice(0, 10)}}"></td>
+                    <td><input class="form-control" type="text" name="{{property.field}}" value="{{property.value.toISOString().slice(0, 10) if property.value else ''}}"></td>
                   {% endif %}
                 </tr>
               {% endfor %}
