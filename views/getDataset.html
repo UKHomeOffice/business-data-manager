@@ -51,7 +51,7 @@
             <p>You can add fields to the {{ data.name }} dataset by completing the form below.</p>
 
             <form method="POST" action="/v1/datasets/{{ data.name }}/properties">
-              <input type='hidden' name='_csrf' value="{{ _csrf }}">
+              <input type='hidden' name="_csrf" value="{{ _csrf }}">
               <h3 class="heading-medium">Field name</h3>
               <div class="form-group">
                 <input class="form-control" id="name" name="name" type="text">
@@ -140,8 +140,8 @@
         Only do this if you are absolutely sure!
       </span>
       <br>
-      <form method="POST" action="/v1/datasets/{{data.datasetName}}/delete">
-        <input type='hidden' name='_csrf' value="{{ _csrf }}">
+      <form method="POST" action="/v1/datasets/{{data.name}}/delete">
+        <input type='hidden' name="_csrf" value="{{ _csrf }}">
         <div class="form-group">
            <a href="#" onclick="document.forms[1].submit();return false;" name="delete-button">Delete</a>
         </div>

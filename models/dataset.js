@@ -61,6 +61,11 @@ class Dataset {
         query += ' UNIQUE'
       }
     }
+    query += `, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    updated_at TIMESTAMP, 
+    created_by VARCHAR, 
+    updated_by VARCHAR`
     query += ' );'
     return query
   }

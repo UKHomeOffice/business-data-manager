@@ -21,7 +21,7 @@
         <h2 class="heading-large">{{ data.datasetName }} - {{ data.itemId }}</h2>
         <p>The dataset contains the following items.</p>
         <form method="POST" action="/v1/datasets/{{data.datasetName}}/items/{{data.itemId}}/update">
-          <input type='hidden' name='_csrf' value="{{ _csrf }}">
+          <input type='hidden' name="_csrf" value="{{ _csrf }}">
           <table>
             <thead>
               <tr>
@@ -43,7 +43,7 @@
                   {% elif property.columnType == 'DATE' and property.value is none %}
                     <td><input class="form-control" type="text" name="{{property.field}}" value=""></td>
                   {% else %}
-                    <td><input class="form-control" type="text" name="{{property.field}}" value="{{property.value.toISOString().slice(0, 10)}}"></td>
+                    <td><input class="form-control" type="text" name="{{property.field}}" value="{{property.value.toISOString().slice(0, 10) if property.value else ''}}"></td>
                   {% endif %}
                 </tr>
               {% endfor %}
@@ -69,7 +69,7 @@
           </span>
           <br>
           <form method="POST" action="/v1/datasets/{{data.datasetName}}/items/{{data.itemId}}/delete">
-            <input type='hidden' name='_csrf' value="{{ _csrf }}">
+            <input type='hidden' name="_csrf" value="{{ _csrf }}">
             <div class="form-group">
                <a href="#" onclick="document.forms[1].submit();return false;" name="delete-button">Delete</a>
             </div>
