@@ -40,10 +40,14 @@
                     <td><input class="form-control" type="number" name="{{property.field}}" value="{{ property.value }}"></td>
                   {% elif property.columnType == 'VARCHAR' %}
                     <td><input class="form-control" type="text" name="{{property.field}}" value="{{ property.value }}"></td>
-                  {% elif property.columnType == 'DATE' and property.value is none %}
-                    <td><input class="form-control" type="text" name="{{property.field}}" value=""></td>
-                  {% else %}
+                  {% elif property.columnType == 'DATE' %}
                     <td><input class="form-control" type="text" name="{{property.field}}" value="{{property.value.toISOString().slice(0, 10) if property.value else ''}}"></td>
+                  {% elif property.columnType == 'TIMESTAMP' %}
+                    <td><input class="form-control" type="text" name="{{property.field}}" value="{{property.value.toISOString() if property.value else ''}}"></td>
+                  {% elif property.columnType == 'NUMERIC' %}
+                    <td><input class="form-control" type="number" name="{{property.field}}" value="{{ property.value }}"></td>
+                  {% else %}
+                    <td><input class="form-control" type="text" name="{{property.field}}" value="{{ property.value }}"></td>
                   {% endif %}
                 </tr>
               {% endfor %}

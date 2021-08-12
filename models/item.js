@@ -260,7 +260,9 @@ class Item {
     const idValueMap = {
       1043: 'VARCHAR',
       23: 'INTEGER',
-      1082: 'DATE'
+      1082: 'DATE',
+      1700: 'NUMERIC',
+      1114: 'TIMESTAMP'
     }
     return idValueMap[columnId]
   }
