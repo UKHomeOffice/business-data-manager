@@ -182,7 +182,7 @@ exports.updateItem = async (req, res) => {
   const datasetName = req.params.dataset
   const itemId = req.params.item
   delete req.body._csrf
-  const item = new Item(datasetName, itemId)
+  const item = new Item(datasetName, itemId, req.body, req.app.locals.email)
   try {
     const updateResponse = await item.update(req.body)
     if (updateResponse.statusCode === '200') {
