@@ -4,7 +4,7 @@ const config = require('./config')
 const handleRoles = (req, res, next) => {
   try {
     const email = (req.get('X-Auth-Email') || 'no-email')
-    const roles = (req.get('X-Auth-Roles') || `${config.roles.superUserRole},BDM-ORG-GAIT`).split(',')
+    const roles = (req.get('X-Auth-Roles') || `${config.roles.superUserRole},BDM-ORG-GAIT,BDM-ORG-CEDAT`).split(',')
     let userRole
     for (let r of Object.values(config.roles)) {
       if (roles.includes(r)) {
