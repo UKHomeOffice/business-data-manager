@@ -291,6 +291,9 @@ exports.postItems = (req, res) => {
     .catch(err => {
       logger.error(err)
       req.flash('errors', { msg: 'Failed to add item' })
+      if (req.get('Accept') === 'application/json') {
+        return res.status(500).json({ action: 'Unprocessable Entity', 'error': err.toString() })
+      }
       res.redirect(`/v1/datasets/${req.params.dataset}/items`)
     })
 }
