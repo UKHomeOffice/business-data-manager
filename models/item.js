@@ -157,7 +157,7 @@ class Item {
     let fields = ''
     const values = []
     for (const key in this.properties) {
-      if (key !== '_csrf') {
+      if (key !== '_csrf' && this.properties[key] !== null) {
         fields += `"${key}", `
         this.properties[key] === '' ? values.push(null) : values.push(`${this.properties[key]}`)
       }
