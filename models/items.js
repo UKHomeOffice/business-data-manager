@@ -21,11 +21,7 @@ class Items {
   constructor (datasetName) {
     this.datasetName = datasetName
     this.nonFields = [
-      '_total_count',
-      'created_at',
-      'created_by',
-      'updated_at',
-      'updated_by',
+      '_total_count'
     ]
   }
 

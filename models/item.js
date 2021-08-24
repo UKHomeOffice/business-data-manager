@@ -20,11 +20,7 @@ class Item {
    */
   constructor (datasetName, itemId, properties = [], userId = '') {
     this.nonFields = [
-      '_total_count',
-      'created_at',
-      'created_by',
-      'updated_at',
-      'updated_by',
+      '_total_count'
     ]
     this.datasetName = datasetName
     this.itemId = itemId
