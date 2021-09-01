@@ -168,3 +168,22 @@ item from a dataset
 
 `DELETE /v1/datasets/{dataset}/items/{item}` - deletes a single
 item from a dataset
+
+### Database backup and restore
+Database backups are made by AWS/ACP nightly and are stored for 7 days. 
+
+To restore a database you will need to ask ACP to start a snapshot of the database and then you can copy and restore this to the main database yourself.
+
+You will need to get the connection details from ACP for the snapshot.
+
+ssh in to the bdm pod and run:
+
+To dump the snapshot db to a file:
+```sql
+pg_dump -cFc -d {snapshot DB} -h {snapshot host} -U {snapshot user} > bdm.dump
+```
+
+To load the snapshot dump from the file in to BDM:
+```sql
+pg_restore -c --single-transaction -d $PGDATABASE -h $PGHOST -U $PGUSER bdm.dump
+```
