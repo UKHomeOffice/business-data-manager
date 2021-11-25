@@ -99,7 +99,7 @@ steps:
       exclude:
       - production
 
- name: deploy_to_staging
+- name: deploy_to_staging
   pull: if-not-exists
   image: quay.io/ukhomeofficedigital/kd
   commands:
