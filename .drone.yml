@@ -158,14 +158,14 @@ steps:
       from_secret: STAGING_PGDATABASE
     STAGING_PGPASSWORD:
       from_secret: STAGING_PGPASSWORD
-  when:
-    branch:
-    - master
-    - hotfix/*
-    event:
-    - promote
-    target:
-    - staging
+#  when:
+#    branch:
+#    - master
+#    - hotfix/*
+#    event:
+#    - promote
+#    target:
+#    - staging
 
 - name: deploy_to_prod
   pull: if-not-exists
