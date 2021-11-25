@@ -99,6 +99,74 @@ steps:
       exclude:
       - production
 
+ name: deploy_to_staging
+  pull: if-not-exists
+  image: quay.io/ukhomeofficedigital/kd
+  commands:
+  - export NODE_ENV=$${NODE_ENV}
+  - export LOG_LEVEL=$${LOG_LEVEL}
+  - export HOSTNAME=$${STAGING_HOSTNAME}
+  - export KEYCLOAK_CLIENT_ID=$${NOTPROD_KEYCLOAK_CLIENT_ID}
+  - export KEYCLOAK_CLIENT_SECRET=$${NOTPROD_KEYCLOAK_CLIENT_SECRET}
+  - export KEYCLOAK_DISCOVERY=$${NOTPROD_KEYCLOAK_DISCOVERY}
+  - export KEYCLOAK_ID=$${NOTPROD_KEYCLOAK_ID}
+  - export KEYCLOAK_SECRET=$${NOTPROD_KEYCLOAK_SECRET}
+  - export KEYCLOAK_DISCOVERY_URL=$${NOTPROD_KEYCLOAK_DISCOVERY_URL}
+  - export KUBE_SERVER=$$PROD_KUBE_SERVER
+  - export KUBE_TOKEN=$$PROD_KUBE_TOKEN
+  - export RDS_SECRET_NAME=dq-apps-bdm-staging-rds
+  - export DB_ATTRIBUTE=db_name
+  - export PGHOST=$${STAGING_PGHOST}
+  - export PGPORT=$${STAGING_PGPORT}
+  - export PGUSER=$${STAGING_PGUSER}
+  - export PGDATABASE=$${STAGING_PGDATABASE}
+  - export PGPASSWORD=$${STAGING_PGPASSWORD}
+  - kd -f kube/secret.yml -f kube/dq-staging-rds-secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml
+  environment:
+    ENV: prod
+    KUBE_NAMESPACE: dq-apps-staging
+    INSECURE_SKIP_TLS_VERIFY: true
+    NODE_ENV:
+      from_secret: NODE_ENV
+    LOG_LEVEL:
+      from_secret: LOG_LEVEL
+    STAGING_HOSTNAME:
+      from_secret: STAGING_HOSTNAME
+    NOTPROD_KEYCLOAK_CLIENT_ID:
+      from_secret: NOTPROD_KEYCLOAK_CLIENT_ID
+    NOTPROD_KEYCLOAK_CLIENT_SECRET:
+      from_secret: NOTPROD_KEYCLOAK_CLIENT_SECRET
+    NOTPROD_KEYCLOAK_DISCOVERY:
+      from_secret: NOTPROD_KEYCLOAK_DISCOVERY
+    PROD_KUBE_SERVER:
+      from_secret: PROD_KUBE_SERVER
+    PROD_KUBE_TOKEN:
+      from_secret: PROD_KUBE_TOKEN
+    NOTPROD_KEYCLOAK_ID:
+      from_secret: NOTPROD_KEYCLOAK_ID
+    NOTPRODKEYCLOAK_SECRET:
+      from_secret: NOTPROD_KEYCLOAK_SECRET
+    NOTPROD_KEYCLOAK_DISCOVERY_URL:
+      from_secret: NOTPROD_KEYCLOAK_DISCOVERY_URL
+    STAGING_PGHOST:
+      from_secret: STAGING_PGHOST
+    STAGING_PGPORT:
+      from_secret: STAGING_PGPORT
+    STAGING_PGUSER:
+      from_secret: STAGING_PGUSER
+    STAGING_PGDATABASE:
+      from_secret: STAGING_PGDATABASE
+    STAGING_PGPASSWORD:
+      from_secret: STAGING_PGPASSWORD
+  when:
+    branch:
+    - master
+    - hotfix/*
+    event:
+    - promote
+    target:
+    - staging
+
 - name: deploy_to_prod
   pull: if-not-exists
   image: quay.io/ukhomeofficedigital/kd
