@@ -113,7 +113,7 @@ steps:
   - export KEYCLOAK_SECRET=$${NOTPROD_KEYCLOAK_SECRET}
   - export KEYCLOAK_DISCOVERY_URL=$${NOTPROD_KEYCLOAK_DISCOVERY_URL}
   - export KUBE_SERVER=$$PROD_KUBE_SERVER
-  - export KUBE_TOKEN=$$PROD_KUBE_TOKEN
+  - export KUBE_TOKEN=$$STAGING_KUBE_TOKEN
   - export RDS_SECRET_NAME=dq-apps-bdm-staging-rds
   - export DB_ATTRIBUTE=db_name
   - export PGHOST=$${STAGING_PGHOST}
@@ -140,8 +140,8 @@ steps:
       from_secret: NOTPROD_KEYCLOAK_DISCOVERY
     PROD_KUBE_SERVER:
       from_secret: PROD_KUBE_SERVER
-    PROD_KUBE_TOKEN:
-      from_secret: PROD_KUBE_TOKEN
+    STAGING_KUBE_TOKEN:
+      from_secret: STAGING_KUBE_TOKEN
     NOTPROD_KEYCLOAK_ID:
       from_secret: NOTPROD_KEYCLOAK_ID
     NOTPRODKEYCLOAK_SECRET:
