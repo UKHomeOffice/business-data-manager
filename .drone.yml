@@ -121,6 +121,7 @@ steps:
   - export PGUSER=$${STAGING_PGUSER}
   - export PGDATABASE=$${STAGING_PGDATABASE}
   - export PGPASSWORD=$${STAGING_PGPASSWORD}
+  - export SESSION_SECRET=$${STAGING_SESSION_SECRET}
   - kd -f kube/secret.yml -f kube/dq-staging-rds-secret.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml -f kube/deployment.yml
   environment:
     ENV: prod
@@ -158,6 +159,8 @@ steps:
       from_secret: STAGING_PGDATABASE
     STAGING_PGPASSWORD:
       from_secret: STAGING_PGPASSWORD
+    STAGING_SESSION_SECRET:
+      from_secret: STAGING_SESSION_SECRET
 #  when:
 #    branch:
 #    - master
