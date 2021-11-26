@@ -161,14 +161,14 @@ steps:
       from_secret: STAGING_PGPASSWORD
     STAGING_SESSION_SECRET:
       from_secret: STAGING_SESSION_SECRET
-#  when:
-#    branch:
-#    - master
-#    - hotfix/*
-#    event:
-#    - promote
-#    target:
-#    - staging
+  when:
+    branch:
+    - master
+    - hotfix/*
+    event:
+    - promote
+    target:
+    - staging
 
 - name: deploy_to_prod
   pull: if-not-exists
