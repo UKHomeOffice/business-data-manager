@@ -121,7 +121,7 @@ steps:
   - export PGUSER=$${STAGING_PGUSER}
   - export PGDATABASE=$${STAGING_PGDATABASE}
   - export PGPASSWORD=$${STAGING_PGPASSWORD}
-  - kd -f kube/secret.yml -f kube/dq-staging-rds-secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml
+  - kd -f kube/secret.yml -f kube/dq-staging-rds-secret.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml -f kube/deployment.yml
   environment:
     ENV: prod
     KUBE_NAMESPACE: dq-apps-staging
