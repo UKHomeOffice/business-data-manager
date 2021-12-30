@@ -19,11 +19,12 @@ class Dataset {
    * create the data structure. This ensures that the data structures aren't
    * touched every time that the class is instanciated.
    */
-  constructor (name, idType, fields = [], org = null) {
+  constructor (name, idType, fields = [], org = null, versioned = false) {
     this.name = name
     this.idType = idType
     this.fields = fields
     this.org = org
+    this.versioned = versioned
   }
 
   checkIfExists () {
@@ -52,13 +53,25 @@ class Dataset {
   createTableQuery () {
     let query = `CREATE TABLE ${this.name} (`
     query += ` id ${this.idType} PRIMARY KEY`
+    if (this.versioned) {
+      query += `, 
+      version_id SMALLINT NOT NULL,
+      is_current SMALLINT DEFAULT 1,
+      version SMALLINT NOT NULL DEFAULT 1,
+      CONSTRAINT version_current_unique UNIQUE (version_id, is_current)`
+    }
     for (let i = 0; i < this.fields.length; i++) {
       query += `, "${this.fields[i].name}" ${this.fields[i].datatype}`
       if (this.fields[i].notNull === 'Yes') {
         query += ' NOT NULL'
       }
       if (this.fields[i].unique === 'Yes') {
-        query += ' UNIQUE'
+        if (this.versioned) {
+          query += `,
+          CONSTRAINT ${this.fields[i].name}_current_unique UNIQUE (${this.fields[i].name}, is_current)`
+        } else {
+          query += ' UNIQUE'
+        }
       }
     }
     query += `, 
@@ -94,8 +107,8 @@ class Dataset {
   registerDatasetQuery () {
     // build the query to register the dataset
     const query = {
-      text: 'INSERT INTO datasets (name, idtype, fields, org) VALUES ($1, $2, $3, $4)',
-      values: [this.name, this.idType, JSON.stringify(this.fields), this.org],
+      text: 'INSERT INTO datasets (name, idtype, fields, org, virsioned) VALUES ($1, $2, $3, $4, $5)',
+      values: [this.name, this.idType, JSON.stringify(this.fields), this.org, this.versioned],
     }
     return query
   }
@@ -229,6 +242,71 @@ class Dataset {
     })
   }
 
+  updateDataset () {
+    return new Promise((resolve, reject) => {
+      const query = {
+        text: 'UPDATE datasets SET versioned = true WHERE name = $1',
+        values: [this.name],
+      }
+      logger.debug(query)
+      db.query(query)
+        .then(result => {
+          logger.verbose(`Set ${this.name} dataset to versioned`)
+          const msg = { statusCode: '200', message: 'Updated' }
+          return resolve(msg)
+        })
+        .catch(err => {
+          logger.error(err)
+          return reject(err)
+        })
+    })
+  }
+
+  versionQuery () {
+    let query = `ALTER TABLE IF EXISTS ${this.name} `
+    if (this.versioned) {
+      query += `,
+      ADD COLUMN IF NOT EXISTS version_id SMALLINT NOT NULL,
+      ADD COLUMN IF NOT EXISTS is_current SMALLINT DEFAULT 1,
+      ADD COLUMN IF NOT EXISTS version SMALLINT NOT NULL DEFAULT 1,
+      ADD CONSTRAINT version_current_unique IF NOT EXISTS UNIQUE (version_id, is_current)`
+    }
+    for (let i = 0; i < this.fields.length; i++) {
+      if (this.fields[i].unique === 'Yes') {
+        if (this.versioned) {
+          query += `,
+          ADD CONSTRAINT IF NOT EXISTS ${this.fields[0].name}_current_unique UNIQUE (${this.fields[i].name}, is_current),
+          DROP CONSTRAINT IF EXISTS ${this.name}_${this.fields[0].name}_key`
+        }
+      }
+    }
+    query += ';'
+    return query
+  }
+
+  versionTable () {
+    return new Promise((resolve, reject) => {
+      if (!this.versioned) {
+        return resolve({ statusCode: '422', message: 'Table bot versioned versioned' })
+      }
+      const queryString = this.versionQuery()
+      logger.debug(queryString)
+      db.query(queryString)
+        .then(result => {
+          this.updateDataset()
+            .then(r => {
+              logger.verbose(`Set ${this.name} dataset to versioned`)
+              const msg = { statusCode: '200', message: 'Updated' }
+              return resolve(msg)
+            })
+        })
+        .catch(err => {
+          logger.error(err)
+          return reject(err)
+        })
+    })
+  }
+
   addPropertyQueryString () {
     let alterTableQuery = `ALTER TABLE IF EXISTS ${this.name} ADD COLUMN`
     alterTableQuery += ` "${this.fields[0].name}" ${this.fields[0].datatype}`
@@ -236,7 +314,12 @@ class Dataset {
       alterTableQuery += ' NOT NULL'
     }
     if (this.fields[0].unique === 'Yes') {
-      alterTableQuery += ' UNIQUE'
+      if (this.versioned) {
+        alterTableQuery += `,
+        ADD CONSTRAINT IF NOT EXISTS ${this.fields[0].name}_current_unique UNIQUE (${this.fields[0].name}, is_current);`
+      } else {
+        alterTableQuery += ' UNIQUE'
+      }
     }
     alterTableQuery += ';'
     return alterTableQuery
@@ -251,14 +334,9 @@ class Dataset {
       logger.debug(queryString)
       db.query(queryString)
         .then(result => {
-          // check that result is as expected for a successful create or throw an error/warning
-          // result.command === 'DELETE'
           logger.verbose(`Added property to ${this.name} table`)
           const msg = { statusCode: '201', message: 'Created' }
           return resolve(msg)
-          // if not then
-          // let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'};
-          // return resolve(msg);
         })
         .catch(err => {
           logger.error(err)
@@ -279,14 +357,9 @@ class Dataset {
       logger.debug(query)
       db.query(query)
         .then(result => {
-          // check that result is as expected for a successful create or throw an error/warning
-          // result.command === 'DELETE'
           logger.verbose(`Added property to ${this.name} table`)
           const msg = { statusCode: '201', message: 'Created' }
           return resolve(msg)
-          // if not then
-          // let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'};
-          // return resolve(msg);
         })
         .catch(err => {
           logger.error(err)
@@ -331,6 +404,15 @@ class Dataset {
       this.checkIfExists()
         .then(tableExists => {
           if (tableExists.statusCode === '302') {
+            if (this.versioned) {
+              this.versionTable()
+                .then(versionResult => {
+                  if (versionResult.statusCode === '200') {
+                    const msg = { statusCode: '200', message: 'Dataset versioning added' }
+                    return resolve(msg)
+                  }
+                })
+            }
             const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
             return resolve(msg)
           }

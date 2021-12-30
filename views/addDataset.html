@@ -66,6 +66,22 @@
                     </fieldset>
                 </div>
                 <div class="form-group">
+                    <fieldset class="inline">
+                        <label class="heading-medium" for="versioned">
+                            Dataset record versioning
+                            <span class="form-hint">Chose Versioned to save the history of updates to the items in the dataset</span>
+                        </label>
+                        <div class="multiple-choice">
+                            <input id="versioned-1" type="radio" name="versioned" value="false">
+                            <label for="versioned-1">Not versioned</label>
+                        </div>
+                        <div class="multiple-choice">
+                            <input id="versioned-2" type="radio" name="versioned" value="true">
+                            <label for="versioned-2">Versioned</label>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="form-group">
                     <input class="button" type="submit" value="Create dataset">
                 </div>
             </form>
