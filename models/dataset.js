@@ -111,7 +111,7 @@ class Dataset {
   registerDatasetQuery () {
     // build the query to register the dataset
     const query = {
-      text: 'INSERT INTO datasets (name, idtype, fields, org, virsioned) VALUES ($1, $2, $3, $4, $5)',
+      text: 'INSERT INTO datasets (name, idtype, fields, org, versioned) VALUES ($1, $2, $3, $4, $5)',
       values: [this.name, this.idType, JSON.stringify(this.fields), this.org, this.versioned],
     }
     return query
