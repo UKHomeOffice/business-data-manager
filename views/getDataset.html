@@ -52,6 +52,7 @@
 
             <form method="POST" action="/v1/datasets/{{ data.name }}/properties">
               <input type='hidden' name="_csrf" value="{{ _csrf }}">
+              <input type="hidden" name="versioned" value="{{ data.versioned }}">
               <h3 class="heading-medium">Field name</h3>
               <div class="form-group">
                 <input class="form-control" id="name" name="name" type="text">
