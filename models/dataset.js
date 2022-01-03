@@ -22,9 +22,9 @@ class Dataset {
   constructor (name, idType, fields = [], org = null, versioned = false) {
     this.name = name
     this.idType = idType
-    this.fields = fields
+    this.fields = typeof fields === 'string' ? JSON.parse(fields):fields
     this.org = org
-    this.versioned = versioned
+    this.versioned = versioned === true || versioned === 'true'
   }
 
   checkIfExists () {

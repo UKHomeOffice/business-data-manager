@@ -151,6 +151,7 @@
       <form method="POST" action="/v1/datasets/{{data.name}}/version">
         <input type='hidden' name="_csrf" value="{{ _csrf }}">
         <input type="hidden" name="name" value="{{data.name}}">
+        <input type="hidden" name="fields" value="{{data.fields | dump}}">
         <input type="hidden" name="org" value="{{data.org}}">
         <input type="hidden" name="idType" value="{{data.idType}}">
         <input type="hidden" name="versioned" value="true">
