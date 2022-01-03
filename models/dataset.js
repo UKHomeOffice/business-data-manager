@@ -62,7 +62,7 @@ class Dataset {
       version_id SMALLINT NOT NULL DEFAULT nextval('${this.name}_version_id_seq'),
       is_current SMALLINT DEFAULT 1,
       version SMALLINT NOT NULL DEFAULT 1,
-      CONSTRAINT version_current_unique UNIQUE (version_id, is_current)`
+      CONSTRAINT ${this.name}_version_current_unique UNIQUE (version_id, is_current)`
     }
     for (let i = 0; i < this.fields.length; i++) {
       query += `, "${this.fields[i].name}" ${this.fields[i].datatype}`
@@ -274,8 +274,8 @@ class Dataset {
     ADD COLUMN IF NOT EXISTS version_id SMALLINT NOT NULL DEFAULT nextval('${this.name}_version_id_seq'),
     ADD COLUMN IF NOT EXISTS is_current SMALLINT DEFAULT 1,
     ADD COLUMN IF NOT EXISTS version SMALLINT NOT NULL DEFAULT 1,
-    DROP CONSTRAINT IF EXISTS version_current_unique,
-    ADD CONSTRAINT version_current_unique UNIQUE (version_id, is_current)`
+    DROP CONSTRAINT IF EXISTS ${this.name}_version_current_unique,
+    ADD CONSTRAINT ${this.name}_version_current_unique UNIQUE (version_id, is_current)`
     for (let i = 0; i < this.fields.length; i++) {
       if (this.fields[i].unique === 'Yes') {
         query += `,
@@ -294,7 +294,6 @@ class Dataset {
         return resolve({ statusCode: '422', message: 'Table is not versioned' })
       }
       const queryString = this.versionQuery()
-      console.log(queryString)
       logger.debug(queryString)
       db.query(queryString)
         .then(result => {
