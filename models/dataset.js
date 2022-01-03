@@ -190,7 +190,7 @@ class Dataset {
 
   findOne () {
     return new Promise((resolve, reject) => {
-      const queryString = `SELECT name, idtype, fields FROM datasets WHERE name = '${this.name}';`
+      const queryString = `SELECT name, idtype, fields, org, versioned FROM datasets WHERE name = '${this.name}';`
       logger.debug(queryString)
       db.query(queryString)
         .then(result => {
@@ -199,7 +199,9 @@ class Dataset {
             const dataset = {
               name: result.rows[0].name,
               idType: result.rows[0].idtype,
-              fields: result.rows[0].fields
+              fields: result.rows[0].fields,
+              org: result.rows[0].org,
+              versioned: result.rows[0].versioned
             }
             const msg = { statusCode: '200', message: 'OK', data: dataset }
             return resolve(msg)
