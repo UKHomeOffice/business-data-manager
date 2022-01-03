@@ -51,11 +51,15 @@ class Dataset {
   }
 
   createTableQuery () {
-    let query = `CREATE TABLE ${this.name} (`
+    let query = ''
+    if (this.versioned) {
+      query += `CREATE SEQUENCE ${this.name}_version_id_seq;`
+    }
+    query += `CREATE TABLE ${this.name} (`
     query += ` id ${this.idType} PRIMARY KEY`
     if (this.versioned) {
       query += `, 
-      version_id SMALLINT NOT NULL,
+      version_id SMALLINT NOT NULL DEFAULT nextval('${this.name}_version_id_seq'),
       is_current SMALLINT DEFAULT 1,
       version SMALLINT NOT NULL DEFAULT 1,
       CONSTRAINT version_current_unique UNIQUE (version_id, is_current)`
@@ -263,21 +267,19 @@ class Dataset {
   }
 
   versionQuery () {
-    let query = `ALTER TABLE IF EXISTS ${this.name} `
-    if (this.versioned) {
-      query += `,
-      ADD COLUMN IF NOT EXISTS version_id SMALLINT NOT NULL,
-      ADD COLUMN IF NOT EXISTS is_current SMALLINT DEFAULT 1,
-      ADD COLUMN IF NOT EXISTS version SMALLINT NOT NULL DEFAULT 1,
-      ADD CONSTRAINT version_current_unique IF NOT EXISTS UNIQUE (version_id, is_current)`
-    }
+    let query = `CREATE SEQUENCE ${this.name}_version_id_seq;
+    ALTER TABLE IF EXISTS ${this.name} 
+    ADD COLUMN IF NOT EXISTS version_id SMALLINT NOT NULL DEFAULT nextval('${this.name}_version_id_seq'),
+    ADD COLUMN IF NOT EXISTS is_current SMALLINT DEFAULT 1,
+    ADD COLUMN IF NOT EXISTS version SMALLINT NOT NULL DEFAULT 1,
+    DROP CONSTRAINT IF EXISTS version_current_unique,
+    ADD CONSTRAINT version_current_unique UNIQUE (version_id, is_current)`
     for (let i = 0; i < this.fields.length; i++) {
       if (this.fields[i].unique === 'Yes') {
-        if (this.versioned) {
-          query += `,
-          ADD CONSTRAINT IF NOT EXISTS ${this.fields[0].name}_current_unique UNIQUE (${this.fields[i].name}, is_current),
-          DROP CONSTRAINT IF EXISTS ${this.name}_${this.fields[0].name}_key`
-        }
+        query += `,
+        DROP CONSTRAINT IF EXISTS ${this.fields[0].name}_current_unique,
+        ADD CONSTRAINT ${this.fields[0].name}_current_unique UNIQUE (${this.fields[i].name}, is_current),
+        DROP CONSTRAINT IF EXISTS ${this.name}_${this.fields[0].name}_key`
       }
     }
     query += ';'
@@ -287,9 +289,10 @@ class Dataset {
   versionTable () {
     return new Promise((resolve, reject) => {
       if (!this.versioned) {
-        return resolve({ statusCode: '422', message: 'Table bot versioned versioned' })
+        return resolve({ statusCode: '422', message: 'Table is not versioned' })
       }
       const queryString = this.versionQuery()
+      console.log(queryString)
       logger.debug(queryString)
       db.query(queryString)
         .then(result => {

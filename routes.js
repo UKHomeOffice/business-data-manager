@@ -40,7 +40,7 @@ router.get('/v1/datasets', datasetRead, datasetsController.getDatasets)
 router.get('/v1/datasets/add', datasetWrite, datasetsController.addViewDatasets)
 router.post('/v1/datasets/add', datasetWrite, datasetsController.postDatasets)
 router.get('/v1/datasets/:dataset', datasetRead, datasetsController.getDataset)
-router.get('/v1/datasets/:dataset/version', datasetAll, datasetsController.postDatasets)
+router.post('/v1/datasets/:dataset/version', datasetAll, datasetsController.postDatasets)
 router.post('/v1/datasets/:dataset/delete', datasetAll, datasetsController.deleteDataset)
 router.post('/v1/datasets/:dataset/properties', datasetWrite, datasetsController.postDatasetProperties)
 // items routes
