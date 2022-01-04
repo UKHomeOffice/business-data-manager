@@ -65,8 +65,7 @@ exports.addViewDatasets = (req, res) => {
  */
 exports.postDatasets = (req, res) => {
   // pre-process the fields to set id correctly
-
-  const dataset = new Dataset(req.body.name, req.body.idType, req.body.fields, req.body.org)
+  const dataset = new Dataset(req.body.name, req.body.idType, req.body.fields, req.body.org, req.body.versioned)
   dataset.post()
     .then(result => {
       // check the result for successful creation
@@ -191,7 +190,7 @@ exports.postDatasetProperties = (req, res) => {
     notNull: req.body.notNull,
     unique: req.body.unique
   }]
-  const dataset = new Dataset(req.params.dataset, '', fields)
+  const dataset = new Dataset(req.params.dataset, '', fields, '', req.body.versioned)
   dataset.postProperty()
     .then(result => {
       // check the result for successful creation
@@ -238,7 +237,6 @@ exports.postDatasetProperties = (req, res) => {
       logger.error(err)
     })
 }
-
 
 exports.deleteDataset = async (req, res) => {
   try {

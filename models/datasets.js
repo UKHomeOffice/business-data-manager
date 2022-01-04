@@ -93,6 +93,7 @@ class Datasets {
     return new Promise((resolve, reject) => {
       logger.info('Updating datasets table')
       let queryString = 'alter table datasets add column if not exists org varchar;'
+      queryString += 'alter table datasets add column if not exists versioned boolean default false;'
       this.findAll().then(result => {
         result.data.forEach(dataset => {
           queryString += `
@@ -121,7 +122,8 @@ class Datasets {
                         'name varchar NOT NULL PRIMARY KEY, ' +
                         'idtype varchar NOT NULL, ' +
                         'fields jsonb NOT NULL, ' +
-                        'org varchar );'
+                        'org varchar, ' +
+                        'versioned boolean );'
       logger.debug(queryString)
       db.query(queryString)
         .then(result => {
@@ -153,7 +155,8 @@ class Datasets {
                 name: result.rows[i].name,
                 idType: result.rows[i].idtype,
                 fields: result.rows[i].fields,
-                org: result.rows[i].org
+                org: result.rows[i].org,
+                versioned: result.rows[i].versioned
               }
               datasets.push(dataset)
             }

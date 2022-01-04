@@ -34,7 +34,7 @@
               {% for property in data.properties %}
                 <tr>
                   <td>{{ property.field }}</td>
-                  {% if property.field in ['id', 'created_at', 'updated_at', 'created_by', 'updated_by'] %}
+                  {% if property.field in ['id', 'created_at', 'updated_at', 'created_by', 'updated_by', 'version', 'is_current', 'version_id'] %}
                     <td>{{ property.value }}</td>
                   {% elif property.columnType == 'INTEGER' %}
                     <td><input class="form-control" type="number" name="{{property.field}}" value="{{ property.value }}"></td>
