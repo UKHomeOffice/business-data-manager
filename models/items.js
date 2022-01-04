@@ -27,6 +27,10 @@ class Items {
 
   findAll (offset = 0, limit = null, fetchAll = false, searchQuery = false) {
     return new Promise((resolve, reject) => {
+      let nonFields = this.nonFields
+      if (fetchAll) {
+        nonFields = [...this.nonFields, ...['is_current', 'version', 'version_id']]
+      }
       let limiter = ''
       let totalCount = ''
 
@@ -53,7 +57,7 @@ class Items {
             // process fields and rows
             const fields = []
             for (let i = 0; i < result.fields.length; i++) {
-              if (!this.nonFields.includes(result.fields[i].name)) {
+              if (!nonFields.includes(result.fields[i].name)) {
                 fields.push(result.fields[i].name)
               }
             }
@@ -65,8 +69,10 @@ class Items {
                 count = result.rows[0]._total_count
               }
 
-              for (let k = 0; k < result.fields.length; k++) {
-                row.push(result.rows[j][fields[k]])
+              for (let k = 0; k < fields.length; k++) {
+                if (!fetchAll || typeof result.rows[j].is_current === 'undefined' || result.rows[j].is_current === 1) {
+                  row.push(result.rows[j][fields[k]])
+                }
               }
               rows.push(row)
             }
