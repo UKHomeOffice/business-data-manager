@@ -155,24 +155,18 @@ class Item {
     for (const key in this.properties) {
       if (key !== '_csrf' && this.properties[key] !== null) {
         fields += `"${key}", `
-        this.properties[key] === '' ? values.push(null) : values.push(`${this.properties[key]}`)
+        this.properties[key] === '' ? values.push(null) : values.push(`'${this.properties[key]}'`)
       }
     }
     fields += '"created_by"'
-    let valueRefs = ''
-    let valNum = 0
-    for (let paramNumber = 1; paramNumber < values.length + 1; paramNumber++) {
-      valueRefs += '$' + paramNumber + ', '
-      valNum = paramNumber
-    };
-    valueRefs += `$${valNum + 1}`
-    values.push(this.userId)
-    const queryText = `INSERT INTO ${this.datasetName} (${fields}) VALUES (${valueRefs}) RETURNING id`
-    const query = {
-      text: queryText,
-      values: values,
+    values.push(`'${this.userId}'`)
+    let currentQuery = ''
+    console.log(this.properties.version_id)
+    if (this.properties.is_current && this.properties.version && this.properties.version_id) {
+      currentQuery = `UPDATE ${this.datasetName} SET is_current = NULL WHERE version_id = '${this.properties.version_id}';`
     }
-    return query
+    const queryText = `${currentQuery}INSERT INTO ${this.datasetName} (${fields}) VALUES (${values.join(',')}) RETURNING id`
+    return queryText
   }
 
   insertItem () {

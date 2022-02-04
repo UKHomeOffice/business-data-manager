@@ -18,9 +18,17 @@
 
     <div class="grid-row">
       <div class="column-full">
+        {% set fields = data.properties | fieldNames %}
+        {% if 'version' in fields and 'version_id' in fields and 'is_current' in fields %}
+          {% set versioned = true %}
+          {% set action = '/v1/datasets/' + data.datasetName + '/items' %}
+        {% else %}
+          {% set versioned = false %}
+          {% set action = '/v1/datasets/' + data.datasetName + '/items/' + data.itemId + '/update' %}
+        {% endif %}
         <h2 class="heading-large">{{ data.datasetName }} - {{ data.itemId }}</h2>
         <p>The dataset contains the following items.</p>
-        <form method="POST" action="/v1/datasets/{{data.datasetName}}/items/{{data.itemId}}/update">
+        <form method="POST" action="{{ action }}">
           <input type='hidden' name="_csrf" value="{{ _csrf }}">
           <table>
             <thead>
@@ -34,8 +42,17 @@
               {% for property in data.properties %}
                 <tr>
                   <td>{{ property.field }}</td>
-                  {% if property.field in ['id', 'created_at', 'updated_at', 'created_by', 'updated_by', 'version', 'is_current', 'version_id'] %}
+                  {% if property.field in ['id', 'created_at', 'updated_at', 'created_by', 'updated_by'] %}
                     <td>{{ property.value }}</td>
+                  {% elif property.field in ['version', 'is_current', 'version_id'] %}
+                    {% if property.field == 'version' %}
+                      {% set val = property.value + 1 %}
+                    {% elif property.field == 'is_current' %}
+                      {% set val = 1 %}
+                    {% else %}
+                      {% set val = property.value %}
+                    {% endif %}
+                    <td><input type='hidden' name="{{property.field}}" value="{{ val }}">{{ property.value }}</td>
                   {% elif property.columnType == 'INTEGER' %}
                     <td><input class="form-control" type="number" name="{{property.field}}" value="{{ property.value }}"></td>
                   {% elif property.columnType == 'VARCHAR' %}

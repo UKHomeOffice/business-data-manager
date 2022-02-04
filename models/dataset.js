@@ -24,7 +24,7 @@ class Dataset {
     this.idType = idType
     this.fields = typeof fields === 'string' ? JSON.parse(fields):fields
     this.org = org
-    this.versioned = versioned === true || versioned === 'true'
+    this.versioned = (versioned === true || versioned === 'true') && idType === 'SERIAL'
   }
 
   checkIfExists () {
