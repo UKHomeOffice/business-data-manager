@@ -190,7 +190,7 @@ exports.postDatasetProperties = (req, res) => {
     notNull: req.body.notNull,
     unique: req.body.unique
   }]
-  const dataset = new Dataset(req.params.dataset, '', fields, '', req.body.versioned)
+  const dataset = new Dataset(req.params.dataset, req.body.idType, fields, '', req.body.versioned)
   dataset.postProperty()
     .then(result => {
       // check the result for successful creation
