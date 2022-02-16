@@ -2,6 +2,7 @@
 
 const logger = require('../logger')
 const db = require('../db')
+const {escapeLiteral} = require('../lib/utils')
 
 /**
  * Provides an interface to singular Item resources.
@@ -152,16 +153,20 @@ class Item {
   insertItemQuery () {
     let fields = ''
     const values = []
+    console.log(this.properties)
     for (const key in this.properties) {
       if (key !== '_csrf' && this.properties[key] !== null) {
+        let val = this.properties[key]
+        if (typeof val === 'string') {
+          val = escapeLiteral(val)
+        }
         fields += `"${key}", `
-        this.properties[key] === '' ? values.push(null) : values.push(`'${this.properties[key]}'`)
+        this.properties[key] === '' || this.properties[key] === null ? values.push('NULL') : values.push(val)
       }
     }
     fields += '"created_by"'
     values.push(`'${this.userId}'`)
     let currentQuery = ''
-    console.log(this.properties.version_id)
     if (this.properties.is_current && this.properties.version && this.properties.version_id) {
       currentQuery = `UPDATE ${this.datasetName} SET is_current = NULL WHERE version_id = '${this.properties.version_id}';`
     }
@@ -185,6 +190,7 @@ class Item {
           // return resolve(msg);
         })
         .catch(err => {
+          logger.error(query)
           logger.error(err)
           return reject(err)
         })
