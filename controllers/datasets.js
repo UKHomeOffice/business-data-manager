@@ -120,7 +120,19 @@ exports.postDatasets = (req, res) => {
  *
  * @param {String} dataset - name of the dataset, used to name the table
  */
-exports.getDataset = (req, res) => {
+exports.getDataset = async (req, res) => {
+  const datasets = new Datasets()
+  const ds = await datasets.findAll()
+  console.log(req.params.dataset)
+  const foreignKeyDatasets = ds.data.filter(dataset => {
+    if (dataset.name === req.params.dataset) {
+      return false
+    }
+    if (dataset.org) {
+      return req.app.locals.orgs.includes(dataset.org)
+    }
+    return true
+  })
   const dataset = new Dataset(req.params.dataset)
   dataset.findOne()
     .then(result => {
@@ -132,6 +144,7 @@ exports.getDataset = (req, res) => {
               title: filter.cCapitalize(req.params.dataset),
               data: result.data,
               reqPath: req.originalUrl,
+              foreignKeyDatasets
             })
           },
           json: () => {
@@ -188,7 +201,8 @@ exports.postDatasetProperties = (req, res) => {
     name: req.body.name,
     datatype: req.body.datatype,
     notNull: req.body.notNull,
-    unique: req.body.unique
+    unique: req.body.unique,
+    foreignKey: req.body.foreignKey
   }]
   const dataset = new Dataset(req.params.dataset, req.body.idType, fields, '', req.body.versioned)
   dataset.postProperty()

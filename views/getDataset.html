@@ -28,6 +28,7 @@
               <th>Datatype</th>
               <th>Not null</th>
               <th>Unique</th>
+              <th>Foreign key</th>
             </tr>
           </thead>
           <tbody>
@@ -37,6 +38,7 @@
                 <td>{{ field.datatype }}</td>
                 <td>{{ field.notNull }}</td>
                 <td>{{ field.unique }}</td>
+                <td>{{ field.foreignKey }}</td>
               </tr>
             {% endfor %}
           <tbody>
@@ -130,6 +132,20 @@
                   </div>
                 </fieldset>
               </div>
+              <div class="form-group">
+                <fieldset class="inline">
+                  <legend>
+                    <h3 class="heading-medium">Foreign key</h3>
+                  </legend>
+                  <label for="foreignKey">Related dataset:</label>
+                  <select class="form-control" name="foreignKey" id="foreignKey">
+                    <option></option>
+                    {% for fkDataset in foreignKeyDatasets %}
+                      <option value="{{ fkDataset.name }}">{{ fkDataset.name }} ({{ fkDataset.idType }})</option>
+                    {% endfor %}
+                  </select>
+                </fieldset>
+              </div>
 
               <div class="form-group">
                 <input class="button" type="submit" value="Add field">
@@ -139,7 +155,7 @@
         </div>
     {% endif %}
 
-    {% if Authenticator.authorise('dataset', 'delete') and not data.versioned %}
+    {% if Authenticator.authorise('dataset', 'delete') and not data.versioned and data.idType in ['SERIAL', 'INTEGER'] %}
     <div class="error-summary" role="alert">
       <h2 class="heading-large">Danger zone</h2>
       <span class="error-message">

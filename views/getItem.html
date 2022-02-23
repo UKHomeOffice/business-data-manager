@@ -40,6 +40,7 @@
             </thead>
             <tbody>
               {% for property in data.properties %}
+                {% set dsField = datasetFields[property.field] %}
                 <tr>
                   <td>{{ property.field }}</td>
                   {% if property.field in ['id', 'created_at', 'updated_at', 'created_by', 'updated_by'] %}
@@ -53,6 +54,15 @@
                       {% set val = property.value %}
                     {% endif %}
                     <td><input type='hidden' name="{{property.field}}" value="{{ val }}">{{ property.value }}</td>
+                  {% elif dsField.foreignKey %}
+                    <td>
+                      <select class="form-control" name="{{ dsField.name }}">
+                        <option></option>
+                        {% for fk in foreignKeys[dsField.foreignKey] %}
+                            <option value="{{ fk.key }}"{% if fk.key == property.value %} selected="selected"{% endif %}>{{ fk.value }}</option>
+                        {% endfor %}
+                      </select>
+                    </td>
                   {% elif property.columnType == 'INTEGER' %}
                     <td><input class="form-control" type="number" name="{{property.field}}" value="{{ property.value }}"></td>
                   {% elif property.columnType == 'VARCHAR' %}

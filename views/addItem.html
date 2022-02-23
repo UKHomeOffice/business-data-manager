@@ -19,22 +19,28 @@
         <div class="column-full">
             <h2 class="heading-large">Add a new item</h2>
             <p>You can add an new item to the dataset below.</p>
-            <form method="POST" action="/v1/datasets/{{ data.datasetName }}/items">
+            <form method="POST" action="/v1/datasets/{{ dataset.name }}/items">
                 <input type='hidden' name="_csrf" value="{{ _csrf }}">
-                {% for field in data.fields %}
+                {% for field in dataset.fields %}
                     <div class="form-group">
-                        {% if field === 'id' and data.idType === 'SERIAL' %}
+                        {% if field.name === 'id' and data.idType === 'SERIAL' %}
                             <p class="form-label">Id</p>
                             <span class="form-hint">The dataset's Id is being managed by the system and will be generated automatically.</span>
-                        {% elif field in ['version', 'is_current'] %}
-                            <input type='hidden' name="{{property.field}}" value="1">
-                        {% elif field not in ['created_at', 'updated_at', 'created_by', 'updated_by', 'version_id'] %}
-                            <label class="form-label" for="{{ field }}">{{ field }}</label>
-                            <input class="form-control" id="{{ field }}" name="{{ field }}" type="text">
+                        {% elif field.name in ['version', 'is_current'] %}
+                            <input type='hidden' name="{{ field.name }}" value="1">
+                        {% elif field.foreignKey %}
+                        <select class="form-control" name="{{ field.name }}">
+                            <option></option>
+                            {% for fk in foreignKeys[field.foreignKey] %}
+                                <option valye="{{ fk.key }}">{{ fk.value }}</option>
+                            {% endfor %}
+                        </select>
+                        {% elif field.name not in ['created_at', 'updated_at', 'created_by', 'updated_by', 'version_id'] %}
+                            <label class="form-label" for="{{ field.name }}">{{ field.name }}</label>
+                            <input class="form-control" id="{{ field.name }}" name="{{ field.name }}" type="text">
                         {% endif %}
                     </div>
                 {% endfor %}
-
 
                 <div class="form-group">
                     <input class="button" type="submit" value="Add item">

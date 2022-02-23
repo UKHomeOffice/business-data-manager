@@ -97,29 +97,27 @@ exports.getItems = async (req, res) => {
  *
  * @returns form to add new item
  */
-exports.addItem = (req, res) => {
-  const items = new Items(req.params.dataset)
-  const fetchAll = (req.get('Accept') === 'application/json') || false
-  const page = parseInt(req.sanitize('page').escape()) || false
-  const itemsPerPage = paginationConfig.itemsPerPage
-  const start = page ? (page - 1) * itemsPerPage : 0
-  items.findAll(start, itemsPerPage, fetchAll)
-    .then(result => {
-      if (result.statusCode === '200') {
-        logger.verbose('getItems sending HTML response')
+exports.addItem = async (req, res) => {
+  const datasetModel = new Dataset(req.params.dataset)
+  try {
+    const result = await datasetModel.findOne()
+    if (result.statusCode === '200') {
+      logger.verbose('getItems sending HTML response')
+      const dataset = result.data
+      const foreignKeys = await getForeignKeys(dataset)
 
-        res.status(200).render('addItem', {
-          title: filter.cCapitalize(req.params.dataset),
-          data: result.data,
-          reqPath: req.originalUrl,
-        })
-      }
-    })
-    .catch(err => {
-      logger.error(err)
-      req.flash('errors', { msg: 'Failed to add item' })
-      res.redirect(`/v1/datasets/${req.params.dataset}/items`)
-    })
+      res.status(200).render('addItem', {
+        title: filter.cCapitalize(req.params.dataset),
+        dataset: dataset,
+        reqPath: req.originalUrl,
+        foreignKeys
+      })
+    }
+  } catch (err) {
+    logger.error(err)
+    req.flash('errors', { msg: 'Failed to add item' })
+    res.redirect(`/v1/datasets/${req.params.dataset}/items`)
+  }
 }
 
 /**
@@ -307,30 +305,56 @@ exports.postItems = (req, res) => {
  */
 exports.getItem = async (req, res) => {
   const item = new Item(req.params.dataset, req.params.item)
-  const dataset = new Dataset(req.params.dataset)
-  const datasetObj = await dataset.findOne()
-  const result = await item.findOne()
-  if (result.statusCode === '200') {
-    res.format({
-      html: () => {
-        logger.verbose('getItem sending HTML response')
-        res.status(200).render('getItem', {
-          title: `${filter.cCapitalize(req.params.dataset)} - ${req.params.item}`,
-          data: result.data,
-          datasetFields: datasetObj.data.fields,
-        })
-      },
-      json: () => {
-        logger.verbose('getItem sending JSON response')
-        res.status(200).json(result.data)
-      },
-      default: () => {
-        logger.verbose('getItem invalid format requested')
-        res.status(406).send('Invalid response format requested')
-      }
-    })
-  }
-  if (result.statusCode === '404') {
+  try {
+    const datasetModel = new Dataset(req.params.dataset)
+    const dataset = (await datasetModel.findOne()).data
+    const dsFields = {}
+    for (let f of dataset.fields) {
+      dsFields[f.name] = f
+    }
+    const result = await item.findOne()
+    if (result.statusCode === '200') {
+      res.format({
+        html: async () => {
+          logger.verbose('getItem sending HTML response')
+          const foreignKeys = await getForeignKeys(dataset)
+          res.status(200).render('getItem', {
+            title: `${filter.cCapitalize(req.params.dataset)} - ${req.params.item}`,
+            data: result.data,
+            datasetFields: dsFields,
+            foreignKeys
+          })
+        },
+        json: () => {
+          logger.verbose('getItem sending JSON response')
+          res.status(200).json(result.data)
+        },
+        default: () => {
+          logger.verbose('getItem invalid format requested')
+          res.status(406).send('Invalid response format requested')
+        }
+      })
+    }
+    if (result.statusCode === '404') {
+      res.format({
+        html: () => {
+          logger.verbose('getItem sending HTML response')
+          // flash notify that dataset could not be found
+          req.flash('errors', { msg: `No item found with the id ${req.params.item} in dataset ${req.params.dataset}` })
+          res.status(200).redirect('/v1/datasets')
+        },
+        json: () => {
+          logger.verbose('getItem sending JSON response')
+          // respond that dataset could not be created
+          res.status(404).json({ status: '404', message: 'NOT FOUND' })
+        },
+        default: () => {
+          logger.verbose('getItem invalid format requested')
+          res.status(406).send('Invalid response format requested')
+        }
+      })
+    }
+  } catch (err) {
     res.format({
       html: () => {
         logger.verbose('getItem sending HTML response')
@@ -358,4 +382,32 @@ exports.getItem = async (req, res) => {
  */
 exports.putItemProperty = (req, res) => {
 
+}
+
+const getForeignKeys = async (dataset) => {
+  const foreignKeys = {}
+  for (let field of dataset.fields) {
+    if (field.foreignKey) {
+      try {
+        const ds = (await (new Dataset(field.foreignKey)).findOne()).data
+        const itemsModel = new Items(field.foreignKey)
+        let searchQuery = false
+        let idField = 'id'
+        if (ds.versioned) {
+          searchQuery = itemsModel.searchQuery({is_current: 1}, ds.fields, true)
+          idField = 'version_id'
+        }
+        const items = await itemsModel.findAll(0, 0, true, searchQuery)
+        const idIndex = items.data.fields.indexOf(idField)
+        foreignKeys[field.foreignKey] = items.data.rows.map((row) => {
+          return {
+            key: row[idIndex],
+            value: row.join(',').substring(0,100)
+          }
+        })
+      } catch (error) {
+      }
+    }
+  }
+  return foreignKeys
 }
