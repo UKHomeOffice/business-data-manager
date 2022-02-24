@@ -123,7 +123,6 @@ exports.postDatasets = (req, res) => {
 exports.getDataset = async (req, res) => {
   const datasets = new Datasets()
   const ds = await datasets.findAll()
-  console.log(req.params.dataset)
   const foreignKeyDatasets = ds.data.filter(dataset => {
     if (dataset.name === req.params.dataset) {
       return false
