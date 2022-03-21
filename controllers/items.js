@@ -27,10 +27,11 @@ exports.getItems = async (req, res) => {
   const itemsPerPage = paginationConfig.itemsPerPage
   const start = page ? (page - 1) * itemsPerPage : 0
   let result
+
   try {
     if (hasNonPageQuery(req)) {
       delete req.query.page
-      result = await items.findAll(start, itemsPerPage, fetchAll, items.searchQuery(req.query, datasetObj.data.fields, fetchAll, start, itemsPerPage))
+      result = await items.findAll(start, itemsPerPage, fetchAll, items.searchQuery(req.query, datasetObj.data.fields, fetchAll, start, itemsPerPage, datasetObj.data.versioned))
     } else {
       result = await items.findAll(start, itemsPerPage, fetchAll)
     }
@@ -54,6 +55,7 @@ exports.getItems = async (req, res) => {
             data: result.data,
             reqPath: req.originalUrl,
             datasetFields: datasetObj.data.fields,
+            dataset: datasetObj
           })
         },
         json: () => {

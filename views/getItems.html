@@ -30,6 +30,10 @@
           <input class="form-control" id="search-{{field.name}}" type="text" name="{{field.name}}"> <br>
         {% endif %}
       {% endfor %}
+      {% if dataset.data.versioned %}
+        <label class="form-label" for="search-current">Is current</label>
+        <input id="search-current" type="checkbox" name="is_current" value="1" checked><br>
+      {% endif %}
       <br>
       <button class="button" type="submit">Search</button>
       </form>
