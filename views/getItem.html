@@ -107,6 +107,30 @@
           </form>
         </div>
         {% endif %}
+        <br>
+        {% if dataset.versioned %}
+          {% for version in history %}
+            {% if version.id != itemId %}
+              <h3 class="heading-medium">Version {{ version.version }}</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Field</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for key, value in version.items() %}
+                    <tr>
+                      <td>{{ key }}</td>
+                      <td>{{ value }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
       </div>
     </div>
 
