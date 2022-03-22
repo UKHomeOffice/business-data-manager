@@ -143,7 +143,7 @@ class Items {
    * @param {Object} searchObj  An object of { columnName: { query, columnType } }
    * @returns {Object} An object for the prepared statement to be run against the database
    */
-  searchQuery (searchQuery, datasetTypeList, fetchAll = false, offset = 0, limit = null) {
+  searchQuery (searchQuery, datasetTypeList, fetchAll = false, offset = 0, limit = null, versioned = false) {
     const searchObj = this.genSearchObj(searchQuery, datasetTypeList)
     const properties = Object.keys(searchObj)
     let limiter = ''
@@ -157,6 +157,7 @@ class Items {
     searchStr += Object.values(searchQuery).join('') === '' ? '' : 'WHERE '
 
     const values = []
+    const valuesNUmber = 1
     for (const [index, property] of properties.entries()) {
       (index !== 0 && index < properties.length) ? searchStr += ' AND ' : searchStr += ''
       if (searchObj[`${property}`].columnType === 'VARCHAR') {
@@ -167,6 +168,13 @@ class Items {
         searchStr += `"${property}" = $${index + 1}`
         values.push(parseInt(searchObj[`${property}`].searchParam))
       }
+    }
+    if (versioned && searchQuery.is_current === '1') {
+      if (values.length > 0) {
+        searchStr += ' AND '
+      }
+      values.push(1)
+      searchStr += `is_current = $${values.length}`
     }
     searchStr += ` ORDER BY 1 ${limiter}`
     return {
