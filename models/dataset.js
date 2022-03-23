@@ -58,7 +58,7 @@ class Dataset {
     query += `CREATE TABLE ${this.name} (`
     query += ` id ${this.idType} PRIMARY KEY`
     if (this.versioned) {
-      query += `, 
+      query += `,
       version_id SMALLINT NOT NULL DEFAULT nextval('${this.name}_version_id_seq'),
       is_current SMALLINT DEFAULT 1,
       version SMALLINT NOT NULL DEFAULT 1,
@@ -78,10 +78,10 @@ class Dataset {
         }
       }
     }
-    query += `, 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
-    updated_at TIMESTAMP, 
-    created_by VARCHAR, 
+    query += `,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP,
+    created_by VARCHAR,
     updated_by VARCHAR`
     query += ' );'
     return query
@@ -269,8 +269,9 @@ class Dataset {
   }
 
   versionQuery () {
-    let query = `CREATE SEQUENCE ${this.name}_version_id_seq;
-    ALTER TABLE IF EXISTS ${this.name} 
+    let query = `DROP SEQUENCE IF EXISTS ${this.name}_version_id_seq;
+    CREATE SEQUENCE ${this.name}_version_id_seq;
+    ALTER TABLE IF EXISTS ${this.name}
     ADD COLUMN IF NOT EXISTS version_id SMALLINT NOT NULL DEFAULT nextval('${this.name}_version_id_seq'),
     ADD COLUMN IF NOT EXISTS is_current SMALLINT DEFAULT 1,
     ADD COLUMN IF NOT EXISTS version SMALLINT NOT NULL DEFAULT 1,
