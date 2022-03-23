@@ -417,9 +417,10 @@ class Dataset {
                     return resolve(msg)
                   }
                 })
+            } else {
+              const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
+              return resolve(msg)
             }
-            const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
-            return resolve(msg)
           }
           this.registerDataset()
             .then(registrationResult => {
