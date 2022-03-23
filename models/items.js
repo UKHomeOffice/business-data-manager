@@ -181,7 +181,6 @@ class Items {
         addVersionQuery('is_current', 1)
       }
       if (searchQuery.version_id) {
-
         addVersionQuery('version_id', searchQuery.version_id)
       }
     }

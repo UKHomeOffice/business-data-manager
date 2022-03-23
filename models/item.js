@@ -153,7 +153,6 @@ class Item {
   insertItemQuery () {
     let fields = ''
     const values = []
-    console.log(this.properties)
     for (const key in this.properties) {
       if (key !== '_csrf' && this.properties[key] !== null) {
         let val = this.properties[key]
@@ -181,6 +180,9 @@ class Item {
       db.query(query)
         .then(result => {
           // check that result is as expected for a successful create
+          if (Array.isArray(result) && result.length > 1) {
+            result = result[1]
+          }
           logger.verbose(`Item ${result.rows[0].id} added to ${this.datasetName} dataset`)
           const uri = `/v1/datasets/${this.datasetName}/items/${result.rows[0].id}`
           const msg = { statusCode: '201', message: 'CREATED', uri: uri, itemId: result.rows[0].id }
@@ -234,6 +236,7 @@ class Item {
           }
           this.insertItem()
             .then(insertResult => {
+              console.log('insertResult', insertResult.statusCode)
               if (insertResult.statusCode === '422') {
                 const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
                 return resolve(msg)
@@ -241,6 +244,8 @@ class Item {
               return resolve(insertResult)
             })
             .catch((err) => {
+              console.log('ERROR')
+              console.log(err)
               logger.error(err)
               return reject(err)
             })
