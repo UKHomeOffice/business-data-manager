@@ -413,36 +413,34 @@ class Dataset {
               this.versionTable()
                 .then(versionResult => {
                   if (versionResult.statusCode === '200') {
-                    const msg = { statusCode: '200', message: 'Dataset versioning added' }
+                    console.log('RESOLVING')
+                    const msg = { statusCode: '201', message: 'Dataset versioning added' }
                     return resolve(msg)
                   }
-                }).catch(err => {
-                  logger.error(err)
-                  return reject(err)
                 })
-                const msg = { statusCode: '200', message: 'Dataset versioning added' }
-                return resolve(msg)
             } else {
               const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
               return resolve(msg)
             }
           }
-          this.registerDataset()
-            .then(registrationResult => {
-              if (registrationResult.statusCode === '422') {
-                const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
-                return resolve(msg)
-              }
-              this.createTable()
-                .then(creationResult => {
-                  if (creationResult.statusCode === '422') {
-                    const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
-                    return resolve(msg)
-                  }
-                  const msg = { statusCode: '201', message: 'CREATED' }
+          if (!this.versioned) {
+            this.registerDataset()
+              .then(registrationResult => {
+                if (registrationResult.statusCode === '422') {
+                  const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
                   return resolve(msg)
-                })
-            })
+                }
+                this.createTable()
+                  .then(creationResult => {
+                    if (creationResult.statusCode === '422') {
+                      const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
+                      return resolve(msg)
+                    }
+                    const msg = { statusCode: '201', message: 'CREATED' }
+                    return resolve(msg)
+                  })
+              })
+          }
         })
         .catch(err => {
           logger.error(err)
