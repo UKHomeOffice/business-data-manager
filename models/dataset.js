@@ -416,7 +416,12 @@ class Dataset {
                     const msg = { statusCode: '200', message: 'Dataset versioning added' }
                     return resolve(msg)
                   }
+                }).catch(err => {
+                  logger.error(err)
+                  return reject(err)
                 })
+                const msg = { statusCode: '200', message: 'Dataset versioning added' }
+                return resolve(msg)
             } else {
               const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
               return resolve(msg)
