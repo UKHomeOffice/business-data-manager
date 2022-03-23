@@ -6,6 +6,7 @@ const Items = require('../models/items')
 const Dataset = require('../models/dataset')
 const logger = require('../logger')
 const filter = require('../lib/filters')
+const { zipListsToDict } = require('../lib/utils')
 
 function hasNonPageQuery (req) {
   if (Object.keys(req.query).length !== 0) {
@@ -27,6 +28,10 @@ exports.getItems = async (req, res) => {
   const itemsPerPage = paginationConfig.itemsPerPage
   const start = page ? (page - 1) * itemsPerPage : 0
   let result
+
+  if (datasetObj.data.versioned) {
+    req.query.is_current = '1'
+  }
 
   try {
     if (hasNonPageQuery(req)) {
@@ -316,6 +321,16 @@ exports.getItem = async (req, res) => {
     }
     const result = await item.findOne()
     if (result.statusCode === '200') {
+      let history = []
+      if (dataset.versioned) {
+        const items = new Items(dataset.name)
+        const query = {
+          version_id: result.data.properties.filter((p) => p.field === 'version_id')[0].value,
+          order_by: 'version DESC'
+        }
+        const historyResult = await items.findAll(0, 100, false, items.searchQuery(query, dataset.fields, false, 0, 100, dataset.versioned))
+        history = historyResult.data.rows.map((r) => zipListsToDict(historyResult.data.fields, r))
+      }
       res.format({
         html: async () => {
           logger.verbose('getItem sending HTML response')
@@ -324,7 +339,10 @@ exports.getItem = async (req, res) => {
             title: `${filter.cCapitalize(req.params.dataset)} - ${req.params.item}`,
             data: result.data,
             datasetFields: dsFields,
-            foreignKeys
+            foreignKeys,
+            dataset,
+            history,
+            itemId: req.params.item
           })
         },
         json: () => {

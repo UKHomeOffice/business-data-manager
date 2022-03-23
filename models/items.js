@@ -40,8 +40,8 @@ class Items {
       }
 
       let query = `SELECT * ${totalCount}
-          FROM ${this.datasetName} 
-          ORDER BY 1 
+          FROM ${this.datasetName}
+          ORDER BY 1
           ${limiter}
           `
       try {
@@ -169,14 +169,29 @@ class Items {
         values.push(parseInt(searchObj[`${property}`].searchParam))
       }
     }
-    if (versioned && searchQuery.is_current === '1') {
+    const addVersionQuery = (field, value) => {
       if (values.length > 0) {
         searchStr += ' AND '
       }
-      values.push(1)
-      searchStr += `is_current = $${values.length}`
+      values.push(value)
+      searchStr += `${field} = $${values.length}`
     }
-    searchStr += ` ORDER BY 1 ${limiter}`
+    if (versioned) {
+      if (searchQuery.is_current === '1') {
+        addVersionQuery('is_current', 1)
+      }
+      if (searchQuery.version_id) {
+
+        addVersionQuery('version_id', searchQuery.version_id)
+      }
+    }
+    if (searchQuery.order_by) {
+      searchStr += ` ORDER BY ${searchQuery.order_by}`
+    } else {
+      searchStr += ' ORDER BY 1'
+    }
+    searchStr += ` ${limiter}`
+
     return {
       text: searchStr,
       values
