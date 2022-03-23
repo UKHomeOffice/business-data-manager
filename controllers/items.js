@@ -29,6 +29,10 @@ exports.getItems = async (req, res) => {
   const start = page ? (page - 1) * itemsPerPage : 0
   let result
 
+  if (datasetObj.data.versioned) {
+    req.query.is_current = '1'
+  }
+
   try {
     if (hasNonPageQuery(req)) {
       delete req.query.page
