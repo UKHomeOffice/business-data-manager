@@ -168,7 +168,7 @@ class Item {
     values.push(`'${this.userId}'`)
     let currentQuery = ''
     if (this.properties.is_current && this.properties.version && this.properties.version_id) {
-      currentQuery = `UPDATE ${this.datasetName} SET is_current = NULL WHERE version_id = '${this.properties.version_id}';`
+      currentQuery = `UPDATE ${this.datasetName} SET is_current = NULL WHERE version_id = ${this.properties.version_id};`
     }
     const queryText = `${currentQuery}INSERT INTO ${this.datasetName} (${fields}) VALUES (${values.join(',')}) RETURNING id`
     return queryText
