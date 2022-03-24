@@ -72,7 +72,7 @@ class Dataset {
       if (this.fields[i].unique === 'Yes') {
         if (this.versioned) {
           query += `,
-          CONSTRAINT ${this.fields[i].name}_current_unique UNIQUE (${this.fields[i].name}, is_current)`
+          CONSTRAINT ${this.name}_${this.fields[i].name}_current_unique UNIQUE (${this.fields[i].name}, is_current)`
         } else {
           query += ' UNIQUE'
         }
@@ -280,8 +280,8 @@ class Dataset {
     for (let i = 0; i < this.fields.length; i++) {
       if (this.fields[i].unique === 'Yes') {
         query += `,
-        DROP CONSTRAINT IF EXISTS ${this.fields[0].name}_current_unique,
-        ADD CONSTRAINT ${this.fields[0].name}_current_unique UNIQUE (${this.fields[i].name}, is_current),
+        DROP CONSTRAINT IF EXISTS ${this.name}_${this.fields[0].name}_current_unique,
+        ADD CONSTRAINT ${this.name}_${this.fields[0].name}_current_unique UNIQUE (${this.fields[i].name}, is_current),
         DROP CONSTRAINT IF EXISTS ${this.name}_${this.fields[0].name}_key`
       }
     }
