@@ -321,7 +321,7 @@ class Dataset {
     if (this.fields[0].unique === 'Yes') {
       if (this.versioned) {
         alterTableQuery += `,
-        ADD CONSTRAINT ${this.fields[0].name}_current_unique UNIQUE (${this.fields[0].name}, is_current)`
+        ADD CONSTRAINT ${this.name}_${this.fields[0].name}_current_unique UNIQUE (${this.fields[0].name}, is_current)`
       } else {
         alterTableQuery += ' UNIQUE'
       }
