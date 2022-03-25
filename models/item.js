@@ -163,14 +163,22 @@ class Item {
         this.properties[key] === '' || this.properties[key] === null ? values.push('NULL') : values.push(val)
       }
     }
-    fields += '"created_by"'
-    values.push(`'${this.userId}'`)
     let currentQuery = ''
     if (this.properties.is_current && this.properties.version && this.properties.version_id) {
       currentQuery = `UPDATE ${this.datasetName} SET is_current = NULL WHERE version_id = ${this.properties.version_id};`
+      fields += '"created_at"'
+      values.push(`(select created_at from ${this.datasetName} where version = 1 and version_id = ${this.properties.version_id})`)
+      fields += ', "created_by"'
+      values.push(`(select created_by from ${this.datasetName} where version = 1 and version_id = ${this.properties.version_id})`)
+      fields += ', "updated_at"'
+      values.push('NOW()')
+      fields += ', "updated_by"'
+      values.push(`'${this.userId}'`)
+    } else {
+      fields += '"created_by"'
+      values.push(`'${this.userId}'`)
     }
-    const queryText = `${currentQuery}INSERT INTO ${this.datasetName} (${fields}) VALUES (${values.join(',')}) RETURNING id`
-    return queryText
+    return `${currentQuery}${withText}INSERT INTO ${this.datasetName} (${fields}) VALUES (${values.join(',')}) RETURNING id`
   }
 
   insertItem () {
