@@ -178,7 +178,7 @@ class Item {
       fields += '"created_by"'
       values.push(`'${this.userId}'`)
     }
-    return `${currentQuery}${withText}INSERT INTO ${this.datasetName} (${fields}) VALUES (${values.join(',')}) RETURNING id`
+    return `${currentQuery}INSERT INTO ${this.datasetName} (${fields}) VALUES (${values.join(',')}) RETURNING id`
   }
 
   insertItem () {
