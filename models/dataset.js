@@ -614,7 +614,7 @@ class Dataset {
                   .then(registrationResult => {
                     if (registrationResult.statusCode === '422') {
                       logger.verbose('postProperty failed to alter the table')
-                      const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
+                      const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY', err: String(registrationResult) }
                       return resolve(msg)
                     }
                     logger.verbose('postProperty has altered the table')

@@ -281,7 +281,7 @@ exports.postEditDatasetProperties = (req, res) => {
           },
           json: () => {
             logger.verbose('postDatasets sending JSON response')
-            res.status(201).json({ name: req.body.name, action: 'Created' })
+            res.status(201).json({ name: req.body.name, action: 'Created', result: result })
           },
           default: () => {
             logger.verbose('postDatasets invalid format requested')
