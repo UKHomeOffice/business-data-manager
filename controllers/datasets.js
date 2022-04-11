@@ -233,10 +233,75 @@ exports.postDatasetProperties = (req, res) => {
             logger.verbose('postDatasets sending HTML response')
             // flash notify that dataset could not be created
             // redirect to GET datasets
+            res.status(201).redirect('/v1/datasets/' + req.params.dataset)
           },
           json: () => {
             logger.verbose('postDatasets sending JSON response')
             // respond that dataset could not be created
+            res.status(201).json({ name: req.body.name, action: 'Not created' })
+          },
+          default: () => {
+            logger.verbose('postDatasets invalid format requested')
+            res.status(406).send('Invalid response format requested')
+          }
+        })
+      }
+      // other catch an unexpected response code
+    })
+    .catch(err => {
+      logger.error(err)
+    })
+}
+
+/**
+ * POST /v1/datasets/:dataset/properties/edit
+ * @returns adds a new property to the dataset
+ */
+exports.postEditDatasetProperties = (req, res) => {
+  // add one or more new fields to the dataset's field (using json operation)
+  const fields = [{
+    name: req.body.name,
+    datatype: req.body.datatype,
+    notNull: req.body.notNull,
+    unique: req.body.unique,
+    foreignKey: req.body.foreignKey
+  }]
+  const dataset = new Dataset(req.params.dataset, req.body.idType, fields, '', req.body.versioned)
+  dataset.postEditProperty()
+    .then(result => {
+      // check the result for successful creation
+      if (result.statusCode === '201') {
+        res.format({
+          html: () => {
+            logger.verbose('postDatasets sending HTML response')
+            // flash notify that dataset was created successfully
+            req.flash('success', { msg: 'Dataset updated' })
+            // redirect to GET datasets/:dataset
+            res.status(201).redirect('/v1/datasets/' + req.params.dataset)
+          },
+          json: () => {
+            logger.verbose('postDatasets sending JSON response')
+            res.status(201).json({ name: req.body.name, action: 'Created' })
+          },
+          default: () => {
+            logger.verbose('postDatasets invalid format requested')
+            res.status(406).send('Invalid response format requested')
+          }
+        })
+      }
+      if (result.statusCode === '422') {
+        // respond with an error about creating the dataset
+        res.format({
+          html: () => {
+            logger.verbose('postDatasets sending HTML response')
+            // flash notify that dataset could not be created
+            // redirect to GET datasets
+            res.status(201).redirect('/v1/datasets/' + req.params.dataset)
+          },
+          json: () => {
+            logger.verbose('postDatasets sending JSON response')
+            // respond that dataset could not be created
+            res.status(201).json({ name: req.body.name, action: 'Not created' })
           },
           default: () => {
             logger.verbose('postDatasets invalid format requested')
