@@ -623,7 +623,8 @@ class Dataset {
               })
               .catch(err => {
                 logger.error(err)
-                return reject(err)
+                const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY', err: err }
+                return resolve(msg)
               })
           } else {
             const msg = { statusCode: '201', message: 'NOT EDITED' }
@@ -632,7 +633,8 @@ class Dataset {
         })
         .catch(err => {
           logger.error(err)
-          return reject(err)
+          const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY', err: err }
+          return resolve(msg)
         })
     })
   }
