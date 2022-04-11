@@ -399,13 +399,13 @@ class Dataset {
     }
     if (this.updatedField.unique === 'Yes' && this.oldField.unique === 'No') {
       if (this.versioned) {
-        alterTableQuery += `${addComma}ADD CONSTRAINT ${this.name}_${this.fields[0].name}_current_unique UNIQUE (${this.fields[0].name}, is_current)`
+        alterTableQuery += `${addComma}ADD CONSTRAINT ${this.name}_${this.updatedField.name}_current_unique UNIQUE (${this.updatedField.name}, is_current)`
       } else {
-        alterTableQuery += `${addComma}ADD CONSTRAINT ${this.name}_${this.fields[0].name}_key UNIQUE (${this.fields[0].name})`
+        alterTableQuery += `${addComma}ADD CONSTRAINT ${this.name}_${this.updatedField.name}_key UNIQUE (${this.updatedField.name})`
       }
     } else if (this.updatedField.unique === 'No' && this.oldField.unique === 'Yes') {
-      alterTableQuery += `${addComma}DROP CONSTRAINT IF EXISTS ${this.name}_${this.fields[0].name}_current_unique,
-        DROP CONSTRAINT IF EXISTS ${this.name}_${this.fields[0].name}_key`
+      alterTableQuery += `${addComma}DROP CONSTRAINT IF EXISTS ${this.name}_${this.updatedField.name}_current_unique,
+        DROP CONSTRAINT IF EXISTS ${this.name}_${this.updatedField.name}_key`
     }
     alterTableQuery += ';'
     return alterTableQuery
