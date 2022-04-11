@@ -224,10 +224,11 @@ class Dataset {
     // this makes them available in memory for the next functions
     // return 302 Found or 404 Not found
     return new Promise((resolve, reject) => {
-      const queryString = `SELECT fields FROM datasets WHERE name = '${this.name}';`
+      const queryString = `SELECT versioned, fields FROM datasets WHERE name = '${this.name}';`
       logger.debug(queryString)
       db.query(queryString)
         .then(result => {
+          this.versioned = result.rows[0].versioned
           for (let i = 0; i < result.rows[0].fields.length; i++) {
             this.fields.push(result.rows[0].fields[i])
           }
@@ -619,11 +620,15 @@ class Dataset {
                     logger.verbose('postProperty has altered the table')
                     const msg = { statusCode: '201', message: 'EDITED' }
                     return resolve(msg)
+                  }).catch(err => {
+                    logger.error(err)
+                    const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY', err: String(err) }
+                    return resolve(msg)
                   })
               })
               .catch(err => {
                 logger.error(err)
-                const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY', err: err }
+                const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY', err: String(err) }
                 return resolve(msg)
               })
           } else {
@@ -633,7 +638,7 @@ class Dataset {
         })
         .catch(err => {
           logger.error(err)
-          const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY', err: err }
+          const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY', err: String(err) }
           return resolve(msg)
         })
     })
