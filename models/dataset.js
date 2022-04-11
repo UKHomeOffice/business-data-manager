@@ -25,6 +25,8 @@ class Dataset {
     this.fields = typeof fields === 'string' ? JSON.parse(fields):fields
     this.org = org
     this.versioned = (versioned === true || versioned === 'true') && idType === 'SERIAL'
+    this.updatedField = null
+    this.oldField = null
   }
 
   checkIfExists () {
@@ -229,13 +231,22 @@ class Dataset {
           for (let i = 0; i < result.rows[0].fields.length; i++) {
             this.fields.push(result.rows[0].fields[i])
           }
+          let found = false
+          let oldIndex = 0
           for (let j = 1; j < this.fields.length; j++) {
             // console.log(`Comparing ${this.fields[0].name} to ${this.fields[j].name}`);
             if (this.fields[0].name === this.fields[j].name) {
               logger.verbose(`The property ${this.fields[0].name} already exists`)
-              const msg = { statusCode: '302', message: 'Found' }
-              return resolve(msg)
+              oldIndex = j
+              found = true
             }
+          }
+          if (found) {
+            this.updatedField = this.fields.shift()
+            this.oldField = Object.assign({}, this.fields[oldIndex - 1])
+            this.fields[oldIndex - 1] = this.updatedField
+            const msg = { statusCode: '302', message: 'Found' }
+            return resolve(msg)
           }
           logger.verbose(`The property ${this.fields[0].name} does not exist in the ${this.name} dataset`)
           const msg = { statusCode: '404', message: 'Not found' }
@@ -373,6 +384,52 @@ class Dataset {
     })
   }
 
+  editPropertyQueryString () {
+    let alterTableQuery = `ALTER TABLE IF EXISTS ${this.name} `
+    let addComma = ''
+    if (this.updatedField.notNull === 'Yes' && this.oldField.notNull === 'No') {
+      alterTableQuery += `ALTER COLUMN "${this.updatedField.name}" SET NOT NULL`
+      addComma = `,
+      `
+    } else if (this.updatedField.notNull === 'No' && this.oldField.notNull === 'Yes') {
+      alterTableQuery += `ALTER COLUMN "${this.updatedField.name}" DROP NOT NULL`
+      addComma = `,
+      `
+    }
+    if (this.updatedField.unique === 'Yes' && this.oldField.unique === 'No') {
+      if (this.versioned) {
+        alterTableQuery += `${addComma}ADD CONSTRAINT ${this.name}_${this.fields[0].name}_current_unique UNIQUE (${this.fields[0].name}, is_current)`
+      } else {
+        alterTableQuery += `${addComma}ADD CONSTRAINT ${this.name}_${this.fields[0].name}_key UNIQUE (${this.fields[0].name})`
+      }
+    } else if (this.updatedField.unique === 'No' && this.oldField.unique === 'Yes') {
+      alterTableQuery += `${addComma}DROP CONSTRAINT IF EXISTS ${this.name}_${this.fields[0].name}_current_unique,
+        DROP CONSTRAINT IF EXISTS ${this.name}_${this.fields[0].name}_key`
+    }
+    alterTableQuery += ';'
+    return alterTableQuery
+  }
+
+  editProperty () {
+    // alter table to add this.fields[0]
+    // if it fails return 422
+    // if it succeeds return 201
+    return new Promise((resolve, reject) => {
+      const queryString = this.editPropertyQueryString()
+      logger.debug(queryString)
+      db.query(queryString)
+        .then(result => {
+          logger.verbose(`Edited property of ${this.name} table`)
+          const msg = { statusCode: '201', message: 'Created' }
+          return resolve(msg)
+        })
+        .catch(err => {
+          logger.error(err)
+          return reject(err)
+        })
+    })
+  }
+
   /**
    * Returns the dataset's idType.
    *
@@ -423,24 +480,22 @@ class Dataset {
               return resolve(msg)
             }
           }
-          if (!this.versioned) {
-            this.registerDataset()
-              .then(registrationResult => {
-                if (registrationResult.statusCode === '422') {
-                  const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
-                  return resolve(msg)
-                }
-                this.createTable()
-                  .then(creationResult => {
-                    if (creationResult.statusCode === '422') {
-                      const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
-                      return resolve(msg)
-                    }
-                    const msg = { statusCode: '201', message: 'CREATED' }
+          this.registerDataset()
+            .then(registrationResult => {
+              if (registrationResult.statusCode === '422') {
+                const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
+                return resolve(msg)
+              }
+              this.createTable()
+                .then(creationResult => {
+                  if (creationResult.statusCode === '422') {
+                    const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
                     return resolve(msg)
-                  })
-              })
-          }
+                  }
+                  const msg = { statusCode: '201', message: 'CREATED' }
+                  return resolve(msg)
+                })
+            })
         })
         .catch(err => {
           logger.error(err)
@@ -504,6 +559,7 @@ class Dataset {
             const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
             return resolve(msg)
           }
+
           this.registerProperty()
             .then(registrationResult => {
               if (registrationResult.statusCode === '422') {
@@ -532,6 +588,47 @@ class Dataset {
               logger.error(err)
               return reject(err)
             })
+        })
+        .catch(err => {
+          logger.error(err)
+          return reject(err)
+        })
+    })
+  }
+
+  postEditProperty () {
+    return new Promise((resolve, reject) => {
+      // check if the dataset already exists (ie. there's a table and it's registered)
+      this.checkIfPropertyExists()
+        .then(propertyExists => {
+          logger.verbose('postProperty has checked if the property already exists')
+          if (propertyExists.statusCode !== '302' || !this.updatedField) {
+            const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
+            return resolve(msg)
+          }
+          if (this.updatedField.notNull !== this.oldField.notNull || this.updatedField.unique !== this.oldField.unique) {
+            this.editProperty()
+              .then(editPropertyResult => {
+                this.registerProperty()
+                  .then(registrationResult => {
+                    if (registrationResult.statusCode === '422') {
+                      logger.verbose('postProperty failed to alter the table')
+                      const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
+                      return resolve(msg)
+                    }
+                    logger.verbose('postProperty has altered the table')
+                    const msg = { statusCode: '201', message: 'EDITED' }
+                    return resolve(msg)
+                  })
+              })
+              .catch(err => {
+                logger.error(err)
+                return reject(err)
+              })
+          } else {
+            const msg = { statusCode: '201', message: 'NOT EDITED' }
+            return resolve(msg)
+          }
         })
         .catch(err => {
           logger.error(err)
