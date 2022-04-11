@@ -296,12 +296,12 @@ exports.postEditDatasetProperties = (req, res) => {
             logger.verbose('postDatasets sending HTML response')
             // flash notify that dataset could not be created
             // redirect to GET datasets
-            res.status(201).redirect('/v1/datasets/' + req.params.dataset)
+            res.status(406).redirect('/v1/datasets/' + req.params.dataset)
           },
           json: () => {
             logger.verbose('postDatasets sending JSON response')
             // respond that dataset could not be created
-            res.status(201).json({ name: req.body.name, action: 'Not created' })
+            res.status(406).json({ name: req.body.name, action: 'Not edited', result: result })
           },
           default: () => {
             logger.verbose('postDatasets invalid format requested')
