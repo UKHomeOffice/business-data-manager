@@ -9,7 +9,7 @@ const session = require('express-session')
 const bodyParser = require('body-parser')
 const compression = require('compression')
 const errorHandler = require('errorhandler')
-const expressValidator = require('express-validator')
+const { check } = require('express-validator')
 const flash = require('express-flash')
 const lusca = require('lusca')
 const morgan = require('morgan')
@@ -52,7 +52,6 @@ if (production) {
 }
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-app.use(expressValidator())
 app.use(session({
   resave: true,
   saveUninitialized: true,
