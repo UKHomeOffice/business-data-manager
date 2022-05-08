@@ -94,6 +94,7 @@ class Datasets {
       logger.info('Updating datasets table')
       let queryString = 'alter table datasets add column if not exists org varchar;'
       queryString += 'alter table datasets add column if not exists versioned boolean default false;'
+      queryString += 'alter table datasets add column if not exists uniquetogether text[] default array[]::varchar[];'
       this.findAll().then(result => {
         result.data.forEach(dataset => {
           queryString += `
@@ -123,7 +124,8 @@ class Datasets {
                         'idtype varchar NOT NULL, ' +
                         'fields jsonb NOT NULL, ' +
                         'org varchar, ' +
-                        'versioned boolean );'
+                        'versioned boolean, ' +
+                        'uniquetogether text[] default array[]::varchar[] );'
       logger.debug(queryString)
       db.query(queryString)
         .then(result => {

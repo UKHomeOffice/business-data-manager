@@ -19,12 +19,13 @@ class Dataset {
    * create the data structure. This ensures that the data structures aren't
    * touched every time that the class is instanciated.
    */
-  constructor (name, idType, fields = [], org = null, versioned = false) {
+  constructor (name, idType, fields = [], org = null, versioned = false, uniqueTogether = []) {
     this.name = name
     this.idType = idType
-    this.fields = typeof fields === 'string' ? JSON.parse(fields):fields
+    this.fields = typeof fields === 'string' ? JSON.parse(fields) : fields
     this.org = org
     this.versioned = (versioned === true || versioned === 'true') && idType === 'SERIAL'
+    this.uniqueTogether = uniqueTogether
     this.updatedField = null
     this.oldField = null
   }
@@ -55,7 +56,7 @@ class Dataset {
   createTableQuery () {
     let query = ''
     if (this.versioned) {
-      query += `CREATE SEQUENCE ${this.name}_version_id_seq;`
+      query += `DROP SEQUENCE IF EXISTS ${this.name}_version_id_seq; CREATE SEQUENCE ${this.name}_version_id_seq;`
     }
     query += `CREATE TABLE ${this.name} (`
     query += ` id ${this.idType} PRIMARY KEY`
@@ -65,6 +66,13 @@ class Dataset {
       is_current SMALLINT DEFAULT 1,
       version SMALLINT NOT NULL DEFAULT 1,
       CONSTRAINT ${this.name}_version_current_unique UNIQUE (version_id, is_current)`
+      if (this.uniqueTogether.length > 0) {
+        query += `,
+        CONSTRAINT ${this.name}_current_unique_together UNIQUE (is_current, ${this.uniqueTogether.join(', ')})`
+      }
+    } else if (this.uniqueTogether.length > 0) {
+      query += `,
+      CONSTRAINT ${this.name}_current_unique_together UNIQUE (${this.uniqueTogether.join(', ')})`
     }
     for (let i = 0; i < this.fields.length; i++) {
       query += `, "${this.fields[i].name}" ${this.fields[i].datatype}`
@@ -288,7 +296,12 @@ class Dataset {
     ADD COLUMN IF NOT EXISTS is_current SMALLINT DEFAULT 1,
     ADD COLUMN IF NOT EXISTS version SMALLINT NOT NULL DEFAULT 1,
     DROP CONSTRAINT IF EXISTS ${this.name}_version_current_unique,
-    ADD CONSTRAINT ${this.name}_version_current_unique UNIQUE (version_id, is_current)`
+    ADD CONSTRAINT ${this.name}_version_current_unique UNIQUE (version_id, is_current),
+    DROP CONSTRAINT IF EXISTS ${this.name}_current_unique_together`
+    if (this.uniqueTogether.length > 0) {
+      query += `,
+      ADD CONSTRAINT ${this.name}_current_unique_together UNIQUE (is_current, ${this.uniqueTogether.join(', ')})`
+    }
     for (let i = 0; i < this.fields.length; i++) {
       if (this.fields[i].unique === 'Yes') {
         query += `,

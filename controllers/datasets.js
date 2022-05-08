@@ -65,7 +65,7 @@ exports.addViewDatasets = (req, res) => {
  */
 exports.postDatasets = (req, res) => {
   // pre-process the fields to set id correctly
-  const dataset = new Dataset(req.body.name, req.body.idType, req.body.fields, req.body.org, req.body.versioned)
+  const dataset = new Dataset(req.body.name, req.body.idType, req.body.fields, req.body.org, req.body.versioned, req.body.uniqueTogether || [])
   dataset.post()
     .then(result => {
       // check the result for successful creation
@@ -203,7 +203,7 @@ exports.postDatasetProperties = (req, res) => {
     unique: req.body.unique,
     foreignKey: req.body.foreignKey
   }]
-  const dataset = new Dataset(req.params.dataset, req.body.idType, fields, '', req.body.versioned)
+  const dataset = new Dataset(req.params.dataset, req.body.idType, fields, '', req.body.versioned, req.body.uniqueTogether || [])
   dataset.postProperty()
     .then(result => {
       // check the result for successful creation
@@ -266,7 +266,7 @@ exports.postEditDatasetProperties = (req, res) => {
     unique: req.body.unique,
     foreignKey: req.body.foreignKey
   }]
-  const dataset = new Dataset(req.params.dataset, req.body.idType, fields, '', req.body.versioned)
+  const dataset = new Dataset(req.params.dataset, req.body.idType, fields, '', req.body.versioned, req.body.uniqueTogether || [])
   dataset.postEditProperty()
     .then(result => {
       // check the result for successful creation
