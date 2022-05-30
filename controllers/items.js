@@ -25,7 +25,7 @@ exports.getItems = async (req, res) => {
   const datasetObj = await dataset.findOne()
   const items = new Items(req.params.dataset)
   const fetchAll = (req.get('Accept') === 'application/json') || false
-  const page = parseInt(check('page').escape()) || false
+  const page = parseInt(req.query.page.trim()) || false
   const itemsPerPage = paginationConfig.itemsPerPage
   const start = page ? (page - 1) * itemsPerPage : 0
   let result
