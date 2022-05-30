@@ -29,10 +29,11 @@
                         {% elif field.name in ['version', 'is_current'] %}
                             <input type='hidden' name="{{ field.name }}" value="1">
                         {% elif field.foreignKey %}
+                        <label class="form-label" for="{{ field.name }}">{{ field.name }}</label>
                         <select class="form-control" name="{{ field.name }}">
                             <option></option>
                             {% for fk in foreignKeys[field.foreignKey] %}
-                                <option valye="{{ fk.key }}">{{ fk.value }}</option>
+                                <option value="{{ fk.key }}">{{ fk.value }}</option>
                             {% endfor %}
                         </select>
                         {% elif field.name not in ['created_at', 'updated_at', 'created_by', 'updated_by', 'version_id'] %}

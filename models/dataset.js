@@ -62,9 +62,9 @@ class Dataset {
     query += ` id ${this.idType} PRIMARY KEY`
     if (this.versioned) {
       query += `,
-      version_id SMALLINT NOT NULL DEFAULT nextval('${this.name}_version_id_seq'),
-      is_current SMALLINT DEFAULT 1,
-      version SMALLINT NOT NULL DEFAULT 1,
+      version_id INTEGER NOT NULL DEFAULT nextval('${this.name}_version_id_seq'),
+      is_current INTEGER DEFAULT 1,
+      version INTEGER NOT NULL DEFAULT 1,
       CONSTRAINT ${this.name}_version_current_unique UNIQUE (version_id, is_current)`
       if (this.uniqueTogether.length > 0) {
         query += `,
@@ -292,9 +292,9 @@ class Dataset {
     let query = `DROP SEQUENCE IF EXISTS ${this.name}_version_id_seq;
     CREATE SEQUENCE ${this.name}_version_id_seq;
     ALTER TABLE IF EXISTS ${this.name}
-    ADD COLUMN IF NOT EXISTS version_id SMALLINT NOT NULL DEFAULT nextval('${this.name}_version_id_seq'),
-    ADD COLUMN IF NOT EXISTS is_current SMALLINT DEFAULT 1,
-    ADD COLUMN IF NOT EXISTS version SMALLINT NOT NULL DEFAULT 1,
+    ADD COLUMN IF NOT EXISTS version_id INTEGER NOT NULL DEFAULT nextval('${this.name}_version_id_seq'),
+    ADD COLUMN IF NOT EXISTS is_current INTEGER DEFAULT 1,
+    ADD COLUMN IF NOT EXISTS version INTEGER NOT NULL DEFAULT 1,
     DROP CONSTRAINT IF EXISTS ${this.name}_version_current_unique,
     ADD CONSTRAINT ${this.name}_version_current_unique UNIQUE (version_id, is_current),
     DROP CONSTRAINT IF EXISTS ${this.name}_current_unique_together`

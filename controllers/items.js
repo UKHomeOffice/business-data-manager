@@ -407,16 +407,22 @@ exports.putItemProperty = (req, res) => {
 
 const getForeignKeys = async (dataset) => {
   const foreignKeys = {}
-  for (let field of dataset.fields) {
+  for (const field of dataset.fields) {
     if (field.foreignKey) {
+      let foreignKey = field.foreignKey
+      let idField = 'id'
+      if (field.foreignKey.includes('.')) {
+        [foreignKey, idField] = field.foreignKey.split('.')
+      }
       try {
-        const ds = (await (new Dataset(field.foreignKey)).findOne()).data
-        const itemsModel = new Items(field.foreignKey)
+        const ds = (await (new Dataset(foreignKey)).findOne()).data
+        const itemsModel = new Items(foreignKey)
         let searchQuery = false
-        let idField = 'id'
         if (ds.versioned) {
-          searchQuery = itemsModel.searchQuery({is_current: 1}, ds.fields, true)
-          idField = 'version_id'
+          searchQuery = itemsModel.searchQuery({ is_current: 1 }, ds.fields, true)
+          if (idField === 'id') {
+            idField = 'version_id'
+          }
         }
         const items = await itemsModel.findAll(0, 0, true, searchQuery)
         const idIndex = items.data.fields.indexOf(idField)
