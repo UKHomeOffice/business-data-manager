@@ -424,12 +424,17 @@ const getForeignKeys = async (dataset) => {
             idField = 'version_id'
           }
         }
+        let displayField = idField
+        if (field.foreignKeyDisplay) {
+          displayField = field.foreignKeyDisplay
+        }
         const items = await itemsModel.findAll(0, 0, true, searchQuery)
         const idIndex = items.data.fields.indexOf(idField)
+        const displayIndex = items.data.fields.indexOf(displayField)
         foreignKeys[field.foreignKey] = items.data.rows.map((row) => {
           return {
             key: row[idIndex],
-            value: row[idIndex]
+            value: row[displayIndex]
           }
         })
       } catch (error) {
