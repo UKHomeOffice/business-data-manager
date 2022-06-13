@@ -30,6 +30,7 @@
         <p>The dataset contains the following items.</p>
         <form method="POST" action="{{ action }}">
           <input type='hidden' name="_csrf" value="{{ _csrf }}">
+          <input type='hidden' name="_itemid" value="{{ data.itemId }}">
           <table>
             <thead>
               <tr>

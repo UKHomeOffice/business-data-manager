@@ -8,6 +8,7 @@ const logger = require('../logger')
 const filter = require('../lib/filters')
 const { zipListsToDict } = require('../lib/utils')
 const { check } = require('express-validator')
+const { Validator } = require('../lib/validator')
 
 function hasNonPageQuery (req) {
   if (Object.keys(req.query).length !== 0) {
@@ -189,6 +190,31 @@ exports.updateItem = async (req, res) => {
   const itemId = req.params.item
   delete req.body._csrf
   const item = new Item(datasetName, itemId, req.body, req.app.locals.email)
+  const dataset = new Dataset(datasetName)
+  const datasetObj = (await dataset.findOne()).data
+  const validator = new Validator(datasetObj, req.body)
+  const errors = validator.validate()
+  if (errors.length > 0) {
+    for (const error of errors) {
+      req.flash('errors', { msg: error })
+    }
+    return res.format({
+      html: () => {
+        res.status(406).redirect(`/v1/datasets/${datasetName}/items/${itemId}`)
+      },
+      json: () => {
+        res.status(406).json({
+          uri: `/v1/datasets/${datasetName}/items/${itemId}`,
+          action: 'Error',
+          errors: errors
+        })
+      },
+      default: () => {
+        logger.verbose('updateItem invalid format requested')
+        res.status(406).send('Invalid response format requested')
+      }
+    })
+  }
   try {
     const updateResponse = await item.update(req.body)
     if (updateResponse.statusCode === '200') {
@@ -242,7 +268,37 @@ exports.updateItem = async (req, res) => {
  *
  * @returns adds a new item to the dataset
  */
-exports.postItems = (req, res) => {
+exports.postItems = async (req, res) => {
+  const datasetName = req.params.dataset
+  const dataset = new Dataset(datasetName)
+  const datasetObj = (await dataset.findOne()).data
+  const validator = new Validator(datasetObj, req.body)
+  const errors = validator.validate()
+  console.log(errors)
+  if (errors.length > 0) {
+    const itemId = req.body._itemid ? req.body._itemid : 'add'
+    for (const error of errors) {
+      console.log(error)
+      req.flash('errors', { msg: error })
+    }
+    return res.format({
+      html: () => {
+        res.status(406).redirect(`/v1/datasets/${datasetName}/items/${itemId}`)
+      },
+      json: () => {
+        res.status(406).json({
+          uri: `/v1/datasets/${datasetName}/items/${itemId}`,
+          action: 'Error',
+          errors: errors
+        })
+      },
+      default: () => {
+        logger.verbose('updateItem invalid format requested')
+        res.status(406).send('Invalid response format requested')
+      }
+    })
+  }
+
   let item
   if (typeof req.body.id !== 'undefined') {
     item = new Item(req.params.dataset, req.body.id, req.body, req.app.locals.email)
