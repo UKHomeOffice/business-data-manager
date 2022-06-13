@@ -29,6 +29,7 @@
               <th>Not null</th>
               <th>Unique</th>
               <th>Foreign key</th>
+              <th>Validators</th>
             </tr>
           </thead>
           <tbody>
@@ -39,6 +40,17 @@
                 <td>{{ field.notNull }}</td>
                 <td>{{ field.unique }}</td>
                 <td>{{ field.foreignKey }}</td>
+                <td>
+                  {% for name, options in field.validators %}
+                    <span>{{ name }}
+                      {% if options | length %}:
+                        {% for p, v in options %}
+                          {{ p }}={{ v }}
+                        {% endfor %}
+                      {% endif %}
+                    </span>
+                  {% endfor %}
+                </td>
               </tr>
             {% endfor %}
           <tbody>
