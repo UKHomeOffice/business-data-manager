@@ -399,16 +399,19 @@ class Dataset {
   }
 
   editPropertyQueryString () {
+    let alterDatabsesCol = false
     let alterTableQuery = `ALTER TABLE IF EXISTS ${this.name} `
     let addComma = ''
     if (this.updatedField.notNull === 'Yes' && this.oldField.notNull === 'No') {
       alterTableQuery += `ALTER COLUMN "${this.updatedField.name}" SET NOT NULL`
       addComma = `,
       `
+      alterDatabsesCol = true
     } else if (this.updatedField.notNull === 'No' && this.oldField.notNull === 'Yes') {
       alterTableQuery += `ALTER COLUMN "${this.updatedField.name}" DROP NOT NULL`
       addComma = `,
       `
+      alterDatabsesCol = true
     }
     if (this.updatedField.unique === 'Yes' && this.oldField.unique === 'No') {
       if (this.versioned) {
@@ -416,9 +419,14 @@ class Dataset {
       } else {
         alterTableQuery += `${addComma}ADD CONSTRAINT ${this.name}_${this.updatedField.name}_key UNIQUE (${this.updatedField.name})`
       }
+      alterDatabsesCol = true
     } else if (this.updatedField.unique === 'No' && this.oldField.unique === 'Yes') {
       alterTableQuery += `${addComma}DROP CONSTRAINT IF EXISTS ${this.name}_${this.updatedField.name}_current_unique,
         DROP CONSTRAINT IF EXISTS ${this.name}_${this.updatedField.name}_key`
+      alterDatabsesCol = true
+    }
+    if (!alterDatabsesCol) {
+      return ''
     }
     alterTableQuery += ';'
     return alterTableQuery
@@ -431,6 +439,10 @@ class Dataset {
     return new Promise((resolve, reject) => {
       const queryString = this.editPropertyQueryString()
       logger.debug(queryString)
+      if (!queryString) {
+        const msg = { statusCode: '201', message: 'Created' }
+        return resolve(msg)
+      }
       db.query(queryString)
         .then(result => {
           logger.verbose(`Edited property of ${this.name} table`)
@@ -620,7 +632,7 @@ class Dataset {
             const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
             return resolve(msg)
           }
-          if (this.updatedField.notNull !== this.oldField.notNull || this.updatedField.unique !== this.oldField.unique) {
+          if (this.updatedField.notNull !== this.oldField.notNull || this.updatedField.unique !== this.oldField.unique || this.updatedField.validators !== this.oldField.validators) {
             this.editProperty()
               .then(editPropertyResult => {
                 this.registerProperty()

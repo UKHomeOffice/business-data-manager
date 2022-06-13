@@ -21,7 +21,7 @@ const passport = require('passport')
 const PgSession = require('connect-pg-simple')(session)
 // multer is only need to support file uploads (not currently a feature but likely an enhancement in the future)
 // const upload = multer({ dest: path.join(__dirname, 'uploads') });
-const {handleRoles} = require('./auth/authToken')
+const { handleRoles } = require('./auth/authToken')
 const Authenticator = require('./lib/Authenticator')
 
 const config = require('./config/core')
@@ -61,7 +61,7 @@ app.use(session({
   })
 }))
 app.use(passport.initialize())
-app.use(passport.session())
+app.use(passport.session({ cookie: { maxAge: 60000 }}))
 app.use(flash())
 app.use(lusca.csrf())
 app.use(lusca.xframe('SAMEORIGIN'))
