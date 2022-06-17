@@ -269,6 +269,8 @@ exports.updateItem = async (req, res) => {
  * @returns adds a new item to the dataset
  */
 exports.postItems = async (req, res) => {
+  const itemId = req.body._itemid ? req.body._itemid : 'add'
+  delete req.body._itemid
   const datasetName = req.params.dataset
   const dataset = new Dataset(datasetName)
   const datasetObj = (await dataset.findOne()).data
@@ -276,7 +278,6 @@ exports.postItems = async (req, res) => {
   const errors = validator.validate()
   console.log(errors)
   if (errors.length > 0) {
-    const itemId = req.body._itemid ? req.body._itemid : 'add'
     for (const error of errors) {
       console.log(error)
       req.flash('errors', { msg: error })
