@@ -65,17 +65,17 @@
                       </select>
                     </td>
                   {% elif property.columnType == 'INTEGER' %}
-                    <td><input class="form-control" type="number" name="{{property.field}}" value="{{ property.value }}"></td>
+                    <td><input class="form-control" type="number" name="{{property.field}}" value="{{ values[property.field] or property.value }}"></td>
                   {% elif property.columnType == 'VARCHAR' %}
-                    <td><input class="form-control" type="text" name="{{property.field}}" value="{{ property.value }}"></td>
+                    <td><input class="form-control" type="text" name="{{property.field}}" value="{{ values[property.field] or property.value }}"></td>
                   {% elif property.columnType == 'DATE' %}
-                    <td><input class="form-control" type="text" name="{{property.field}}" value="{{property.value.toISOString().slice(0, 10) if property.value else ''}}"></td>
+                    <td><input class="form-control" type="text" name="{{property.field}}" value="{{ values[property.field] or (property.value.toISOString().slice(0, 10) if property.value else '') }}"></td>
                   {% elif property.columnType == 'TIMESTAMP' %}
-                    <td><input class="form-control" type="text" name="{{property.field}}" value="{{property.value.toISOString() if property.value else ''}}"></td>
+                    <td><input class="form-control" type="text" name="{{property.field}}" value="{{ values[property.field] or (property.value.toISOString() if property.value else '') }}"></td>
                   {% elif property.columnType == 'NUMERIC' %}
-                    <td><input class="form-control" type="number" name="{{property.field}}" value="{{ property.value }}"></td>
+                    <td><input class="form-control" type="number" name="{{property.field}}" value="{{ values[property.field] or property.value }}"></td>
                   {% else %}
-                    <td><input class="form-control" type="text" name="{{property.field}}" value="{{ property.value }}"></td>
+                    <td><input class="form-control" type="text" name="{{property.field}}" value="{{ values[property.field] or property.value }}"></td>
                   {% endif %}
                 </tr>
               {% endfor %}

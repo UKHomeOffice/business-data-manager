@@ -38,7 +38,7 @@
                         </select>
                         {% elif field.name not in ['created_at', 'updated_at', 'created_by', 'updated_by', 'version_id'] %}
                             <label class="form-label" for="{{ field.name }}">{{ field.name }}</label>
-                            <input class="form-control" id="{{ field.name }}" name="{{ field.name }}" type="text">
+                            <input class="form-control" id="{{ field.name }}" name="{{ field.name }}" type="text" value="{{ values[field.name] }}">
                         {% endif %}
                     </div>
                 {% endfor %}

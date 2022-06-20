@@ -22,6 +22,7 @@ function hasNonPageQuery (req) {
  * @returns summary all items from the dataset
  */
 exports.getItems = async (req, res) => {
+  delete req.session.form
   const dataset = new Dataset(req.params.dataset)
   const datasetObj = await dataset.findOne()
   const items = new Items(req.params.dataset)
@@ -108,6 +109,8 @@ exports.getItems = async (req, res) => {
  */
 exports.addItem = async (req, res) => {
   const datasetModel = new Dataset(req.params.dataset)
+  const values = req.session.form
+  delete req.session.form
   try {
     const result = await datasetModel.findOne()
     if (result.statusCode === '200') {
@@ -119,7 +122,8 @@ exports.addItem = async (req, res) => {
         title: filter.cCapitalize(req.params.dataset),
         dataset: dataset,
         reqPath: req.originalUrl,
-        foreignKeys
+        foreignKeys,
+        values
       })
     }
   } catch (err) {
@@ -199,6 +203,7 @@ exports.updateItem = async (req, res) => {
     for (const error of errors) {
       req.flash('errors', { msg: error })
     }
+    req.session.form = req.body
     return res.format({
       html: () => {
         res.status(406).redirect(`/v1/datasets/${datasetName}/items/${itemId}`)
@@ -272,6 +277,7 @@ exports.updateItem = async (req, res) => {
 exports.postItems = async (req, res) => {
   const itemId = req.body._itemid ? req.body._itemid : 'add'
   delete req.body._itemid
+  delete req.body._csrf
   const datasetName = req.params.dataset
   const dataset = new Dataset(datasetName)
   const datasetObj = (await dataset.findOne()).data
@@ -283,6 +289,7 @@ exports.postItems = async (req, res) => {
       console.log(error)
       req.flash('errors', { msg: error })
     }
+    req.session.form = req.body
     return res.format({
       html: () => {
         res.status(406).redirect(`/v1/datasets/${datasetName}/items/${itemId}`)
@@ -371,11 +378,13 @@ exports.postItems = async (req, res) => {
  */
 exports.getItem = async (req, res) => {
   const item = new Item(req.params.dataset, req.params.item)
+  const values = req.session.form
+  delete req.session.form
   try {
     const datasetModel = new Dataset(req.params.dataset)
     const dataset = (await datasetModel.findOne()).data
     const dsFields = {}
-    for (let f of dataset.fields) {
+    for (const f of dataset.fields) {
       dsFields[f.name] = f
     }
     const result = await item.findOne()
@@ -396,6 +405,7 @@ exports.getItem = async (req, res) => {
           const foreignKeys = await getForeignKeys(dataset)
           res.status(200).render('getItem', {
             title: `${filter.cCapitalize(req.params.dataset)} - ${req.params.item}`,
+            values,
             data: result.data,
             datasetFields: dsFields,
             foreignKeys,
