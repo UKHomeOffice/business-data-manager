@@ -263,7 +263,12 @@ exports.updateItem = async (req, res) => {
     logger.error(err)
     let errString = err.toString()
     if (err.detail.startsWith('Key (') && err.detail.endsWith(') already exists.')) {
-      errString = err.detail
+      const re = /\(([^)]+)\)/g
+      const matches = [...err.detail.matchAll(re)]
+      const msg = matches.map(x => {
+        return x[1].split(', ')[0]
+      })
+      errString = `${msg[0]} ${msg[1]} already exists`
     }
     req.flash('errors', { msg: `Update failed: ${errString}` })
     res.redirect(`/v1/datasets/${datasetName}/items/${itemId}`)
@@ -367,7 +372,12 @@ exports.postItems = async (req, res) => {
       logger.error(err)
       let errString = err.toString()
       if (err.detail.startsWith('Key (') && err.detail.endsWith(') already exists.')) {
-        errString = err.detail
+        const re = /\(([^)]+)\)/g
+        const matches = [...err.detail.matchAll(re)]
+        const msg = matches.map(x => {
+          return x[1].split(', ')[0]
+        })
+        errString = `${msg[0]} ${msg[1]} already exists`
       }
       req.flash('errors', { msg: `Failed to add item: ${errString}` })
       if (req.get('Accept') === 'application/json') {
