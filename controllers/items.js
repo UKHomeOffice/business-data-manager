@@ -261,7 +261,11 @@ exports.updateItem = async (req, res) => {
     }
   } catch (err) {
     logger.error(err)
-    req.flash('errors', { msg: `Update failed: ${err.detail}` })
+    let errString = err.toString()
+    if (err.detail.startsWith('Key (') && err.detail.endsWith(') already exists.')) {
+      errString = err.detail
+    }
+    req.flash('errors', { msg: `Update failed: ${errString}` })
     res.redirect(`/v1/datasets/${datasetName}/items/${itemId}`)
   }
 }
@@ -361,9 +365,13 @@ exports.postItems = async (req, res) => {
     // other catch an unexpected response code
     .catch(err => {
       logger.error(err)
-      req.flash('errors', { msg: `Failed to add item: ${err.detail}` })
+      let errString = err.toString()
+      if (err.detail.startsWith('Key (') && err.detail.endsWith(') already exists.')) {
+        errString = err.detail
+      }
+      req.flash('errors', { msg: `Failed to add item: ${errString}` })
       if (req.get('Accept') === 'application/json') {
-        return res.status(500).json({ action: 'Unprocessable Entity', error: err.detail })
+        return res.status(500).json({ action: 'Unprocessable Entity', error: errString })
       }
       res.redirect(`/v1/datasets/${req.params.dataset}/items`)
     })

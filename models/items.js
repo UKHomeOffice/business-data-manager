@@ -74,7 +74,9 @@ class Items {
                   row.push(result.rows[j][fields[k]])
                 }
               }
-              rows.push(row)
+              if (row.length > 0) {
+                rows.push(row)
+              }
             }
             const items = {
               datasetName: this.datasetName,
