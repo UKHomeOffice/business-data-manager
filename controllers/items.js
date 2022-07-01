@@ -262,7 +262,7 @@ exports.updateItem = async (req, res) => {
   } catch (err) {
     logger.error(err)
     let errString = err.toString()
-    if (err.detail.startsWith('Key (') && err.detail.endsWith(') already exists.')) {
+    if (err.detail && err.detail.startsWith('Key (') && err.detail.endsWith(') already exists.')) {
       const re = /\(([^)]+)\)/g
       const matches = [...err.detail.matchAll(re)]
       const msg = matches.map(x => {
@@ -371,7 +371,7 @@ exports.postItems = async (req, res) => {
     .catch(err => {
       logger.error(err)
       let errString = err.toString()
-      if (err.detail.startsWith('Key (') && err.detail.endsWith(') already exists.')) {
+      if (err.detail && err.detail.startsWith('Key (') && err.detail.endsWith(') already exists.')) {
         const re = /\(([^)]+)\)/g
         const matches = [...err.detail.matchAll(re)]
         const msg = matches.map(x => {
