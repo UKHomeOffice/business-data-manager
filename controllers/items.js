@@ -191,7 +191,7 @@ exports.deleteItem = async (req, res) => {
  */
 exports.updateItem = async (req, res) => {
   const datasetName = req.params.dataset
-  const itemId = req.body._itemid ? req.body._itemid : 'add'
+  const itemId = req.body._itemid ? req.body._itemid : req.params.item || 'add'
   delete req.body._itemid
   delete req.body._csrf
   const item = new Item(datasetName, itemId, req.body, req.app.locals.email)
