@@ -528,7 +528,10 @@ const getForeignKeys = async (dataset) => {
             value = `${v1} (${values.join(', ')})`
           } else {
             const displayIndex = items.data.fields.indexOf(displayField)
-            value = `${row[displayIndex]} (${row[idIndex]})`
+            value = `${row[displayIndex]}`
+            if (displayIndex !== idIndex) {
+              value += ` (${row[idIndex]})`
+            }
           }
           return {
             key: row[idIndex],
