@@ -516,11 +516,23 @@ const getForeignKeys = async (dataset) => {
         }
         const items = await itemsModel.findAll(0, 0, true, searchQuery)
         const idIndex = items.data.fields.indexOf(idField)
-        const displayIndex = items.data.fields.indexOf(displayField)
         foreignKeys[field.foreignKey] = items.data.rows.map((row) => {
+          let value = ''
+          if (Array.isArray(displayField)) {
+            const values = []
+            for (const f of displayField) {
+              const displayIndex = items.data.fields.indexOf(f)
+              values.push(row[displayIndex])
+            }
+            const v1 = values.shift()
+            value = `${v1} (${values.join(', ')})`
+          } else {
+            const displayIndex = items.data.fields.indexOf(displayField)
+            value = `${row[displayIndex]} (${row[idIndex]})`
+          }
           return {
             key: row[idIndex],
-            value: `${row[displayIndex]} (${row[idIndex]})`
+            value: value
           }
         })
       } catch (error) {
