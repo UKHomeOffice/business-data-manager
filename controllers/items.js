@@ -520,7 +520,7 @@ const getForeignKeys = async (dataset) => {
         foreignKeys[field.foreignKey] = items.data.rows.map((row) => {
           return {
             key: row[idIndex],
-            value: row[displayIndex]
+            value: `${row[displayIndex]} (${row[idIndex]})`
           }
         })
       } catch (error) {
