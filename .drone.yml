@@ -29,6 +29,10 @@ steps:
     DOCKER_USERNAME:
       from_secret: docker_username
   when:
+    branch:
+    - master
+    - hotfix/*
+    - feature/*
     event:
     - push
 
@@ -39,8 +43,8 @@ steps:
  - trivy image --ignore-unfixed --exit-code 0 --no-progress quay.io/ukhomeofficedigital/business-data-manager:${DRONE_COMMIT_SHA}
  when:
    branch:
-     exclude:
-     - master
+   - hotfix/*
+   - feature/*
    event:
    - push
 
