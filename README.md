@@ -1,6 +1,5 @@
 ![Logo of the project](./documents/images/cube.png)
 
-
 # Business Data Manager
 
 > A lightweight, flexible business data management solution
@@ -38,7 +37,7 @@ export PGPASSWORD=badpassword
 
 > Run `yarn install`
 > Install postgres 13.x `brew search postgresql && brew install postgresql`
-> 
+>
 > Add the following lines to your .bashrc or .zshrc file (which ever shell you use)
 >
 ```
@@ -50,7 +49,7 @@ export PKG_CONFIG_PATH="/usr/local/opt/postgresql/lib/pkgconfig"
 >
 > Create user bdm (change admin with your current username)
 > `psql -U admin -d postgres -c 'CREATE USER bdm; ALTER USER bdm WITH SUPERUSER;'`
-> 
+>
 > Create database bdm
 > `psql -U admin -d postgres -c 'CREATE DATABASE bdm;'`
 >
@@ -62,17 +61,17 @@ export PKG_CONFIG_PATH="/usr/local/opt/postgresql/lib/pkgconfig"
 > `brew services start postgresql`
 >
 > Now run the following commands
-> 
+>
 > `yarn install`
 > `yarn build`
 > `yarn setup`
-> 
-> Then to start the project we run: 
+>
+> Then to start the project we run:
 
 > `yarn start`
-> 
+>
 > Note: You might have to restart the laptop if postgress is refusing the connection.
-> 
+>
 
 ## Building with Drone
 
@@ -170,7 +169,7 @@ item from a dataset
 item from a dataset
 
 ### Database backup and restore
-Database backups are made by AWS/ACP nightly and are stored for 7 days. 
+Database backups are made by AWS/ACP nightly and are stored for 7 days.
 
 To restore a database you will need to ask ACP to start a snapshot of the database and then you can copy and restore this to the main database yourself.
 
