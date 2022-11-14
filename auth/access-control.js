@@ -31,6 +31,9 @@ let grantsObject = {
       },
       {
         resource: 'item', action: 'write', attributes: ['*']
+      },
+      {
+        resource: 'item', action: 'read', attributes: ['*']
       }
     ]
   },
