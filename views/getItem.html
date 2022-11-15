@@ -44,7 +44,7 @@
                 {% set dsField = datasetFields[property.field] %}
                 <tr>
                   <td>{{ property.field }}</td>
-                  {% if property.field in ['id', 'created_at', 'updated_at', 'created_by', 'updated_by'] %}
+                  {% if not Authenticator.authorise('item', 'write') or property.field in ['id', 'created_at', 'updated_at', 'created_by', 'updated_by'] %}
                     <td>{{ property.value }}</td>
                   {% elif property.field in ['version', 'is_current', 'version_id'] %}
                     {% if property.field == 'version' %}

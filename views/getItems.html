@@ -62,9 +62,13 @@
               <td>{{ value }}</td>
             {% endfor %}
             <td>
-              {% if Authenticator.authorise('item', 'write') %}
-                <a class="button" href="/v1/datasets/{{ data.datasetName }}/items/{{ row[0] }}">Edit</a>
-              {% endif %}
+              <a class="button" href="/v1/datasets/{{ data.datasetName }}/items/{{ row[0] }}">
+                {% if Authenticator.authorise('item', 'write') %}
+                  Edit
+                {% elif Authenticator.authorise('item', 'read') %}
+                  View
+                {% endif %}
+              </a>
             </td>
           </tr>
         {% endfor %}
