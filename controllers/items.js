@@ -538,6 +538,15 @@ const getForeignKeys = async (dataset) => {
           }
           foreignKeys[field.foreignKey][row[idIndex]] = value
         })
+        foreignKeys[field.foreignKey] = Object.keys(foreignKeys[field.foreignKey]).sort((a, b) => {
+          return foreignKeys[field.foreignKey][a] - foreignKeys[field.foreignKey][b]
+        }).reduce(
+          (obj, key) => {
+            obj[key] = foreignKeys[field.foreignKey][key];
+            return obj;
+          },
+          {}
+        );
       } catch (error) {
       }
     }
