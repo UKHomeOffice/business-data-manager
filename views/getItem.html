@@ -44,7 +44,15 @@
                 {% set dsField = datasetFields[property.field] %}
                 <tr>
                   <td>{{ property.field }}</td>
-                  {% if not Authenticator.authorise('item', 'write') or property.field in ['id', 'created_at', 'updated_at', 'created_by', 'updated_by'] %}
+                  {% if not Authenticator.authorise('item', 'write') %}
+                    <td>
+                      {% if dsField.foreignKey %}
+                        {{ foreignKeys[dsField.foreignKey][property.value] }}
+                      {% else %}
+                        {{ property.value }}
+                      {% endif %}
+                    </td>
+                  {% elif property.field in ['id', 'created_at', 'updated_at', 'created_by', 'updated_by'] %}
                     <td>{{ property.value }}</td>
                   {% elif property.field in ['version', 'is_current', 'version_id'] %}
                     {% if property.field == 'version' %}
@@ -59,8 +67,8 @@
                     <td>
                       <select class="form-control" name="{{ dsField.name }}">
                         <option></option>
-                        {% for fk in foreignKeys[dsField.foreignKey] %}
-                            <option value="{{ fk.key }}"{% if fk.key == property.value %} selected="selected"{% endif %}>{{ fk.value }}</option>
+                        {% for key, value in foreignKeys[dsField.foreignKey].items() %}
+                            <option value="{{ key }}"{% if key == property.value %} selected="selected"{% endif %}>{{ value }}</option>
                         {% endfor %}
                       </select>
                     </td>
