@@ -632,7 +632,13 @@ class Dataset {
             const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
             return resolve(msg)
           }
-          if (this.updatedField.notNull !== this.oldField.notNull || this.updatedField.unique !== this.oldField.unique || this.updatedField.validators !== this.oldField.validators) {
+          if (
+                this.updatedField.foreignKey !== this.oldField.foreignKey ||
+                this.updatedField.foreignKeyDisplay !== this.oldField.foreignKeyDisplay ||
+                this.updatedField.notNull !== this.oldField.notNull ||
+                this.updatedField.unique !== this.oldField.unique ||
+                this.updatedField.validators !== this.oldField.validators
+          ) {
             this.editProperty()
               .then(editPropertyResult => {
                 this.registerProperty()
