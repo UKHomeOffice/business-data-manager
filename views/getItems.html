@@ -59,12 +59,23 @@
         {% for row in data.rows %}
           <tr>
             {% for value in row[:6] %}
-              <td>{{ value }}</td>
+              {% set field = datasetFields[loop.index-2] %}
+              <td>
+                {% if field.foreignKey %}
+                  {{ foreignKeys[field.foreignKey][value] }}
+                {% else %}
+                  {{ value }}
+                {% endif %}
+              </td>
             {% endfor %}
             <td>
-              {% if Authenticator.authorise('item', 'write') %}
-                <a class="button" href="/v1/datasets/{{ data.datasetName }}/items/{{ row[0] }}">Edit</a>
-              {% endif %}
+              <a class="button" href="/v1/datasets/{{ data.datasetName }}/items/{{ row[0] }}">
+                {% if Authenticator.authorise('item', 'write') %}
+                  Edit
+                {% elif Authenticator.authorise('item', 'read') %}
+                  View
+                {% endif %}
+              </a>
             </td>
           </tr>
         {% endfor %}

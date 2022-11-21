@@ -32,8 +32,8 @@
                         <label class="form-label" for="{{ field.name }}">{{ field.name }}</label>
                         <select class="form-control" name="{{ field.name }}">
                             <option></option>
-                            {% for fk in foreignKeys[field.foreignKey] %}
-                                <option value="{{ fk.key }}">{{ fk.value }}</option>
+                            {% for key, value in foreignKeys[dsField.foreignKey].items() %}
+                                <option value="{{ key }}">{{ value }}</option>
                             {% endfor %}
                         </select>
                         {% elif field.name not in ['created_at', 'updated_at', 'created_by', 'updated_by', 'version_id'] %}

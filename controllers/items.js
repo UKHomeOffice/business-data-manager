@@ -25,6 +25,7 @@ exports.getItems = async (req, res) => {
   delete req.session.form
   const dataset = new Dataset(req.params.dataset)
   const datasetObj = await dataset.findOne()
+  const foreignKeys = await getForeignKeys(datasetObj.data)
   const items = new Items(req.params.dataset)
   const fetchAll = (req.get('Accept') === 'application/json') || false
   const page = req.query.page ? parseInt(req.query.page.trim()) || false : false
@@ -63,7 +64,8 @@ exports.getItems = async (req, res) => {
             data: result.data,
             reqPath: req.originalUrl,
             datasetFields: datasetObj.data.fields,
-            dataset: datasetObj
+            dataset: datasetObj,
+            foreignKeys
           })
         },
         json: () => {
@@ -516,7 +518,8 @@ const getForeignKeys = async (dataset) => {
         }
         const items = await itemsModel.findAll(0, 0, true, searchQuery)
         const idIndex = items.data.fields.indexOf(idField)
-        foreignKeys[field.foreignKey] = items.data.rows.map((row) => {
+        foreignKeys[field.foreignKey] = {}
+        items.data.rows.map((row) => {
           let value = ''
           if (Array.isArray(displayField)) {
             const values = []
@@ -533,11 +536,17 @@ const getForeignKeys = async (dataset) => {
               value += ` (${row[idIndex]})`
             }
           }
-          return {
-            key: row[idIndex],
-            value: value
-          }
+          foreignKeys[field.foreignKey][row[idIndex]] = value
         })
+        foreignKeys[field.foreignKey] = Object.keys(foreignKeys[field.foreignKey]).sort((a, b) => {
+          return foreignKeys[field.foreignKey][a].localeCompare(foreignKeys[field.foreignKey][b])
+        }).reduce(
+          (obj, key) => {
+            obj[key] = foreignKeys[field.foreignKey][key];
+            return obj;
+          },
+          {}
+        );
       } catch (error) {
       }
     }

@@ -251,7 +251,7 @@ class Dataset {
             }
           }
           if (found) {
-            this.updatedField = this.fields.shift()
+            this.updatedField = Object.assign({}, this.fields.shift())
             this.oldField = Object.assign({}, this.fields[oldIndex - 1])
             this.fields[oldIndex - 1] = this.updatedField
             const msg = { statusCode: '302', message: 'Found' }
@@ -632,7 +632,13 @@ class Dataset {
             const msg = { statusCode: '422', message: 'UNPROCESSABLE ENTITY' }
             return resolve(msg)
           }
-          if (this.updatedField.notNull !== this.oldField.notNull || this.updatedField.unique !== this.oldField.unique || this.updatedField.validators !== this.oldField.validators) {
+          if (
+                this.updatedField.foreignKey !== this.oldField.foreignKey ||
+                this.updatedField.foreignKeyDisplay !== this.oldField.foreignKeyDisplay ||
+                this.updatedField.notNull !== this.oldField.notNull ||
+                this.updatedField.unique !== this.oldField.unique ||
+                this.updatedField.validators !== this.oldField.validators
+          ) {
             this.editProperty()
               .then(editPropertyResult => {
                 this.registerProperty()
