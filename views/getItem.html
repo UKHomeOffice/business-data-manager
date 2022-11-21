@@ -52,6 +52,8 @@
                         {{ property.value }}
                       {% endif %}
                     </td>
+                  {% elif dsField.generateUniqueId %}
+                    <td><input type='hidden' name="{{property.field}}" value="{{ property.value }}">{{ property.value }}</td>
                   {% elif property.field in ['id', 'created_at', 'updated_at', 'created_by', 'updated_by'] %}
                     <td>{{ property.value }}</td>
                   {% elif property.field in ['version', 'is_current', 'version_id'] %}
