@@ -633,11 +633,12 @@ class Dataset {
             return resolve(msg)
           }
           if (
-                this.updatedField.foreignKey !== this.oldField.foreignKey ||
-                this.updatedField.foreignKeyDisplay !== this.oldField.foreignKeyDisplay ||
-                this.updatedField.notNull !== this.oldField.notNull ||
-                this.updatedField.unique !== this.oldField.unique ||
-                this.updatedField.validators !== this.oldField.validators
+            this.updatedField.foreignKey !== this.oldField.foreignKey ||
+            this.updatedField.foreignKeyDisplay !== this.oldField.foreignKeyDisplay ||
+            this.updatedField.notNull !== this.oldField.notNull ||
+            this.updatedField.unique !== this.oldField.unique ||
+            this.updatedField.validators !== this.oldField.validators ||
+            this.updatedField.generateUniqueId !== this.oldField.generateUniqueId
           ) {
             this.editProperty()
               .then(editPropertyResult => {

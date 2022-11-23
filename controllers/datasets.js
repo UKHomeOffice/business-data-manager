@@ -203,7 +203,8 @@ exports.postDatasetProperties = (req, res) => {
     unique: req.body.unique,
     foreignKey: req.body.foreignKey,
     foreignKeyDisplay: req.body.foreignKeyDisplay,
-    validators: req.body.validators
+    validators: req.body.validators,
+    generateUniqueId: req.body.generateUniqueId
   }]
   const dataset = new Dataset(req.params.dataset, req.body.idType, fields, '', req.body.versioned, req.body.uniqueTogether || [])
   dataset.postProperty()
@@ -268,7 +269,8 @@ exports.postEditDatasetProperties = (req, res) => {
     unique: req.body.unique,
     foreignKey: req.body.foreignKey,
     foreignKeyDisplay: req.body.foreignKeyDisplay,
-    validators: req.body.validators
+    validators: req.body.validators,
+    generateUniqueId: req.body.generateUniqueId
   }]
   const dataset = new Dataset(req.params.dataset, req.body.idType, fields, '', req.body.versioned, req.body.uniqueTogether || [])
   dataset.postEditProperty()

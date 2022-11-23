@@ -9,6 +9,7 @@ const filter = require('../lib/filters')
 const { zipListsToDict } = require('../lib/utils')
 const { check } = require('express-validator')
 const { Validator } = require('../lib/validator')
+const CRC32C = require('crc-32/crc32c')
 
 function hasNonPageQuery (req) {
   if (Object.keys(req.query).length !== 0) {
@@ -292,12 +293,19 @@ exports.postItems = async (req, res) => {
   const datasetName = req.params.dataset
   const dataset = new Dataset(datasetName)
   const datasetObj = (await dataset.findOne()).data
+  for (const field of datasetObj.fields) {
+    if (field.generateUniqueId && !req.body[field.name]) {
+      let str = ''
+      for (const f of field.generateUniqueId) {
+        str += req.body[f]
+      }
+      req.body[field.name] = `${Math.abs(CRC32C.str(str.toLowerCase()))}`
+    }
+  }
   const validator = new Validator(datasetObj, req.body)
   const errors = validator.validate()
-  console.log(errors)
   if (errors.length > 0) {
     for (const error of errors) {
-      console.log(error)
       req.flash('errors', { msg: error })
     }
     req.session.form = req.body
