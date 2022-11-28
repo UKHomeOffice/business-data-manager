@@ -29,6 +29,14 @@
                             <span class="form-hint">The dataset's Id is being managed by the system and will be generated automatically.</span>
                         {% elif field.name in ['version', 'is_current'] %}
                             <input type='hidden' name="{{ field.name }}" value="1">
+                        {% elif field.choices %}
+                        <label class="form-label" for="{{ field.name }}">{{ field.name }}</label>
+                        <select class="form-control" name="{{property.field}}">
+                          <option></option>
+                          {% for value in field.choices %}
+                              <option value="{{ value }}">{{ value }}</option>
+                          {% endfor %}
+                        </select>
                         {% elif field.foreignKey %}
                         <label class="form-label" for="{{ field.name }}">{{ field.name }}</label>
                         <select class="form-control" name="{{ field.name }}">
