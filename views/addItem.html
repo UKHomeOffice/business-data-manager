@@ -31,7 +31,7 @@
                             <input type='hidden' name="{{ field.name }}" value="1">
                         {% elif field.choices %}
                         <label class="form-label" for="{{ field.name }}">{{ field.name }}</label>
-                        <select class="form-control" name="{{property.field}}">
+                        <select class="form-control" name="{{ field.name }}">
                           <option></option>
                           {% for value in field.choices %}
                               <option value="{{ value }}">{{ value }}</option>
