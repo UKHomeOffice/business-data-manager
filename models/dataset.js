@@ -638,7 +638,8 @@ class Dataset {
             this.updatedField.notNull !== this.oldField.notNull ||
             this.updatedField.unique !== this.oldField.unique ||
             this.updatedField.validators !== this.oldField.validators ||
-            this.updatedField.generateUniqueId !== this.oldField.generateUniqueId
+            this.updatedField.generateUniqueId !== this.oldField.generateUniqueId ||
+            this.updatedField.choices !== this.oldField.choices
           ) {
             this.editProperty()
               .then(editPropertyResult => {

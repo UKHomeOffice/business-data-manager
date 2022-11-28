@@ -65,6 +65,15 @@
                       {% set val = property.value %}
                     {% endif %}
                     <td><input type='hidden' name="{{property.field}}" value="{{ val }}">{{ property.value }}</td>
+                  {% elif dsField.choices %}
+                    <td>
+                      <select class="form-control" name="{{property.field}}">
+                        <option></option>
+                        {% for value in dsField.choices %}
+                            <option value="{{ value }}"{% if value == property.value %} selected="selected"{% endif %}>{{ value }}</option>
+                        {% endfor %}
+                      </select>
+                    </td>
                   {% elif dsField.foreignKey %}
                     <td>
                       <select class="form-control" name="{{ dsField.name }}">
