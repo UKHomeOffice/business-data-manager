@@ -25,4 +25,5 @@ exports.register = (app, viewPath, production) => {
   env.addFilter('basePath', filters.basePath)
   env.addFilter('getReverseSubsetMatch', filters.getReverseSubsetMatch)
   env.addFilter('fieldNames', filters.fieldNames)
+  env.addFilter('join', filters.join)
 }

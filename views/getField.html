@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block page_title %}
+  {{ app_title }} - {{ title }}
+{% endblock %}
+
+{% block inside_header %}
+  {% include "partials/header.html" %}
+{% endblock %}
+
+{% block main_content %}
+    <div class="grid-row">
+      <div class="column-full">
+        <h1 class="heading-xlarge">{{ title }}</h1>
+      </div>
+    </div>
+
+    {% if Authenticator.authorise('dataset', 'write') %}
+        <div class="grid-row">
+          <div class="column-full">
+            <h2 class="heading-large">Edit {{ field.name }} field</h2>
+            <p>You can add fields to the {{ data.name }} dataset by completing the form below.</p>
+
+            <form method="POST" action="/v1/datasets/{{ data.name }}/properties/edit">
+              {% include "partials/field-form.html" %}
+
+              <div class="form-group">
+                <input class="button" type="submit" value="Save field">
+              </div>
+            </form>
+          </div>
+        </div>
+    {% endif %}
+
+    <!-- {% include "partials/pagination.html" %} -->
+{% endblock %}

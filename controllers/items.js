@@ -550,11 +550,11 @@ const getForeignKeys = async (dataset) => {
           return foreignKeys[field.foreignKey][a].localeCompare(foreignKeys[field.foreignKey][b])
         }).reduce(
           (obj, key) => {
-            obj[key] = foreignKeys[field.foreignKey][key];
-            return obj;
+            obj[key] = foreignKeys[field.foreignKey][key]
+            return obj
           },
           {}
-        );
+        )
       } catch (error) {
       }
     }

@@ -25,17 +25,20 @@
           <thead>
             <tr>
               <th>Name</th>
+              <th>Display</th>
               <th>Datatype</th>
               <th>Not null</th>
               <th>Unique</th>
               <th>Foreign key</th>
               <th>Validators</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {% for field in data.fields %}
               <tr>
                 <td>{{ field.name }}</td>
+                <td>{{ field.display }}</td>
                 <td>{{ field.datatype }}</td>
                 <td>{{ field.notNull }}</td>
                 <td>{{ field.unique }}</td>
@@ -51,6 +54,11 @@
                     </span>
                   {% endfor %}
                 </td>
+                <td>
+                  {% if Authenticator.authorise('dataset', 'write') %}
+                    <a class="button" href="/v1/datasets/{{ data.name }}/field/{{ field.name }}">Edit</a>
+                  {% endif %}
+                </td>
               </tr>
             {% endfor %}
           <tbody>
@@ -65,122 +73,7 @@
             <p>You can add fields to the {{ data.name }} dataset by completing the form below.</p>
 
             <form method="POST" action="/v1/datasets/{{ data.name }}/properties">
-              <input type='hidden' name="_csrf" value="{{ _csrf }}">
-              <input type="hidden" name="versioned" value="{{ data.versioned }}">
-              <input type="hidden" name="idType" value="{{ data.idType }}">
-              <h3 class="heading-medium">Field name</h3>
-              <div class="form-group">
-                <input class="form-control" id="name" name="name" type="text">
-              </div>
-              <div class="form-group">
-                <fieldset class="inline">
-                  <legend>
-                    <h3 class="heading-medium">Field data type</h3>
-                  </legend>
-                  <div class="multiple-choice">
-                    <input id="datatype-1" type="radio" name="datatype" value="VARCHAR">
-                    <label for="datatype-1">Text</label>
-                  </div>
-                  <div class="multiple-choice">
-                    <input id="datatype-2" type="radio" name="datatype" value="DATE">
-                    <label for="datatype-2">Date</label>
-                  </div>
-                  <div class="multiple-choice">
-                    <input id="datatype-3" type="radio" name="datatype" value="INTEGER">
-                    <label for="datatype-3">Integer</label>
-                  </div>
-                  <div class="multiple-choice">
-                    <input id="datatype-4" type="radio" name="datatype" value="NUMERIC">
-                    <label for="datatype-4">Numeric</label>
-                  </div>
-                  <div class="multiple-choice">
-                    <input id="datatype-5" type="radio" name="datatype" value="TIMESTAMP">
-                    <label for="datatype-5">Timestamp</label>
-                  </div>
-                </fieldset>
-              </div>
-              <!-- <div class="form-group">
-                <fieldset class="inline">
-                  <legend>
-                    <h3 class="heading-medium">Primary key</h3>
-                  </legend>
-                  <div class="multiple-choice">
-                    <input id="primaryKey-1" type="radio" name="primaryKey" value="Yes">
-                    <label for="primaryKey-1">Yes</label>
-                  </div>
-                  <div class="multiple-choice">
-                    <input id="primaryKey-2" type="radio" name="primaryKey" value="No">
-                    <label for="primaryKey-2">No</label>
-                  </div>
-                </fieldset>
-              </div> -->
-              <div class="form-group">
-                <fieldset class="inline">
-                  <legend>
-                    <h3 class="heading-medium">Not null</h3>
-                  </legend>
-                  <div class="multiple-choice">
-                    <input id="notNull-1" type="radio" name="notNull" value="Yes">
-                    <label for="notNull-1">Yes</label>
-                  </div>
-                  <div class="multiple-choice">
-                    <input id="notNull-2" type="radio" name="notNull" value="No">
-                    <label for="notNull-2">No</label>
-                  </div>
-                </fieldset>
-              </div>
-              <div class="form-group">
-                <fieldset class="inline">
-                  <legend>
-                    <h3 class="heading-medium">Unique</h3>
-                  </legend>
-                  <div class="multiple-choice">
-                    <input id="unique-1" type="radio" name="unique" value="Yes">
-                    <label for="unique-1">Yes</label>
-                  </div>
-                  <div class="multiple-choice">
-                    <input id="unique-2" type="radio" name="unique" value="No">
-                    <label for="unique-2">No</label>
-                  </div>
-                </fieldset>
-              </div>
-              <div class="form-group">
-                <fieldset class="inline">
-                  <legend>
-                    <h3 class="heading-medium">Foreign key</h3>
-                  </legend>
-                  <label for="foreignKey">Related dataset:</label>
-                  <select class="form-control" name="foreignKey" id="foreignKey">
-                    <option></option>
-                    {% for fkDataset in foreignKeyDatasets %}
-                      <option value="{{ fkDataset.name }}">{{ fkDataset.name }} ({{ fkDataset.idType }})</option>
-                    {% endfor %}
-                  </select>
-                </fieldset>
-              </div>
-              <div class="form-group">
-                <fieldset class="inline">
-                  <legend>
-                    <h3 class="heading-medium">Validators</h3>
-                  </legend>
-                  <div class="multiple-choice">
-                    <input id="validator-1" type="checkbox" name="validators[]" value="stringLength">
-                    <label for="validator-1">stringLength</label>
-                  </div>
-                  <div class="multiple-choice">
-                    <input id="validator-2" type="checkbox" name="validators[]" value="upperCaseAlphaNumeric">
-                    <label for="validator-2">upperCaseAlphaNumeric</label>
-                  </div>
-                  <div class="multiple-choice">
-                    <input id="validator-3" type="checkbox" name="validators[]" value="upperCaseAlpha">
-                    <label for="validator-3">upperCaseAlpha</label>
-                  </div>
-                  <div class="multiple-choice">
-                    <input id="validator-4" type="checkbox" name="validators[]" value="regExValidator">
-                    <label for="validator-4">regExValidator</label>
-                  </div>
-                </fieldset>
-              </div>
+              {% include "partials/field-form.html" %}
 
               <div class="form-group">
                 <input class="button" type="submit" value="Add field">

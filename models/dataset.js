@@ -639,7 +639,8 @@ class Dataset {
             this.updatedField.unique !== this.oldField.unique ||
             this.updatedField.validators !== this.oldField.validators ||
             this.updatedField.generateUniqueId !== this.oldField.generateUniqueId ||
-            this.updatedField.choices !== this.oldField.choices
+            this.updatedField.choices !== this.oldField.choices ||
+            this.updatedField.display !== this.oldField.display
           ) {
             this.editProperty()
               .then(editPropertyResult => {
