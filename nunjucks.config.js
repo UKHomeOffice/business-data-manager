@@ -16,7 +16,7 @@ exports.register = (app, viewPath, production) => {
   }
 
   const env = nunjucks.configure(viewPath, nunjucksConfig)
-  nunjucks.installJinjaCompat()
+  // nunjucks.installJinjaCompat()
   env.addFilter('startsWith', filters.startsWith)
   env.addFilter('startsWithArr', filters.startsWithArr)
   env.addFilter('cCapitalize', filters.cCapitalize)

@@ -1,3 +1,4 @@
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% extends "layout.html" %}
 
 {% block page_title %}
@@ -78,7 +79,7 @@
                     <td>
                       <select class="form-control" name="{{ dsField.name }}">
                         <option></option>
-                        {% for key, value in foreignKeys[dsField.foreignKey].items() %}
+                        {% for key, value in foreignKeys[dsField.foreignKey] %}
                             <option value="{{ key }}"{% if key == property.value %} selected="selected"{% endif %}>{{ value }}</option>
                         {% endfor %}
                       </select>
@@ -88,7 +89,35 @@
                   {% elif property.columnType == 'VARCHAR' %}
                     <td><input class="form-control" type="text" name="{{property.field}}" value="{{ values[property.field] or property.value }}"></td>
                   {% elif property.columnType == 'DATE' %}
-                    <td><input class="form-control" type="text" name="{{property.field}}" value="{{ values[property.field] or (property.value.toISOString().slice(0, 10) if property.value else '') }}"></td>
+                    <td>
+                      {{ govukDateInput({
+                        id: property.field,
+                        namePrefix: property.field,
+                        fieldset: {
+                          classes: "bdm-date-input"
+                        },
+                        hint: {
+                          text: "For example, 27 3 2007"
+                        },
+                        items: [
+                          {
+                            name: "day",
+                            classes: "govuk-input--width-2",
+                            value: property.value.getDate() if property.value else ""
+                          },
+                          {
+                            name: "month",
+                            classes: "govuk-input--width-2",
+                            value: property.value.getMonth() + 1 if property.value else ""
+                          },
+                          {
+                            name: "year",
+                            classes: "govuk-input--width-4",
+                            value: property.value.getFullYear() if property.value else ""
+                          }
+                        ]
+                      }) }}
+                    </td>
                   {% elif property.columnType == 'TIMESTAMP' %}
                     <td><input class="form-control" type="text" name="{{property.field}}" value="{{ values[property.field] or (property.value.toISOString() if property.value else '') }}"></td>
                   {% elif property.columnType == 'NUMERIC' %}
@@ -140,7 +169,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for key, value in version.items() %}
+                  {% for key, value in version %}
                     <tr>
                       <td>{{ key }}</td>
                       <td>{{ value }}</td>

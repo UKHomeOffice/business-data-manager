@@ -41,10 +41,22 @@
                         <label class="form-label" for="{{ field.name }}">{{ field.name }}</label>
                         <select class="form-control" name="{{ field.name }}">
                             <option></option>
-                            {% for key, value in foreignKeys[field.foreignKey].items() %}
+                            {% for key, value in foreignKeys[field.foreignKey] %}
                                 <option value="{{ key }}">{{ value }}</option>
                             {% endfor %}
                         </select>
+                        {% elif property.columnType == 'DATE' %}
+                          <label class="form-label" for="{{ field.name }}">{{ field.name }}</label>
+                          {{ govukDateInput({
+                            id: field.name,
+                            namePrefix: field.name,
+                            fieldset: {
+                              classes: "bdm-date-input"
+                            },
+                            hint: {
+                              text: "For example, 27 3 2007"
+                            }
+                          }) }}
                         {% elif field.name not in ['created_at', 'updated_at', 'created_by', 'updated_by', 'version_id'] %}
                             <label class="form-label" for="{{ field.name }}">{{ field.name }}</label>
                             <input class="form-control" id="{{ field.name }}" name="{{ field.name }}" type="text" value="{{ values[field.name] }}">

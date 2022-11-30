@@ -41,7 +41,10 @@ const app = express()
  * Express configuration.
  */
 app.set('port', config.port)
-nunjucksConfig.register(app, path.join(__dirname, 'views'), production)
+nunjucksConfig.register(app, [
+  path.join(__dirname, 'views'),
+  path.join(__dirname, 'node_modules/govuk-frontend')
+], production)
 
 app.set('view engine', 'html')
 
@@ -113,7 +116,10 @@ app.use(
       force: true,
       outputStyle: 'compressed',
       prefix: '/css',
-      includePaths: ['node_modules/govuk_frontend_toolkit/stylesheets', 'node_modules/govuk-elements-sass/public/sass'],
+      includePaths: [
+        'node_modules/govuk_frontend_toolkit/stylesheets',
+        'node_modules/govuk-elements-sass/public/sass'
+      ],
       sourceComments: 'map',
       error: function (severity, key, value) { logger.error(`node-saas-middleware: ${severity}, ${key}, ${value}`) },
       log: function (severity, key, value) { logger.info(`node-saas-middleware: ${severity}, ${key}, ${value}`) }
