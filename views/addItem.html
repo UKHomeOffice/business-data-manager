@@ -46,7 +46,7 @@
                                 <option value="{{ key }}">{{ value }}</option>
                             {% endfor %}
                         </select>
-                        {% elif property.columnType == 'DATE' %}
+                        {% elif field.datatype == 'DATE' %}
                           <label class="form-label" for="{{ field.name }}">{{ field.name }}</label>
                           {{ govukDateInput({
                             id: field.name,
