@@ -46,6 +46,7 @@
     "govuk_template_jinja": "^0.26.0",
     "lodash": "^4.17.21",
     "lusca": "^1.7.0",
+    "moment": "^2.29.4",
     "morgan": "^1.10.0",
     "node-sass-middleware": "^1.0.1",
     "nunjucks": "^3.2.3",

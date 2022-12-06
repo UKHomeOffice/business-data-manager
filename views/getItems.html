@@ -50,7 +50,9 @@
         <thead>
         <tr>
           {% for field in data.fields.slice(0, 6) %}
-            <th>{{ field }}</th>
+            {% set dsField = datasetFields[loop.index-2] %}
+            {% set displayName = dsField.display or dsField.name or field %}
+            <th>{{ displayName }}</th>
           {% endfor %}
           <th>Actions</th>
         </tr>
@@ -63,6 +65,10 @@
               <td>
                 {% if field.foreignKey %}
                   {{ foreignKeys[field.foreignKey][value] }}
+                {% elif field.datatype == 'DATE' %}
+                  {{ value | date }}
+                {% elif field.datatype == 'TIMESTAMP' or field.name in ['created_at', 'updated_at'] %}
+                  {{ value | dateTime }}
                 {% else %}
                   {{ value }}
                 {% endif %}

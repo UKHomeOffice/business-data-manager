@@ -24,6 +24,7 @@
                 <input type='hidden' name="_csrf" value="{{ _csrf }}">
                 {% for field in dataset.fields %}
                   {% if not field.generateUniqueId %}
+                    {% set displayName = field.display or field.name %}
                     <div class="form-group">
                         {% if field.name === 'id' and data.idType === 'SERIAL' %}
                             <p class="form-label">Id</p>
@@ -31,7 +32,7 @@
                         {% elif field.name in ['version', 'is_current'] %}
                             <input type='hidden' name="{{ field.name }}" value="1">
                         {% elif field.choices %}
-                        <label class="form-label" for="{{ field.name }}">{{ field.name }}</label>
+                        <label class="form-label" for="{{ field.name }}">{{ displayName }}</label>
                         <select class="form-control" name="{{ field.name }}">
                           <option></option>
                           {% for value in field.choices %}
@@ -39,7 +40,7 @@
                           {% endfor %}
                         </select>
                         {% elif field.foreignKey %}
-                        <label class="form-label" for="{{ field.name }}">{{ field.name }}</label>
+                        <label class="form-label" for="{{ field.name }}">{{ displayName }}</label>
                         <select class="form-control" name="{{ field.name }}">
                             <option></option>
                             {% for key, value in foreignKeys[field.foreignKey] %}
@@ -47,7 +48,7 @@
                             {% endfor %}
                         </select>
                         {% elif field.datatype == 'DATE' %}
-                          <label class="form-label" for="{{ field.name }}">{{ field.name }}</label>
+                          <label class="form-label" for="{{ field.name }}">{{ displayName }}</label>
                           {{ govukDateInput({
                             id: field.name,
                             namePrefix: field.name,
@@ -59,7 +60,7 @@
                             }
                           }) }}
                         {% elif field.name not in ['created_at', 'updated_at', 'created_by', 'updated_by', 'version_id'] %}
-                            <label class="form-label" for="{{ field.name }}">{{ field.name }}</label>
+                            <label class="form-label" for="{{ field.name }}">{{ displayName }}</label>
                             <input class="form-control" id="{{ field.name }}" name="{{ field.name }}" type="text" value="{{ values[field.name] }}">
                         {% endif %}
                     </div>

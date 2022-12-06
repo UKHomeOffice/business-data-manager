@@ -43,8 +43,9 @@
             <tbody>
               {% for property in data.properties %}
                 {% set dsField = datasetFields[property.field] %}
+                {% set displayName = dsField.display or dsField.name or property.field %}
                 <tr>
-                  <td>{{ property.field }}</td>
+                  <td>{{ displayName }}</td>
                   {% if not Authenticator.authorise('item', 'write') %}
                     <td>
                       {% if dsField.foreignKey %}
