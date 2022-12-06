@@ -134,7 +134,7 @@
     {% for field in data.fields %}
       {% if field.name !== currentField.name %}
         <div class="multiple-choice">
-          <input id="generateUniqueId-{{ field.name }}" type="checkbox" name="generateUniqueId[]" value="{{ field.name }}"{% if field.name in currentField.generateUniqueId %} checked{% endif %}>
+          <input id="generateUniqueId-{{ field.name }}" type="checkbox" name="generateUniqueId[]" value="{{ field.name }}"{% if field.name in (currentField.generateUniqueId or []) %} checked{% endif %}>
           <label for="generateUniqueId-{{ field.name }}">{{ field.name }}</label>
         </div>
       {% endif %}
