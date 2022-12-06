@@ -446,6 +446,9 @@ const getFieldsDataFromRequest = (req) => {
       if (req.body.validators.includes('upperCase')) {
         fieldValidators.upperCase = {}
       }
+      if (req.body.validators.includes('year')) {
+        fieldValidators.year = {}
+      }
     }
     if (req.body.choices) {
       choices = req.body.choices.trim().split('\n').map(x => {
