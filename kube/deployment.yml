@@ -5,7 +5,7 @@ metadata:
   name: dq-business-data-manager
   annotations:
     environment: {{ .ENV }}
-    {{ if eq .ENV "notprod" }}downscaler/uptime: Mon-Fri 07:00-18:00 Europe/London{{ end }}
+#    {{ if eq .ENV "notprod" }}downscaler/uptime: Mon-Fri 07:00-18:00 Europe/London{{ end }}
 spec:
   replicas: 1
   revisionHistoryLimit: 3
