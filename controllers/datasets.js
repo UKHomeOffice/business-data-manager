@@ -458,6 +458,9 @@ const getFieldsDataFromRequest = (req) => {
     if (req.body.foreignKeyDisplay && req.body.foreignKeyDisplay.includes(',')) {
       req.body.foreignKeyDisplay = req.body.foreignKeyDisplay.split(',')
     }
+  } else {
+    choices = req.body.choices
+    fieldValidators = req.body.validators
   }
   return [{
     name: req.body.name,
