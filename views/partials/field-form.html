@@ -117,7 +117,7 @@
 <div class="form-group">
   <fieldset class="inline">
     <legend>
-      <h3 class="heading-medium">Choices</h3>
+      <h3 class="heading-medium">Choices (one per line)</h3>
     </legend>
     <textarea class="form-control form-control-3-4"
       rows="10"
@@ -129,16 +129,16 @@
 <div class="form-group">
   <fieldset class="inline">
     <legend>
-      <h3 class="heading-medium">Generate unique id on null</h3>
+      <h3 class="heading-medium">Generate unique id on null (select fields to hash)</h3>
     </legend>
-    <div class="multiple-choice">
-      <input id="generateUniqueId-1" type="radio" name="generateUniqueId" value="true"{% if currentField.generateUniqueId === true %} checked{% endif %}>
-      <label for="generateUniqueId-1">Yes</label>
-    </div>
-    <div class="multiple-choice">
-      <input id="generateUniqueId-2" type="radio" name="generateUniqueId" value="false"{% if currentField.generateUniqueId === false %} checked{% endif %}>
-      <label for="generateUniqueId-2">No</label>
-    </div>
+    {% for field in data.fields %}
+      {% if field.name !== currentField.name %}
+        <div class="multiple-choice">
+          <input id="generateUniqueId-{{ field.name }}" type="checkbox" name="generateUniqueId[]" value="{{ field.name }}"{% if field.name in currentField.generateUniqueId %} checked{% endif %}>
+          <label for="generateUniqueId-{{ field.name }}">{{ field.name }}</label>
+        </div>
+      {% endif %}
+    {% endfor %}
   </fieldset>
 </div>
 <div class="form-group">

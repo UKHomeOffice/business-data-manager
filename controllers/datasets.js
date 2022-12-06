@@ -474,7 +474,7 @@ const getFieldsDataFromRequest = (req) => {
     foreignKey: req.body.foreignKey || null,
     foreignKeyDisplay: req.body.foreignKeyDisplay || null,
     validators: fieldValidators || null,
-    generateUniqueId: req.body.generateUniqueId === 'true',
+    generateUniqueId: req.body.generateUniqueId || null,
     choices
   }]
 }
