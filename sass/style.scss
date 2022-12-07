@@ -1,3 +1,4 @@
+@import "node_modules/govuk-frontend/govuk/all";
 @import "variables";
 @import "flash";
 @import "mixins";
@@ -79,4 +80,14 @@
 
 .bottom-spacer {
   margin-bottom: 50px;
+}
+
+.bdm-date-input .govuk-date-input__label, .bdm-date-input .govuk-hint {
+  font-size: 19px;
+}
+
+.bdm-date-input .govuk-date-input__input {
+  font-size: 19px;
+  line-height: 19px;
+  box-sizing: revert;
 }

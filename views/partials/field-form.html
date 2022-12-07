@@ -1,0 +1,184 @@
+<input type='hidden' name="_csrf" value="{{ _csrf }}">
+<input type="hidden" name="versioned" value="{{ data.versioned }}">
+<input type="hidden" name="idType" value="{{ data.idType }}">
+<h3 class="heading-medium">Field name</h3>
+<div class="form-group">
+  {% if currentField.name %}
+    <input name="name" type="hidden" value="{{ currentField.name }}">
+    <div class="multiple-choice">
+      {{ currentField.name }}
+    </div>
+  {% else %}
+    <input class="form-control" id="name" name="name" type="text">
+  {% endif %}
+</div>
+<h3 class="heading-medium">Display name</h3>
+<div class="form-group">
+  <input class="form-control" id="display" name="display" type="text" value="{{ currentField.display }}">
+</div>
+<div class="form-group">
+  <fieldset class="inline">
+    <legend>
+      <h3 class="heading-medium">Field data type</h3>
+    </legend>
+    {% if currentField.name %}
+      <input name="datatype" type="hidden" value="{{ currentField.datatype }}">
+      <div class="multiple-choice">
+        {{ currentField.datatype }}
+      </div>
+    {% else %}
+      <div class="multiple-choice">
+        <input id="datatype-1" type="radio" name="datatype" value="VARCHAR">
+        <label for="datatype-1">Text</label>
+      </div>
+      <div class="multiple-choice">
+        <input id="datatype-2" type="radio" name="datatype" value="DATE">
+        <label for="datatype-2">Date</label>
+      </div>
+      <div class="multiple-choice">
+        <input id="datatype-3" type="radio" name="datatype" value="INTEGER">
+        <label for="datatype-3">Integer</label>
+      </div>
+      <div class="multiple-choice">
+        <input id="datatype-4" type="radio" name="datatype" value="NUMERIC">
+        <label for="datatype-4">Numeric</label>
+      </div>
+      <div class="multiple-choice">
+        <input id="datatype-5" type="radio" name="datatype" value="TIMESTAMP">
+        <label for="datatype-5">Timestamp</label>
+      </div>
+    {% endif %}
+  </fieldset>
+</div>
+<!-- <div class="form-group">
+  <fieldset class="inline">
+    <legend>
+      <h3 class="heading-medium">Primary key</h3>
+    </legend>
+    <div class="multiple-choice">
+      <input id="primaryKey-1" type="radio" name="primaryKey" value="Yes">
+      <label for="primaryKey-1">Yes</label>
+    </div>
+    <div class="multiple-choice">
+      <input id="primaryKey-2" type="radio" name="primaryKey" value="No">
+      <label for="primaryKey-2">No</label>
+    </div>
+  </fieldset>
+</div> -->
+<div class="form-group">
+  <fieldset class="inline">
+    <legend>
+      <h3 class="heading-medium">Not null</h3>
+    </legend>
+    <div class="multiple-choice">
+      <input id="notNull-1" type="radio" name="notNull" value="Yes"{% if currentField.notNull === 'Yes' %} checked{% endif %}>
+      <label for="notNull-1">Yes</label>
+    </div>
+    <div class="multiple-choice">
+      <input id="notNull-2" type="radio" name="notNull" value="No"{% if currentField.notNull === 'No' %} checked{% endif %}>
+      <label for="notNull-2">No</label>
+    </div>
+  </fieldset>
+</div>
+<div class="form-group">
+  <fieldset class="inline">
+    <legend>
+      <h3 class="heading-medium">Unique</h3>
+    </legend>
+    <div class="multiple-choice">
+      <input id="unique-1" type="radio" name="unique" value="Yes"{% if currentField.unique === 'Yes' %} checked{% endif %}>
+      <label for="unique-1">Yes</label>
+    </div>
+    <div class="multiple-choice">
+      <input id="unique-2" type="radio" name="unique" value="No"{% if currentField.unique === 'No' %} checked{% endif %}>
+      <label for="unique-2">No</label>
+    </div>
+  </fieldset>
+</div>
+<div class="form-group">
+  <fieldset class="inline">
+    {% set fk = currentField.foreignKey | split('.') %}
+    {% set foreignKey = fk[0] %}
+    {% set foreignKeyId = fk[1] %}
+    <legend>
+      <h3 class="heading-medium">Foreign key</h3>
+    </legend>
+    <label for="foreignKey">Related dataset:</label>
+    <select class="form-control" name="foreignKey" id="foreignKey">
+      <option></option>
+      {% for fkDataset in foreignKeyDatasets %}
+        <option value="{{ fkDataset.name }}"{% if foreignKey == fkDataset.name %} selected{% endif %}>{{ fkDataset.name }} ({{ fkDataset.idType }})</option>
+      {% endfor %}
+    </select><br />
+    <label for="foreignKeyId">Related field:</label><input id="foreignKeyId" class="form-control" width="10" name="foreignKeyId" type="text" value="{{ foreignKeyId }}"><br />
+    <label for="foreignKeyDisplay">Display value:</label><input id="foreignKeyDisplay" class="form-control" width="10" name="foreignKeyDisplay" type="text" value="{{ currentField.foreignKeyDisplay | join(',') }}">
+  </fieldset>
+</div>
+<div class="form-group">
+  <fieldset class="inline">
+    <legend>
+      <h3 class="heading-medium">Choices (one per line)</h3>
+    </legend>
+    <textarea class="form-control form-control-3-4"
+      rows="10"
+      id="choices"
+      name="choices"
+      maxlength="1200">{{ currentField.choices | join('\n') }}</textarea>
+  </fieldset>
+</div>
+<div class="form-group">
+  <fieldset class="inline">
+    <legend>
+      <h3 class="heading-medium">Generate unique id on null (select fields to hash)</h3>
+    </legend>
+    {% for field in data.fields %}
+      {% if field.name !== currentField.name %}
+        <div class="multiple-choice">
+          <input id="generateUniqueId-{{ field.name }}" type="checkbox" name="generateUniqueId[]" value="{{ field.name }}"{% if field.name in (currentField.generateUniqueId or []) %} checked{% endif %}>
+          <label for="generateUniqueId-{{ field.name }}">{{ field.name }}</label>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </fieldset>
+</div>
+<div class="form-group">
+  <fieldset class="inline">
+    <legend>
+      <h3 class="heading-medium">Validators</h3>
+    </legend>
+    <fieldset class="inline">
+      <div class="multiple-choice">
+        <input id="validator-1" type="checkbox" name="validators[]" value="stringLength"{% if currentField.validators.stringLength %} checked{% endif %}>
+        <label for="validator-1">stringLength</label>
+      </div>
+      <label for="stringLength-min">Min</label>
+      <input type="number" id="stringLength-min" name="stringLengthMin" value="{{ currentField.validators.stringLength.min }}">
+      <label for="stringLength-max">Max</label>
+      <input type="number" id="stringLength-max" name="stringLengthMax" value="{{ currentField.validators.stringLength.max }}">
+    </fieldset>
+    <fieldset class="inline">
+      <div class="multiple-choice">
+        <input id="validator-2" type="checkbox" name="validators[]" value="upperCaseAlphaNumeric"{% if currentField.validators.upperCaseAlphaNumeric %} checked{% endif %}>
+        <label for="validator-2">upperCaseAlphaNumeric</label>
+      </div>
+    </fieldset>
+    <fieldset class="inline">
+      <div class="multiple-choice">
+        <input id="validator-3" type="checkbox" name="validators[]" value="upperCaseAlpha"{% if currentField.validators.upperCaseAlpha %} checked{% endif %}>
+        <label for="validator-3">upperCaseAlpha</label>
+      </div>
+    </fieldset>
+    <fieldset class="inline">
+      <div class="multiple-choice">
+        <input id="validator-5" type="checkbox" name="validators[]" value="upperCase"{% if currentField.validators.upperCase %} checked{% endif %}>
+        <label for="validator-5">upperCase</label>
+      </div>
+    </fieldset>
+    <fieldset class="inline">
+      <div class="multiple-choice">
+        <input id="validator-6" type="checkbox" name="validators[]" value="year"{% if currentField.validators.year %} checked{% endif %}>
+        <label for="validator-6">year</label>
+      </div>
+    </fieldset>
+  </fieldset>
+</div>

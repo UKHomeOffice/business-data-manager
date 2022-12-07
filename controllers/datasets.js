@@ -4,6 +4,7 @@ const Dataset = require('../models/dataset')
 const Datasets = require('../models/datasets')
 const logger = require('../logger')
 const filter = require('../lib/filters')
+const { validators } = require('../lib/validator')
 
 /**
  * GET /v1/datasets
@@ -22,6 +23,8 @@ exports.getDatasets = (req, res) => {
                 return req.app.locals.orgs.includes(dataset.org)
               }
               return true
+            }).sort((a, b) => {
+              return a.name.localeCompare(b.name)
             })
             res.status(200).render('getDatasets', {
               reqPath: req.originalUrl,
@@ -143,7 +146,8 @@ exports.getDataset = async (req, res) => {
               title: filter.cCapitalize(req.params.dataset),
               data: result.data,
               reqPath: req.originalUrl,
-              foreignKeyDatasets
+              foreignKeyDatasets,
+              validators
             })
           },
           json: () => {
@@ -196,17 +200,7 @@ exports.getDataset = async (req, res) => {
  */
 exports.postDatasetProperties = (req, res) => {
   // add one or more new fields to the dataset's field (using json operation)
-  const fields = [{
-    name: req.body.name,
-    datatype: req.body.datatype,
-    notNull: req.body.notNull,
-    unique: req.body.unique,
-    foreignKey: req.body.foreignKey,
-    foreignKeyDisplay: req.body.foreignKeyDisplay,
-    validators: req.body.validators,
-    generateUniqueId: req.body.generateUniqueId,
-    choices: req.body.choices
-  }]
+  const fields = getFieldsDataFromRequest(req)
   const dataset = new Dataset(req.params.dataset, req.body.idType, fields, '', req.body.versioned, req.body.uniqueTogether || [])
   dataset.postProperty()
     .then(result => {
@@ -263,17 +257,7 @@ exports.postDatasetProperties = (req, res) => {
  */
 exports.postEditDatasetProperties = (req, res) => {
   // add one or more new fields to the dataset's field (using json operation)
-  const fields = [{
-    name: req.body.name,
-    datatype: req.body.datatype,
-    notNull: req.body.notNull,
-    unique: req.body.unique,
-    foreignKey: req.body.foreignKey,
-    foreignKeyDisplay: req.body.foreignKeyDisplay,
-    validators: req.body.validators,
-    generateUniqueId: req.body.generateUniqueId,
-    choices: req.body.choices
-  }]
+  const fields = getFieldsDataFromRequest(req)
   const dataset = new Dataset(req.params.dataset, req.body.idType, fields, '', req.body.versioned, req.body.uniqueTogether || [])
   dataset.postEditProperty()
     .then(result => {
@@ -366,4 +350,131 @@ exports.deleteDataset = async (req, res) => {
   } catch (err) {
     logger.error(err)
   }
+}
+
+/**
+ * GET /v1/datasets/:dataset/fields/:field
+ *
+ * @param {String} dataset - name of the dataset, used to name the table
+ * @param {String} field - name of the field, used to name the field
+ */
+exports.getDatasetField = async (req, res) => {
+  const datasets = new Datasets()
+  const ds = await datasets.findAll()
+  const foreignKeyDatasets = ds.data.filter(dataset => {
+    if (dataset.name === req.params.dataset) {
+      return false
+    }
+    if (dataset.org) {
+      return req.app.locals.orgs.includes(dataset.org)
+    }
+    return true
+  })
+  const dataset = new Dataset(req.params.dataset)
+  dataset.findOne()
+    .then(result => {
+      const field = result.data.fields.filter(x => {
+        return x.name === req.params.field
+      })[0]
+      if (result.statusCode === '200') {
+        res.format({
+          html: () => {
+            logger.verbose('getField sending HTML response')
+            res.status(200).render('getField', {
+              title: filter.cCapitalize(req.params.dataset),
+              data: result.data,
+              reqPath: req.originalUrl,
+              currentField: field,
+              foreignKeyDatasets,
+              validators
+            })
+          },
+          json: () => {
+            logger.verbose('getField sending JSON response')
+            res.status(200).json(result.data)
+          },
+          default: () => {
+            logger.verbose('getField invalid format requested')
+            res.status(406).send('Invalid response format requested')
+          }
+        })
+      }
+      if (result.statusCode === '404') {
+        res.format({
+          html: () => {
+            logger.verbose('getField sending HTML response')
+            // flash notify that dataset could not be found
+            req.flash('errors', { msg: `No dataset found with the name ${req.params.dataset}` })
+            res.status(200).redirect('/v1/datasets')
+          },
+          json: () => {
+            logger.verbose('getField sending JSON response')
+            // respond that dataset could not be created
+            res.status(404).json({ status: '404', message: 'NOT FOUND' })
+          },
+          default: () => {
+            logger.verbose('getField invalid format requested')
+            res.status(406).send('Invalid response format requested')
+          }
+        })
+      }
+      // other catch an unexpected response code
+    })
+    .catch(err => {
+      logger.error(err)
+    })
+}
+
+const getFieldsDataFromRequest = (req) => {
+  let fieldValidators = null
+  let choices = null
+  if (!req.is('json')) {
+    if (req.body.validators) {
+      fieldValidators = {}
+      if (req.body.validators.includes('stringLength')) {
+        fieldValidators.stringLength = {
+          min: parseInt(req.body.stringLengthMin) || 0,
+          max: parseInt(req.body.stringLengthMax) || 100
+        }
+      }
+      if (req.body.validators.includes('upperCaseAlphaNumeric')) {
+        fieldValidators.upperCaseAlphaNumeric = {}
+      }
+      if (req.body.validators.includes('upperCaseAlpha')) {
+        fieldValidators.upperCaseAlpha = {}
+      }
+      if (req.body.validators.includes('upperCase')) {
+        fieldValidators.upperCase = {}
+      }
+      if (req.body.validators.includes('year')) {
+        fieldValidators.year = {}
+      }
+    }
+    if (req.body.choices) {
+      choices = req.body.choices.trim().split('\n').map(x => {
+        return x.trim()
+      })
+    }
+    if (req.body.foreignKey && req.body.foreignKeyId) {
+      req.body.foreignKey = `${req.body.foreignKey}.${req.body.foreignKeyId}`
+    }
+    if (req.body.foreignKeyDisplay && req.body.foreignKeyDisplay.includes(',')) {
+      req.body.foreignKeyDisplay = req.body.foreignKeyDisplay.split(',')
+    }
+  } else {
+    choices = req.body.choices
+    fieldValidators = req.body.validators
+  }
+  return [{
+    name: req.body.name,
+    display: req.body.display || null,
+    datatype: req.body.datatype,
+    notNull: req.body.notNull,
+    unique: req.body.unique,
+    foreignKey: req.body.foreignKey || null,
+    foreignKeyDisplay: req.body.foreignKeyDisplay || null,
+    validators: fieldValidators || null,
+    generateUniqueId: req.body.generateUniqueId || null,
+    choices
+  }]
 }

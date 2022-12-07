@@ -8,7 +8,7 @@ const logger = require('../logger')
 const filter = require('../lib/filters')
 const { zipListsToDict } = require('../lib/utils')
 const { check } = require('express-validator')
-const { Validator } = require('../lib/validator')
+const { Validator, sanatize } = require('../lib/validator')
 const CRC32C = require('crc-32/crc32c')
 
 function hasNonPageQuery (req) {
@@ -197,9 +197,9 @@ exports.updateItem = async (req, res) => {
   const itemId = req.body._itemid ? req.body._itemid : req.params.item || 'add'
   delete req.body._itemid
   delete req.body._csrf
-  const item = new Item(datasetName, itemId, req.body, req.app.locals.email)
   const dataset = new Dataset(datasetName)
   const datasetObj = (await dataset.findOne()).data
+  const item = new Item(datasetName, itemId, sanatize(datasetObj, req.body), req.app.locals.email)
   const validator = new Validator(datasetObj, req.body)
   const errors = validator.validate()
   if (errors.length > 0) {
@@ -225,7 +225,7 @@ exports.updateItem = async (req, res) => {
     })
   }
   try {
-    const updateResponse = await item.update(req.body)
+    const updateResponse = await item.update(sanatize(datasetObj, req.body))
     if (updateResponse.statusCode === '200') {
       res.format({
         html: () => {
@@ -329,9 +329,9 @@ exports.postItems = async (req, res) => {
 
   let item
   if (typeof req.body.id !== 'undefined') {
-    item = new Item(req.params.dataset, req.body.id, req.body, req.app.locals.email)
+    item = new Item(req.params.dataset, req.body.id, sanatize(datasetObj, req.body), req.app.locals.email)
   } else {
-    item = new Item(req.params.dataset, null, req.body, req.app.locals.email)
+    item = new Item(req.params.dataset, null, sanatize(datasetObj, req.body), req.app.locals.email)
   }
   item.post()
     .then(result => {
@@ -550,11 +550,11 @@ const getForeignKeys = async (dataset) => {
           return foreignKeys[field.foreignKey][a].localeCompare(foreignKeys[field.foreignKey][b])
         }).reduce(
           (obj, key) => {
-            obj[key] = foreignKeys[field.foreignKey][key];
-            return obj;
+            obj[key] = foreignKeys[field.foreignKey][key]
+            return obj
           },
           {}
-        );
+        )
       } catch (error) {
       }
     }

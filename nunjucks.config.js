@@ -16,7 +16,7 @@ exports.register = (app, viewPath, production) => {
   }
 
   const env = nunjucks.configure(viewPath, nunjucksConfig)
-  nunjucks.installJinjaCompat()
+  // nunjucks.installJinjaCompat()
   env.addFilter('startsWith', filters.startsWith)
   env.addFilter('startsWithArr', filters.startsWithArr)
   env.addFilter('cCapitalize', filters.cCapitalize)
@@ -25,4 +25,7 @@ exports.register = (app, viewPath, production) => {
   env.addFilter('basePath', filters.basePath)
   env.addFilter('getReverseSubsetMatch', filters.getReverseSubsetMatch)
   env.addFilter('fieldNames', filters.fieldNames)
+  env.addFilter('join', filters.join)
+  env.addFilter('date', filters.date)
+  env.addFilter('dateTime', filters.dateTime)
 }
