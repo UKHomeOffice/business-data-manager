@@ -49,9 +49,9 @@
       <table>
         <thead>
         <tr>
-          {% for field in data.fields.slice(0, 6) %}
-            {% set dsField = datasetFields[loop.index-2] %}
-            {% set displayName = dsField.display or dsField.name or field %}
+          <th>id</th>
+          {% for field in datasetFields.slice(0, 5) %}
+            {% set displayName = field.display or field.name %}
             <th>{{ displayName }}</th>
           {% endfor %}
           <th>Actions</th>
@@ -60,8 +60,9 @@
         <tbody>
         {% for row in data.rows %}
           <tr>
-            {% for value in row.slice(0, 6) %}
-              {% set field = datasetFields[loop.index-2] %}
+            <td>{{ row[0] }}</td>
+            {% for field in datasetFields.slice(0, 5) %}
+              {% set value = row[data.fields.indexOf(field.name)] %}
               <td>
                 {% if field.foreignKey %}
                   {{ foreignKeys[field.foreignKey][value] }}
