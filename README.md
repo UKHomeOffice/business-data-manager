@@ -35,43 +35,42 @@ export PGPASSWORD=badpassword
 
 ## Setting up locally
 
-> Run `yarn install`
-> Install postgres 13.x `brew search postgresql && brew install postgresql`
+> ```
+> nvm use
+> yarn install
+> # Install postgres 13.x
+> brew search postgresql && brew install postgresql
+> # Add the following lines to your .bashrc or .zshrc file (which ever shell you use)
+> export PATH="/usr/local/opt/postgresql/bin:$PATH"
+> export LDFLAGS="-L/usr/local/opt/postgresql/lib"
+> export CPPFLAGS="-I/usr/local/opt/postgresql/include"
+> export PKG_CONFIG_PATH="/usr/local/opt/postgresql/lib/pkgconfig"
 >
-> Add the following lines to your .bashrc or .zshrc file (which ever shell you use)
+> # Create user bdm (change admin with your current username)
+> psql -U admin -d postgres -c 'CREATE USER bdm; ALTER USER bdm WITH SUPERUSER;'
 >
-```
-export PATH="/usr/local/opt/postgresql/bin:$PATH"
-export LDFLAGS="-L/usr/local/opt/postgresql/lib"
-export CPPFLAGS="-I/usr/local/opt/postgresql/include"
-export PKG_CONFIG_PATH="/usr/local/opt/postgresql/lib/pkgconfig"
-```
+> # Create database bdm
+> psql -U admin -d postgres -c 'CREATE DATABASE bdm;'
 >
-> Create user bdm (change admin with your current username)
-> `psql -U admin -d postgres -c 'CREATE USER bdm; ALTER USER bdm WITH SUPERUSER;'`
+> # Modify `/usr/local/var/postgresql/postgresql.conf`
+> # to change the line containing `listen_addresses = ` to read `listen_addresses = '*'
 >
-> Create database bdm
-> `psql -U admin -d postgres -c 'CREATE DATABASE bdm;'`
 >
-> Modify `/usr/local/var/postgresql/postgresql.conf`
-> to change the line containing `listen_addresses = ` to read `listen_addresses = '*'`
+> # Then reload the shell to load new settings and finally run this command to start psql service
 >
-> Then reload the shell to load new settings and finally run this command to start psql service
+> brew services start postgresql
 >
-> `brew services start postgresql`
+> # Now run the following commands
 >
-> Now run the following commands
+> yarn install
+> yarn build
+> yarn setup
 >
-> `yarn install`
-> `yarn build`
-> `yarn setup`
+> # Then to start the project we run:
+> yarn start
 >
-> Then to start the project we run:
-
-> `yarn start`
->
-> Note: You might have to restart the laptop if postgress is refusing the connection.
->
+> # Note: You might have to restart the laptop if postgress is refusing the connection.
+> ```
 
 ## Building with Drone
 
