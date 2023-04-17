@@ -30,9 +30,8 @@ steps:
       from_secret: docker_username
   when:
     branch:
-    - master
-    - hotfix/*
-    - feature/*
+      exclude:
+      - master
     event:
     - push
 
