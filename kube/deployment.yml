@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: dq-business-data-manager
   annotations:
-    environment: {{ .ENV }}
+    environment: { { .ENV } }
 #    {{ if eq .ENV "notprod" }}downscaler/uptime: Mon-Fri 07:00-18:00 Europe/London{{ end }}
 spec:
   replicas: 1
@@ -18,86 +18,86 @@ spec:
         name: dq-business-data-manager
     spec:
       containers:
-      - name: dq-business-data-manager
-        image: quay.io/ukhomeofficedigital/business-data-manager:{{.DRONE_COMMIT_SHA}}
-        imagePullPolicy: Always
-        resources:
-          limits:
-            memory: "1Gi"
-            cpu: "1"
-          requests:
-            memory: "1Gi"
-            cpu: "1"
-        securityContext:
-          runAsNonRoot: true
-          runAsUser: 1000
-        env:
-          - name: NODE_ENV
-            value: {{ .NODE_ENV }}
-          - name: LOG_LEVEL
-            value: {{ .LOG_LEVEL }}
-          - name: NAME
-            value: 'business-data-manager'
-          - name: PORT
-            value: '8080'
-          - name: BDM_SUPERUSER_ROLE
-            value: 'BDM-SUPERUSER'
-          - name: BDM_STANDARD_ROLE
-            value: 'BDM-STANDARD-USER'
-          - name: BDM_READONLY_ROLE
-            value: 'BDM-READONLY-USER'
-          - name: SESSION_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: bdm
-                key: sessionsecret
-          - name: TITLE
-            value: 'Business Data Manager'
-          - name: PGHOST
-            valueFrom:
-              secretKeyRef:
-                name: {{ .RDS_SECRET_NAME }}
-                key: endpoint
-          - name: PGPORT
-            valueFrom:
-              secretKeyRef:
-                name: {{ .RDS_SECRET_NAME }}
-                key: port
-          - name: PGUSER
-            valueFrom:
-              secretKeyRef:
-                name: {{ .RDS_SECRET_NAME }}
-                key: username
-          - name: PGDATABASE
-            valueFrom:
-              secretKeyRef:
-                name: {{ .RDS_SECRET_NAME }}
-                key: {{ .DB_ATTRIBUTE }}
-          - name: PGPASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: {{ .RDS_SECRET_NAME }}
-                key: password
-      - name: keycloak-proxy
-        image: quay.io/keycloak/keycloak-gatekeeper:10.0.0
-        imagePullPolicy: IfNotPresent
-        securityContext:
-          runAsNonRoot: true
-          runAsUser: 1000
-        resources:
-          limits:
-            cpu: 100m
-            memory: 100Mi
-        args:
-          - --client-id={{ .KEYCLOAK_ID }}
-          - --client-secret={{ .KEYCLOAK_SECRET }}
-          - --discovery-url={{ .KEYCLOAK_DISCOVERY_URL }}
-          - --listen=0.0.0.0:8081
-          - --upstream-url=http://127.0.0.1:8080
-          - --enable-logging
-          - --enable-json-logging
-          - --verbose
-          - --resources=uri=/*|roles=bdm,BDM-SUPERUSER,BDM-STANDARD-USER,BDM-READONLY-USER|require-any-role=true
-        ports:
-          - name: keycloak
-            containerPort: 8081
+        - name: dq-business-data-manager
+          image: quay.io/ukhomeofficedigital/business-data-manager:b{{.DRONE_BUILD_NUMBER}}
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+            requests:
+              memory: "1Gi"
+              cpu: "1"
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+          env:
+            - name: NODE_ENV
+              value: { { .NODE_ENV } }
+            - name: LOG_LEVEL
+              value: { { .LOG_LEVEL } }
+            - name: NAME
+              value: "business-data-manager"
+            - name: PORT
+              value: "8080"
+            - name: BDM_SUPERUSER_ROLE
+              value: "BDM-SUPERUSER"
+            - name: BDM_STANDARD_ROLE
+              value: "BDM-STANDARD-USER"
+            - name: BDM_READONLY_ROLE
+              value: "BDM-READONLY-USER"
+            - name: SESSION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: bdm
+                  key: sessionsecret
+            - name: TITLE
+              value: "Business Data Manager"
+            - name: PGHOST
+              valueFrom:
+                secretKeyRef:
+                  name: { { .RDS_SECRET_NAME } }
+                  key: endpoint
+            - name: PGPORT
+              valueFrom:
+                secretKeyRef:
+                  name: { { .RDS_SECRET_NAME } }
+                  key: port
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: { { .RDS_SECRET_NAME } }
+                  key: username
+            - name: PGDATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: { { .RDS_SECRET_NAME } }
+                  key: { { .DB_ATTRIBUTE } }
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: { { .RDS_SECRET_NAME } }
+                  key: password
+        - name: keycloak-proxy
+          image: quay.io/keycloak/keycloak-gatekeeper:10.0.0
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+          resources:
+            limits:
+              cpu: 100m
+              memory: 100Mi
+          args:
+            - --client-id={{ .KEYCLOAK_ID }}
+            - --client-secret={{ .KEYCLOAK_SECRET }}
+            - --discovery-url={{ .KEYCLOAK_DISCOVERY_URL }}
+            - --listen=0.0.0.0:8081
+            - --upstream-url=http://127.0.0.1:8080
+            - --enable-logging
+            - --enable-json-logging
+            - --verbose
+            - --resources=uri=/*|roles=bdm,BDM-SUPERUSER,BDM-STANDARD-USER,BDM-READONLY-USER|require-any-role=true
+          ports:
+            - name: keycloak
+              containerPort: 8081
