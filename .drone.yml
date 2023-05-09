@@ -29,9 +29,6 @@ steps:
     DOCKER_USERNAME:
       from_secret: docker_username
   when:
-    branch:
-      exclude:
-      - master
     event:
     - push
 
