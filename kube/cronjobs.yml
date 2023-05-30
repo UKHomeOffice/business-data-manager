@@ -1,0 +1,85 @@
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  annotations:
+    environment: {{ .ENV }}
+  name: dq-bdm-gbr-port-cronjob
+  namespace: {{ .KUBE_NAMESPACE }}
+spec:
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    metadata:
+      creationTimestamp: null
+    spec:
+      template:
+        metadata:
+          labels:
+            name: dq-bdm-gbr-port-cronjob
+        spec:
+          containers:
+            - command: ['psql', '-a', '-f', 'sql/update_gbr_ports.sql']
+              env:
+                - name: NODE_ENV
+                  value: {{ .NODE_ENV }}
+                - name: LOG_LEVEL
+                  value: {{ .LOG_LEVEL }}
+                - name: NAME
+                  value: business-data-manager
+                - name: PORT
+                  value: '8080'
+                - name: BDM_SUPERUSER_ROLE
+                  value: BDM-SUPERUSER
+                - name: BDM_STANDARD_ROLE
+                  value: BDM-STANDARD-USER
+                - name: BDM_READONLY_ROLE
+                  value: BDM-READONLY-USER
+                - name: SESSION_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      key: sessionsecret
+                      name: bdm
+                - name: TITLE
+                  value: Business Data Manager
+                - name: PGHOST
+                  valueFrom:
+                    secretKeyRef:
+                      key: endpoint
+                      name: {{ .RDS_SECRET_NAME }}
+                - name: PGPORT
+                  valueFrom:
+                    secretKeyRef:
+                      key: port
+                      name: {{ .RDS_SECRET_NAME }}
+                - name: PGUSER
+                  valueFrom:
+                    secretKeyRef:
+                      key: username
+                      name: {{ .RDS_SECRET_NAME }}
+                - name: PGDATABASE
+                  valueFrom:
+                    secretKeyRef:
+                      key: {{ .DB_ATTRIBUTE }}
+                      name: {{ .RDS_SECRET_NAME }}
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: password
+                      name: {{ .RDS_SECRET_NAME }}
+              image: quay.io/ukhomeofficedigital/business-data-manager:b{{.DRONE_BUILD_NUMBER}}
+              imagePullPolicy: Always
+              name: dq-bdm-gbr-port-cronjob
+              resources:
+                limits:
+                  cpu: 1200m
+                  memory: 2048Mi
+                requests:
+                  cpu: 1000m
+                  memory: 1024Mi
+              securityContext:
+                runAsNonRoot: true
+                runAsUser: 1000
+          restartPolicy: OnFailure
+  schedule: 0 2 * * *
+  successfulJobsHistoryLimit: 3
