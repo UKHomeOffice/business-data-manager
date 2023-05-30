@@ -72,11 +72,11 @@ spec:
               name: dq-bdm-gbr-port-cronjob
               resources:
                 limits:
-                  cpu: 1200m
-                  memory: 2048Mi
+                  cpu: 600m
+                  memory: 800Mi
                 requests:
-                  cpu: 1000m
-                  memory: 1024Mi
+                  cpu: 400m
+                  memory: 600Mi
               securityContext:
                 runAsNonRoot: true
                 runAsUser: 1000
