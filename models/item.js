@@ -2,7 +2,7 @@
 
 const logger = require('../logger')
 const db = require('../db')
-const {escapeLiteral} = require('../lib/utils')
+const { escapeLiteral } = require('../lib/utils')
 
 /**
  * Provides an interface to singular Item resources.
@@ -177,6 +177,10 @@ class Item {
     } else {
       fields += '"created_by"'
       values.push(`'${this.userId}'`)
+    }
+    if (this.datasetName === 'port') {
+      fields = '"id", ' + fields
+      values.unshift(values[0])
     }
     return `${currentQuery}INSERT INTO ${this.datasetName} (${fields}) VALUES (${values.join(',')}) RETURNING id`
   }
