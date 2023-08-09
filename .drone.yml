@@ -39,7 +39,23 @@ steps:
           - master
       event:
         - push
-  - commands:
+
+  - name: deploy_to_dev
+    image: quay.io/ukhomeofficedigital/kd
+    pull: if-not-exists
+    when:
+      branch:
+        - master
+        - hotfix/*
+        - feature/*
+      event:
+        - promote
+        - push
+      target:
+        exclude:
+          - production
+    commands:
+      - export WHITELIST_RANGES=$${WHITELIST_RANGES_NOTPROD}
       - export NODE_ENV=$${NODE_ENV}
       - export LOG_LEVEL=$${LOG_LEVEL}
       - export HOSTNAME=$${NOTPROD_HOSTNAME}
@@ -80,21 +96,22 @@ steps:
         from_secret: NOTPROD_KUBE_SERVER
       NOTPROD_KUBE_TOKEN:
         from_secret: NOTPROD_KUBE_TOKEN
+      WHITELIST_RANGES_NOTPROD:
+        from_secret: WHITELIST_RANGES_NOTPROD
+
+  - name: deploy_to_staging
     image: quay.io/ukhomeofficedigital/kd
-    name: deploy_to_dev
     pull: if-not-exists
     when:
       branch:
         - master
         - hotfix/*
-        - feature/*
       event:
         - promote
-        - push
       target:
-        exclude:
-          - production
-  - commands:
+        - staging
+    commands:
+      - export WHITELIST_RANGES=$${WHITELIST_RANGES_NOTPROD}
       - export NODE_ENV=$${NODE_ENV}
       - export LOG_LEVEL=$${LOG_LEVEL}
       - export HOSTNAME=$${STAGING_HOSTNAME}
@@ -153,8 +170,11 @@ steps:
         from_secret: STAGING_PGUSER
       STAGING_SESSION_SECRET:
         from_secret: STAGING_SESSION_SECRET
+      WHITELIST_RANGES_NOTPROD:
+        from_secret: WHITELIST_RANGES_NOTPROD
+
+  - name: deploy_to_prod
     image: quay.io/ukhomeofficedigital/kd
-    name: deploy_to_staging
     pull: if-not-exists
     when:
       branch:
@@ -163,8 +183,9 @@ steps:
       event:
         - promote
       target:
-        - staging
-  - commands:
+        - production
+    commands:
+      - export WHITELIST_RANGES=$${WHITELIST_RANGES}
       - export NODE_ENV=$${NODE_ENV}
       - export LOG_LEVEL=$${LOG_LEVEL}
       - export HOSTNAME=$${PROD_HOSTNAME}
@@ -205,17 +226,8 @@ steps:
         from_secret: PROD_KUBE_SERVER
       PROD_KUBE_TOKEN:
         from_secret: PROD_KUBE_TOKEN
-    image: quay.io/ukhomeofficedigital/kd
-    name: deploy_to_prod
-    pull: if-not-exists
-    when:
-      branch:
-        - master
-        - hotfix/*
-      event:
-        - promote
-      target:
-        - production
+      WHITELIST_RANGES:
+        from_secret: WHITELIST_RANGES
 type: kubernetes
 workspace:
   path: /go/src/gitlab.digital.homeoffice.gov.uk/${DRONE_REPO}
