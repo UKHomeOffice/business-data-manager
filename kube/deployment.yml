@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: dq-business-data-manager
-          image: quay.io/ukhomeofficedigital/business-data-manager:b{{.DRONE_BUILD_NUMBER}}
+          image: quay.io/ukhomeofficedigital/business-data-manager:latest
           imagePullPolicy: Always
           resources:
             limits:
