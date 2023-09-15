@@ -67,7 +67,7 @@ spec:
                     secretKeyRef:
                       key: password
                       name: {{ .RDS_SECRET_NAME }}
-              image: quay.io/ukhomeofficedigital/business-data-manager:b{{.DRONE_BUILD_NUMBER}}
+              image: quay.io/ukhomeofficedigital/business-data-manager:latest
               imagePullPolicy: Always
               name: dq-bdm-gbr-port-cronjob
               resources:
