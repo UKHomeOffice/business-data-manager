@@ -178,10 +178,6 @@ class Item {
       fields += '"created_by"'
       values.push(`'${this.userId}'`)
     }
-    if (this.datasetName === 'port') {
-      fields = '"id", ' + fields
-      values.unshift(values[0])
-    }
     return `${currentQuery}INSERT INTO ${this.datasetName} (${fields}) VALUES (${values.join(',')}) RETURNING id`
   }
 
