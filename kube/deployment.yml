@@ -106,7 +106,7 @@ spec:
             - name: keycloak
               containerPort: 8081
         - name: nginx-proxy
-          image: quay.io/ukhomeofficedigital/dq-nginx-proxy-redirect:b96
+          image: quay.io/ukhomeofficedigital/dq-nginx-proxy-redirect:b224
           securityContext:
             runAsNonRoot: true
           env:
