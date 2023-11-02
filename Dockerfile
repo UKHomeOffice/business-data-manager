@@ -23,6 +23,6 @@ EXPOSE 8080
 
 USER ${USERMAP_UID}
 RUN yarn install --quiet
-RUN npm rebuild node-sass
+RUN npm rebuild node-sass && npm audit fix
 
 CMD ["npm","start"]
