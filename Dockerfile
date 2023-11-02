@@ -14,7 +14,8 @@ RUN npm config set unsafe-perm true
 RUN npm uninstall -g semver@6.3.0 && \
     npm install -g semver@7.5.4 && \
     npm install -g get-func-name@2.0.1 && \
-    npm install -g tough-cookie@4.1.3
+    npm install -g tough-cookie@4.1.3 && \
+    npm audit fix
 
 WORKDIR $DOCKER_HOME
 COPY . ${DOCKER_HOME}
@@ -23,6 +24,6 @@ EXPOSE 8080
 
 USER ${USERMAP_UID}
 RUN yarn install --quiet
-RUN npm rebuild node-sass && npm audit fix
+RUN npm install -g npm@10.2.2 && npm rebuild node-sass
 
 CMD ["npm","start"]
