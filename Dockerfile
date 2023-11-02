@@ -13,7 +13,7 @@ RUN npm config set unsafe-perm true
 
 WORKDIR $DOCKER_HOME
 COPY . ${DOCKER_HOME}
-RUN chown -R node ${DOCKER_HOME}
+RUN chown -R node ${DOCKER_HOME} 
 EXPOSE 8080
 
 USER ${USERMAP_UID}
