@@ -93,7 +93,7 @@ spec:
             - --client-secret={{ .KEYCLOAK_SECRET }}
             - --discovery-url={{ .KEYCLOAK_DISCOVERY_URL }}
             - --listen=0.0.0.0:8081
-            - --upstream-url=http://127.0.0.1:8080
+            - --upstream-url=http://127.0.0.1:{{ .WEB_PORT }}
             - --enable-logging
             - --enable-json-logging
             - --cors-origins=*
@@ -104,7 +104,7 @@ spec:
             - --resources=uri=/*|roles=bdm,BDM-SUPERUSER,BDM-STANDARD-USER,BDM-READONLY-USER|require-any-role=true
           ports:
             - name: keycloak
-              containerPort: 8081
+              containerPort: {{ .BDM_PORT }}
         - name: nginx-proxy
           image: quay.io/ukhomeofficedigital/dq-nginx-proxy-redirect:b224
           securityContext:
