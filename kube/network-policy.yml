@@ -9,7 +9,7 @@ spec:
   ingress:
     - ports:
       - protocol: TCP
-        port: 8081
+        port: {{ .BDM_PORT }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -26,11 +26,11 @@ spec:
               name: web
       ports:
         - protocol: TCP
-          port: 8080
+          port: {{ .WEB_PORT }}
     - from:
         - podSelector:
             matchLabels:
               name: worker
       ports:
         - protocol: TCP
-          port: 8080
+          port: {{ .WEB_PORT }}
