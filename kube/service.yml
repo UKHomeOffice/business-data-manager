@@ -11,7 +11,7 @@ spec:
     port: 443
     targetPort: keycloak
   - name: dq-business-data-manager
-    port: 8080
-    targetPort: 8080
+    port: {{ .WEB_PORT }}
+    targetPort: {{ .WEB_PORT }}
   selector:
     name: dq-business-data-manager
