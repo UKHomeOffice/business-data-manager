@@ -141,7 +141,7 @@ steps:
       - export WEB_PORT=$${WEB_PORT}
       - kd -f kube/secret.yml -f kube/dq-staging-rds-secret.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml -f kube/deployment.yml -f kube/cronjobs.yml
     environment:
-      ENV: prod
+      ENV: staging
       INSECURE_SKIP_TLS_VERIFY: true
       KUBE_NAMESPACE: dq-apps-staging
       LOG_LEVEL:
@@ -184,7 +184,7 @@ steps:
         from_secret: BDM_PORT
       WEB_PORT:
         from_secret: WEB_PORT
-        
+
   - name: deploy_to_prod
     image: quay.io/ukhomeofficedigital/kd
     pull: if-not-exists
@@ -245,7 +245,7 @@ steps:
       BDM_PORT:
         from_secret: BDM_PORT
       WEB_PORT:
-        from_secret: WEB_PORT        
+        from_secret: WEB_PORT
 type: kubernetes
 workspace:
   path: /go/src/gitlab.digital.homeoffice.gov.uk/${DRONE_REPO}
