@@ -47,7 +47,7 @@ export PGPASSWORD=badpassword
 > export PKG_CONFIG_PATH="/usr/local/opt/postgresql/lib/pkgconfig"
 >
 > # Create user bdm (change admin with your current username)
-> psql -U admin -d postgres -c 'CREATE USER bdm; ALTER USER bdm WITH SUPERUSER;'
+> psql -U admin -d postgres -c 'CREATE USER bdm WITH PASSWORD \'postgres\'; ALTER USER bdm WITH SUPERUSER;'
 >
 > # Create database bdm
 > psql -U admin -d postgres -c 'CREATE DATABASE bdm;'
