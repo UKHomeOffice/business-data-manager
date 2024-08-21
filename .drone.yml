@@ -40,7 +40,72 @@ steps:
       event:
         - push
 
-  - name: deploy_to_dev
+#  - name: deploy_to_dev
+#    image: quay.io/ukhomeofficedigital/kd
+#    pull: if-not-exists
+#    when:
+#      branch:
+#        - master
+#        - hotfix/*
+#        - feature/*
+#      event:
+#        - promote
+#        - push
+#      target:
+#        exclude:
+#          - production
+#    commands:
+#      - export WHITELIST_RANGES=$${WHITELIST_RANGES_NOTPROD}
+#      - export NODE_ENV=$${NODE_ENV}
+#      - export LOG_LEVEL=$${LOG_LEVEL}
+#      - export HOSTNAME=$${NOTPROD_HOSTNAME}
+#      - export KEYCLOAK_CLIENT_ID=$${NOTPROD_KEYCLOAK_CLIENT_ID}
+#      - export KEYCLOAK_CLIENT_SECRET=$${NOTPROD_KEYCLOAK_CLIENT_SECRET}
+#      - export KEYCLOAK_DISCOVERY=$${NOTPROD_KEYCLOAK_DISCOVERY}
+#      - export KEYCLOAK_ID=$${NOTPROD_KEYCLOAK_ID}
+#      - export KEYCLOAK_SECRET=$${NOTPROD_KEYCLOAK_SECRET}
+#      - export KEYCLOAK_DISCOVERY_URL=$${NOTPROD_KEYCLOAK_DISCOVERY_URL}
+#      - export KUBE_SERVER=$$NOTPROD_KUBE_SERVER
+#      - export KUBE_TOKEN=$$NOTPROD_KUBE_TOKEN
+#      - export RDS_SECRET_NAME=dq-apps-notprod-postgres-rds
+#      - export DB_ATTRIBUTE=database_name
+#      - export BDM_PORT=$${BDM_PORT}
+#      - export WEB_PORT=$${WEB_PORT}
+#      - kd -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml -f kube/cronjobs.yml
+#    environment:
+#      ENV: notprod
+#      INSECURE_SKIP_TLS_VERIFY: true
+#      KUBE_NAMESPACE: dq-apps-notprod
+#      LOG_LEVEL:
+#        from_secret: LOG_LEVEL
+#      NODE_ENV:
+#        from_secret: NODE_ENV
+#      NOTPROD_HOSTNAME:
+#        from_secret: NOTPROD_HOSTNAME
+#      NOTPROD_KEYCLOAK_CLIENT_ID:
+#        from_secret: NOTPROD_KEYCLOAK_CLIENT_ID
+#      NOTPROD_KEYCLOAK_CLIENT_SECRET:
+#        from_secret: NOTPROD_KEYCLOAK_CLIENT_SECRET
+#      NOTPROD_KEYCLOAK_DISCOVERY:
+#        from_secret: NOTPROD_KEYCLOAK_DISCOVERY
+#      NOTPROD_KEYCLOAK_DISCOVERY_URL:
+#        from_secret: NOTPROD_KEYCLOAK_DISCOVERY_URL
+#      NOTPROD_KEYCLOAK_ID:
+#        from_secret: NOTPROD_KEYCLOAK_ID
+#      NOTPROD_KEYCLOAK_SECRET:
+#        from_secret: NOTPROD_KEYCLOAK_SECRET
+#      NOTPROD_KUBE_SERVER:
+#        from_secret: NOTPROD_KUBE_SERVER
+#      NOTPROD_KUBE_TOKEN:
+#        from_secret: NOTPROD_KUBE_TOKEN
+#      WHITELIST_RANGES_NOTPROD:
+#        from_secret: WHITELIST_RANGES_NOTPROD
+#      BDM_PORT:
+#        from_secret: BDM_PORT
+#      WEB_PORT:
+#        from_secret: WEB_PORT
+
+  - name: deploy_to_staging
     image: quay.io/ukhomeofficedigital/kd
     pull: if-not-exists
     when:
@@ -51,71 +116,6 @@ steps:
       event:
         - promote
         - push
-      target:
-        exclude:
-          - production
-    commands:
-      - export WHITELIST_RANGES=$${WHITELIST_RANGES_NOTPROD}
-      - export NODE_ENV=$${NODE_ENV}
-      - export LOG_LEVEL=$${LOG_LEVEL}
-      - export HOSTNAME=$${NOTPROD_HOSTNAME}
-      - export KEYCLOAK_CLIENT_ID=$${NOTPROD_KEYCLOAK_CLIENT_ID}
-      - export KEYCLOAK_CLIENT_SECRET=$${NOTPROD_KEYCLOAK_CLIENT_SECRET}
-      - export KEYCLOAK_DISCOVERY=$${NOTPROD_KEYCLOAK_DISCOVERY}
-      - export KEYCLOAK_ID=$${NOTPROD_KEYCLOAK_ID}
-      - export KEYCLOAK_SECRET=$${NOTPROD_KEYCLOAK_SECRET}
-      - export KEYCLOAK_DISCOVERY_URL=$${NOTPROD_KEYCLOAK_DISCOVERY_URL}
-      - export KUBE_SERVER=$$NOTPROD_KUBE_SERVER
-      - export KUBE_TOKEN=$$NOTPROD_KUBE_TOKEN
-      - export RDS_SECRET_NAME=dq-apps-notprod-postgres-rds
-      - export DB_ATTRIBUTE=database_name
-      - export BDM_PORT=$${BDM_PORT}
-      - export WEB_PORT=$${WEB_PORT}
-      - kd -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml -f kube/cronjobs.yml
-    environment:
-      ENV: notprod
-      INSECURE_SKIP_TLS_VERIFY: true
-      KUBE_NAMESPACE: dq-apps-notprod
-      LOG_LEVEL:
-        from_secret: LOG_LEVEL
-      NODE_ENV:
-        from_secret: NODE_ENV
-      NOTPROD_HOSTNAME:
-        from_secret: NOTPROD_HOSTNAME
-      NOTPROD_KEYCLOAK_CLIENT_ID:
-        from_secret: NOTPROD_KEYCLOAK_CLIENT_ID
-      NOTPROD_KEYCLOAK_CLIENT_SECRET:
-        from_secret: NOTPROD_KEYCLOAK_CLIENT_SECRET
-      NOTPROD_KEYCLOAK_DISCOVERY:
-        from_secret: NOTPROD_KEYCLOAK_DISCOVERY
-      NOTPROD_KEYCLOAK_DISCOVERY_URL:
-        from_secret: NOTPROD_KEYCLOAK_DISCOVERY_URL
-      NOTPROD_KEYCLOAK_ID:
-        from_secret: NOTPROD_KEYCLOAK_ID
-      NOTPROD_KEYCLOAK_SECRET:
-        from_secret: NOTPROD_KEYCLOAK_SECRET
-      NOTPROD_KUBE_SERVER:
-        from_secret: NOTPROD_KUBE_SERVER
-      NOTPROD_KUBE_TOKEN:
-        from_secret: NOTPROD_KUBE_TOKEN
-      WHITELIST_RANGES_NOTPROD:
-        from_secret: WHITELIST_RANGES_NOTPROD
-      BDM_PORT:
-        from_secret: BDM_PORT
-      WEB_PORT:
-        from_secret: WEB_PORT
-
-  - name: deploy_to_staging
-    image: quay.io/ukhomeofficedigital/kd
-    pull: if-not-exists
-    when:
-      branch:
-        - master
-        - hotfix/*
-      event:
-        - promote
-      target:
-        - staging
     commands:
       - export WHITELIST_RANGES=$${WHITELIST_RANGES_NOTPROD}
       - export NODE_ENV=$${NODE_ENV}
@@ -139,6 +139,7 @@ steps:
       - export SESSION_SECRET=$${STAGING_SESSION_SECRET}
       - export BDM_PORT=$${BDM_PORT}
       - export WEB_PORT=$${WEB_PORT}
+      - exit 1
       - kd -f kube/secret.yml -f kube/dq-staging-rds-secret.yml -f kube/service.yml -f kube/ingress.yml -f kube/network-policy.yml -f kube/deployment.yml -f kube/cronjobs.yml
     environment:
       ENV: prod
@@ -180,11 +181,25 @@ steps:
         from_secret: STAGING_SESSION_SECRET
       WHITELIST_RANGES_NOTPROD:
         from_secret: WHITELIST_RANGES_NOTPROD
+      PROD_HOSTNAME:
+        from_secret: PROD_HOSTNAME
+      PROD_KEYCLOAK_CLIENT_ID:
+        from_secret: PROD_KEYCLOAK_CLIENT_ID
+      PROD_KEYCLOAK_CLIENT_SECRET:
+        from_secret: PROD_KEYCLOAK_CLIENT_SECRET
+      PROD_KEYCLOAK_DISCOVERY:
+        from_secret: PROD_KEYCLOAK_DISCOVERY
+      PROD_KEYCLOAK_DISCOVERY_URL:
+        from_secret: PROD_KEYCLOAK_DISCOVERY_URL
+      PROD_KEYCLOAK_ID:
+        from_secret: PROD_KEYCLOAK_ID
+      PROD_KEYCLOAK_SECRET:
+        from_secret: PROD_KEYCLOAK_SECRET
       BDM_PORT:
         from_secret: BDM_PORT
       WEB_PORT:
         from_secret: WEB_PORT
-        
+
   - name: deploy_to_prod
     image: quay.io/ukhomeofficedigital/kd
     pull: if-not-exists
@@ -245,7 +260,7 @@ steps:
       BDM_PORT:
         from_secret: BDM_PORT
       WEB_PORT:
-        from_secret: WEB_PORT        
+        from_secret: WEB_PORT
 type: kubernetes
 workspace:
   path: /go/src/gitlab.digital.homeoffice.gov.uk/${DRONE_REPO}
