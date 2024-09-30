@@ -7,10 +7,7 @@ RUN apk update && apk upgrade
 
 # Update the package list and upgrade libpq and postgresql15-client
 RUN apk update && apk upgrade && \
-    apk add --no-cache libpq postgresql15-client
-
-# Update the package list and upgrade
-RUN apk update && apk upgrade braces
+    apk add --no-cache libpq postgresql15-client braces@latest
 
 # Temporary solution to dump and restore database
 RUN apk add --no-cache --update postgresql-client
