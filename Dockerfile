@@ -7,7 +7,13 @@ RUN apk update && apk upgrade
 
 # Update the package list and upgrade libpq and postgresql15-client
 RUN apk update && apk upgrade && \
-    apk add --no-cache libpq postgresql15-client braces@latest
+    apk add --no-cache libpq postgresql15-client 
+
+# Update the package list and upgrade system packages
+RUN apk update && apk upgrade
+
+# Install 'braces' package using npm
+RUN npm install braces@latest
 
 # Temporary solution to dump and restore database
 RUN apk add --no-cache --update postgresql-client
