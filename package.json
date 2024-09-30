@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/ukhomeoffice/business-data-manager#readme",
   "dependencies": {
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.3",
     "compression": "^1.7.4",
     "connect-pg-simple": "^7.0.0-0",
     "crc-32": "^1.2.2",
