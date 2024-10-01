@@ -9,8 +9,6 @@ RUN apk update && apk upgrade
 RUN apk update && apk upgrade && \
     apk add --no-cache libpq postgresql15-client 
 
-#RUN npm install braces@3.0.2
-
 # Temporary solution to dump and restore database
 RUN apk add --no-cache --update postgresql-client
 
@@ -23,6 +21,9 @@ RUN chown -R node ${DOCKER_HOME}
 EXPOSE 8080
 
 USER ${USERMAP_UID}
+RUN yarn install --quiet
+RUN yarn add braces@3.0.3
+RUN yarn add semver@7.5.2 
 RUN yarn install --quiet
 RUN npm rebuild node-sass
 

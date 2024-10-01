@@ -32,6 +32,7 @@
   "homepage": "https://github.com/ukhomeoffice/business-data-manager#readme",
   "dependencies": {
     "body-parser": "^1.20.3",
+    "braces": "^3.0.3",
     "compression": "^1.7.4",
     "connect-pg-simple": "^7.0.0-0",
     "crc-32": "^1.2.2",
@@ -60,6 +61,7 @@
     "yarn": "^1.22.18"
   },
   "devDependencies": {
+    "braces": "^3.0.3",
     "chai": "^4.5.0",
     "chai-as-promised": "^7.1.1",
     "eslint": "^7.27.0",
