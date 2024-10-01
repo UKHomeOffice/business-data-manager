@@ -22,8 +22,6 @@ EXPOSE 8080
 
 USER ${USERMAP_UID}
 RUN yarn install --quiet
-RUN yarn add braces@3.0.3
-RUN yarn add semver@7.5.2
 RUN npm rebuild node-sass
 
 CMD ["npm","start"]
