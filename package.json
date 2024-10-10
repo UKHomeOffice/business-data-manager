@@ -31,12 +31,12 @@
   },
   "homepage": "https://github.com/ukhomeoffice/business-data-manager#readme",
   "dependencies": {
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.3",
     "compression": "^1.7.4",
     "connect-pg-simple": "^7.0.0-0",
     "crc-32": "^1.2.2",
     "errorhandler": "^1.5.1",
-    "express": "^4.19.2",
+    "express": "^4.21.0",
     "express-flash": "0.0.2",
     "express-session": "^1.17.2",
     "express-validator": "^6.14.0",
@@ -53,6 +53,7 @@
     "passport": "0.6.0",
     "pg": "^8.6.0",
     "role-acl": "^4.5.4",
+    "semver": "^7.5.2",
     "setup": "^0.0.3",
     "start": "^5.1.0",
     "uglify-js": "^3.15.4",
@@ -64,7 +65,7 @@
     "chai-as-promised": "^7.1.1",
     "eslint": "^7.27.0",
     "eslint-config-standard": "^16.0.2",
-    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-import": "^2.30.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
     "eslint-plugin-standard": "^5.0.0",
@@ -72,10 +73,10 @@
     "js-yaml": "^4.1.0",
     "jsdoc": "^3.6.7",
     "marked": "^4.0.15",
-    "mocha": "^10.0.0",
-    "node-gyp": "^9.0.0",
+    "mocha": "^10.7.0",
+    "node-gyp": "^9.4.1",
     "node-pre-gyp": "^0.17.0",
     "proxyquire": "^2.1.3",
-    "sinon": "^10.0.0"
+    "sinon": "^16.1.2"
   }
 }
