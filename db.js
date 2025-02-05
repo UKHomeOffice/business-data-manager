@@ -10,6 +10,7 @@ const pool = new pg.Pool({
   database: config.pg.database,
   password: config.pg.password,
   port: config.pg.port,
+  ssl: true,
 })
 
 module.exports = pool
