@@ -51,7 +51,7 @@
     "node-sass-middleware": "^1.0.1",
     "nunjucks": "^3.2.3",
     "passport": "0.6.0",
-    "pg": "^8.6.0",
+    "pg": "^8.13.1",
     "role-acl": "^4.5.4",
     "semver": "^7.5.2",
     "setup": "^0.0.3",

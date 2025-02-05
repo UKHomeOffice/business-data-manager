@@ -10,9 +10,6 @@ const pool = new pg.Pool({
   database: config.pg.database,
   password: config.pg.password,
   port: config.pg.port,
-  ssl: {
-    rejectUnauthorized: false,
-  }
 })
 
 module.exports = pool
