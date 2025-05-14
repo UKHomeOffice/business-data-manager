@@ -41,8 +41,6 @@ Setup Mise: [mise|](https://mise.jdx.dev/getting-started.html)]
 - The above files copied will have the path sorted, putting it down for reference:
 - Add this to .bashrc:
   - `eval "$(~/.local/bin/mise activate bash)"`
-- Add this to zshrc:
-  - `eval "$(~/.local/bin/mise activate bash)"`
 
 ### Initialise environment
 * mise init
