@@ -35,42 +35,59 @@ export PGPASSWORD=badpassword
 
 ## Setting up locally
 
-> ```
-> nvm use
-> yarn install
-> # Install postgres 13.x
-> brew search postgresql && brew install postgresql
-> # Add the following lines to your .bashrc or .zshrc file (which ever shell you use)
-> export PATH="/usr/local/opt/postgresql/bin:$PATH"
-> export LDFLAGS="-L/usr/local/opt/postgresql/lib"
-> export CPPFLAGS="-I/usr/local/opt/postgresql/include"
-> export PKG_CONFIG_PATH="/usr/local/opt/postgresql/lib/pkgconfig"
->
-> # Create user bdm (change admin with your current username)
-> psql -U admin -d postgres -c 'CREATE USER bdm WITH PASSWORD \'postgres\'; ALTER USER bdm WITH SUPERUSER;'
->
-> # Create database bdm
-> psql -U admin -d postgres -c 'CREATE DATABASE bdm;'
->
-> # Modify `/usr/local/var/postgresql/postgresql.conf`
-> # to change the line containing `listen_addresses = ` to read `listen_addresses = '*'
->
->
-> # Then reload the shell to load new settings and finally run this command to start psql service
->
-> brew services start postgresql
->
-> # Now run the following commands
->
-> yarn install
-> yarn build
-> yarn setup
->
-> # Then to start the project we run:
-> yarn start
->
-> # Note: You might have to restart the laptop if postgress is refusing the connection.
-> ```
+Setup Mise: [mise|](https://mise.jdx.dev/getting-started.html)]
+
+- `curl https://mise.run | sh`
+- The above files copied will have the path sorted, putting it down for reference:
+- Add this to .bashrc:
+  - `eval "$(~/.local/bin/mise activate bash)"`
+
+### Initialise environment
+* mise init
+
+> # Install postgres 16.x, only if this is not already installed
+* To Upgrade to V16 if a previous version i.e. 14 is installed by default:
+```shell
+# Create the file repository configuration:
+sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+
+# Import the repository signing key:
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+
+# Update the package lists:
+sudo apt-get update
+
+# Install the latest version of PostgreSQL.
+# If you want a specific version, use 'postgresql-12' or similar instead of 'postgresql':
+sudo apt-get -y install postgresql-16
+
+# drop the newest cluster if it exists
+sudo pg_dropcluster 16 main --stop
+
+# upgrade the old cluster to the new version
+sudo pg_upgradecluster 14 main
+
+# drop the old cluster
+sudo pg_dropcluster 14 main
+
+# remove old PostgreSQL version from the system
+sudo apt purge postgresql-14 postgresql-client-14
+````
+
+### Create user bdm (change admin with your current username)
+```shell
+`sudo su postgres -c "psql -d postgres"`
+`CREATE USER bdm WITH PASSWORD 'postgres';`
+`ALTER USER bdm WITH SUPERUSER;`
+`CREATE DATABASE bdm;`
+`\q`
+```
+
+### build and setup - Now run the following commands
+* `mise run yi`
+
+### Then to start the project we run:
+* `mise run rs`
 
 ## Building with Drone
 

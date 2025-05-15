@@ -1,0 +1,30 @@
+[env]
+# Use the project name derived from the current directory
+PROJECT_NAME = "{{ config_root | basename }}"
+
+[tools]
+node = '16'
+yarn = '4'
+nodemon = '3'
+
+[tasks.yi]
+description = "Yarn install dependencies, build and setup"
+alias = "yi"
+run = 'source env.sh && yarn install && yarn build && yarn setup'
+
+[tasks.test]
+description = "Run the tests"
+alias = "t"
+run = 'yarn run test'
+
+[tasks.run]
+description = "Run the dev server"
+alias = "rs"
+run = "./bin/server-start.sh"
+
+[tasks.info]
+description = "Print project information"
+run = '''
+echo "Project: $PROJECT_NAME"
+echo "Virtual Environment: $VIRTUAL_ENV"
+'''
