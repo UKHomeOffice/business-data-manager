@@ -106,7 +106,7 @@ spec:
             - name: keycloak
               containerPort: {{ .BDM_PORT }}
         - name: nginx-proxy
-          image: quay.io/ukhomeofficedigital/dq-nginx-proxy-redirect:b265
+          image: quay.io/ukhomeofficedigital/dq-nginx-proxy-redirect:b269
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
