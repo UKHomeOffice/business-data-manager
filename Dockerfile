@@ -1,4 +1,4 @@
-FROM quay.io/ukhomeofficedigital/ga-node:16-alpine3.17
+FROM quay.io/ukhomeofficedigital/ga-node:b6
 
 ENV USERMAP_UID 1000
 ENV DOCKER_HOME /usr/src/app
@@ -17,11 +17,12 @@ RUN npm config set unsafe-perm true
 
 WORKDIR $DOCKER_HOME
 COPY . ${DOCKER_HOME}
+RUN npm install --quite
 RUN chown -R node ${DOCKER_HOME}
 EXPOSE 8080
 
 USER ${USERMAP_UID}
-RUN yarn install --quiet
-RUN npm rebuild node-sass
+#RUN yarn config set ignore-engines true && yarn install --quiet
+#RUN npm rebuild node-sass
 
 CMD ["npm","start"]
