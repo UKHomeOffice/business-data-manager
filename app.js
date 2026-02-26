@@ -3,7 +3,6 @@
 /* eslint camelcase: 0 */
 
 const express = require('express')
-const sassMiddleware = require('node-sass-middleware')
 const session = require('express-session')
 
 const bodyParser = require('body-parser')

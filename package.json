@@ -12,7 +12,8 @@
     "setup-cleanup": "rm -rf public/base && rm -rf views/base",
     "setup-public": "mkdir public/base && cp -r node_modules/govuk_template_jinja/assets/* public/base && cp -rf node_modules/govuk_frontend_toolkit/images/* public/base/images",
     "setup-views": "mkdir views/base && cp node_modules/govuk_template_jinja/views/layouts/* views/base/",
-    "build": "npm run setup-cleanup && npm run setup-public && npm run setup-views"
+    "build:css": "sass --style=compressed --load-path=node_modules --load-path=node_modules/govuk-frontend --no-source-map public/scss:public/css",
+    "build": "npm run setup-cleanup && npm run setup-public && npm run setup-views && npm run build:css"
   },
   "repository": {
     "type": "git",
