@@ -3,7 +3,6 @@
 /* eslint camelcase: 0 */
 
 const express = require('express')
-const sassMiddleware = require('node-sass-middleware')
 const session = require('express-session')
 
 const bodyParser = require('body-parser')
@@ -106,24 +105,7 @@ app.locals.homepage_url = '/'
 app.locals.logo_link_title = config.title
 app.locals.navbar = routes.navbar
 
-app.use(
-  sassMiddleware(
-    {
-      src: path.join(__dirname, 'sass'),
-      dest: path.join(__dirname, 'public', 'css'),
-      debug: true,
-      force: true,
-      outputStyle: 'compressed',
-      prefix: '/css',
-      includePaths: [
-        'node_modules/govuk_frontend_toolkit/stylesheets',
-        'node_modules/govuk-elements-sass/public/sass'
-      ],
-      sourceComments: 'map',
-      error: function (severity, key, value) { logger.error(`node-saas-middleware: ${severity}, ${key}, ${value}`) },
-      log: function (severity, key, value) { logger.info(`node-saas-middleware: ${severity}, ${key}, ${value}`) }
-    }
-  ))
+
 app.use(express.static(path.join(__dirname, 'public/')))
 
 /**
