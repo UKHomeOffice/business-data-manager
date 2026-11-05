@@ -62,19 +62,44 @@ class Item {
     let updatePartial = ''
     const values = []
 
-    // eslint-disable-next-line no-unused-vars
+    /* ==========================================
+     * --- OLD CODE (Vulnerable to SQLi / Binding Issues) ---
+     * 
+     * for (const [index, val] of properties.entries()) {
+     *   updatePartial += values.length !== 0 ? ', ' : ''
+     *   updatePartial += `"${val}" = $${values.length + 1}`
+     *   updateObj[val] === '' ? values.push(null) : values.push(updateObj[val])
+     * }
+     * updatePartial += `, "updated_at" = $${values.length + 1}`
+     * values.push('NOW()')
+     * updatePartial += `, "updated_by" = $${values.length + 1}`
+     * values.push(this.userId)
+     * 
+     * return {
+     *   text: `UPDATE ${this.datasetName} SET ${updatePartial} WHERE id = '${this.itemId}'`,
+     *   values,
+     * }
+     * ========================================== */
+
+    // --- NEW CODE (Parameterized & Secure) ---
     for (const [index, val] of properties.entries()) {
       updatePartial += values.length !== 0 ? ', ' : ''
       updatePartial += `"${val}" = $${values.length + 1}`
       updateObj[val] === '' ? values.push(null) : values.push(updateObj[val])
     }
-    updatePartial += `, "updated_at" = $${values.length + 1}`
-    values.push('NOW()')
+    
+    // Use SQL function NOW() directly rather than binding it as a string literal parameter
+    updatePartial += `, "updated_at" = NOW()`
+    
     updatePartial += `, "updated_by" = $${values.length + 1}`
     values.push(this.userId)
 
+    // Securely parameterize itemId instead of direct string interpolation
+    values.push(this.itemId)
+    const idParamIndex = values.length
+
     return {
-      text: `UPDATE ${this.datasetName} SET ${updatePartial} WHERE id = '${this.itemId}'`,
+      text: `UPDATE ${this.datasetName} SET ${updatePartial} WHERE id = $${idParamIndex}`,
       values,
     }
   }
@@ -151,34 +176,122 @@ class Item {
   }
 
   insertItemQuery () {
-    let fields = ''
+    /* ==========================================
+     * --- OLD CODE (Raw string concatenation & manual escaping) ---
+     * 
+     * let fields = ''
+     * const values = []
+     * for (const key in this.properties) {
+     *   if (key !== '_csrf' && this.properties[key] !== null) {
+     *     let val = this.properties[key]
+     *     if (typeof val === 'string') {
+     *       val = escapeLiteral(val)
+     *     }
+     *     fields += `"${key}", `
+     *     this.properties[key] === '' || this.properties[key] === null ? values.push('NULL') : values.push(val)
+     *   }
+     * }
+     * let currentQuery = ''
+     * if (this.properties.is_current && this.properties.version && this.properties.version_id) {
+     *   currentQuery = `UPDATE ${this.datasetName} SET is_current = NULL WHERE version_id = ${this.properties.version_id};`
+     *   fields += '"created_at"'
+     *   values.push(`(select created_at from ${this.datasetName} where version = 1 and version_id = ${this.properties.version_id})`)
+     *   fields += ', "created_by"'
+     *   values.push(`(select created_by from ${this.datasetName} where version = 1 and version_id = ${this.properties.version_id})`)
+     *   fields += ', "updated_at"'
+     *   values.push('NOW()')
+     *   fields += ', "updated_by"'
+     *   values.push(`'${this.userId}'`)
+     * } else {
+     *   fields += '"created_by"'
+     *   values.push(`'${this.userId}'`)
+     * }
+     * return `${currentQuery}INSERT INTO ${this.datasetName} (${fields}) VALUES (${values.join(',')}) RETURNING id`
+     * ========================================== */
+
+    // --- NEW CODE (Parameterized Query Object) ---
+    const fields = []
     const values = []
+
     for (const key in this.properties) {
-      if (key !== '_csrf' && this.properties[key] !== null) {
-        let val = this.properties[key]
-        if (typeof val === 'string') {
-          val = escapeLiteral(val)
+      if (Object.prototype.hasOwnProperty.call(this.properties, key)) {
+        if (key !== '_csrf' && this.properties[key] !== null) {
+          fields.push(`"${key}"`)
+          const val = this.properties[key]
+          values.push(val === '' ? null : val)
         }
-        fields += `"${key}", `
-        this.properties[key] === '' || this.properties[key] === null ? values.push('NULL') : values.push(val)
       }
     }
+
     let currentQuery = ''
     if (this.properties.is_current && this.properties.version && this.properties.version_id) {
-      currentQuery = `UPDATE ${this.datasetName} SET is_current = NULL WHERE version_id = ${this.properties.version_id};`
-      fields += '"created_at"'
-      values.push(`(select created_at from ${this.datasetName} where version = 1 and version_id = ${this.properties.version_id})`)
-      fields += ', "created_by"'
-      values.push(`(select created_by from ${this.datasetName} where version = 1 and version_id = ${this.properties.version_id})`)
-      fields += ', "updated_at"'
-      values.push('NOW()')
-      fields += ', "updated_by"'
-      values.push(`'${this.userId}'`)
-    } else {
-      fields += '"created_by"'
-      values.push(`'${this.userId}'`)
+      values.push(this.properties.version_id)
+      const vIdParam = `$${values.length}`
+      currentQuery = `UPDATE ${this.datasetName} SET is_current = NULL WHERE version_id = ${vIdParam};`
+
+      fields.push('"created_at"')
+      values.push(this.properties.version_id)
+      const createdAtIndex = values.length
+      fields.push('"created_by"')
+      values.push(this.properties.version_id)
+      const createdByIndex = values.length
+
+      // Using subqueries with parameter placeholders for version tracking
+      fields.push('"updated_at"')
+      // We handle NOW() directly as a function expression
+      const placeholders = fields.map((_, idx) => {
+        // If it's updated_at, use NOW() directly
+        return idx === fields.length - 1 ? 'NOW()' : `$${idx + 1}`
+      })
+
+      // Re-map fields and placeholders properly for parameterized execution
+      // Let's build the text and values cleanly below:
     }
-    return `${currentQuery}INSERT INTO ${this.datasetName} (${fields}) VALUES (${values.join(',')}) RETURNING id`
+
+    // Cleaner parameterized build for insert
+    const insertFields = []
+    const insertValues = []
+    const placeholders = []
+
+    for (const key in this.properties) {
+      if (Object.prototype.hasOwnProperty.call(this.properties, key)) {
+        if (key !== '_csrf' && this.properties[key] !== null) {
+          insertFields.push(`"${key}"`)
+          insertValues.push(this.properties[key] === '' ? null : this.properties[key])
+          placeholders.push(`$${insertValues.length}`)
+        }
+      }
+    }
+
+    if (this.properties.is_current && this.properties.version && this.properties.version_id) {
+      insertValues.push(this.properties.version_id)
+      const vIdPlaceholder = `$${insertValues.length}`
+      currentQuery = `UPDATE ${this.datasetName} SET is_current = NULL WHERE version_id = ${vIdPlaceholder};`
+
+      insertFields.push('"created_at"')
+      placeholders.push(`(SELECT created_at FROM ${this.datasetName} WHERE version = 1 AND version_id = ${vIdPlaceholder})`)
+
+      insertFields.push('"created_by"')
+      placeholders.push(`(SELECT created_by FROM ${this.datasetName} WHERE version = 1 AND version_id = ${vIdPlaceholder})`)
+
+      insertFields.push('"updated_at"')
+      placeholders.push('NOW()')
+
+      insertFields.push('"updated_by"')
+      insertValues.push(this.userId)
+      placeholders.push(`$${insertValues.length}`)
+    } else {
+      insertFields.push('"created_by"')
+      insertValues.push(this.userId)
+      placeholders.push(`$${insertValues.length}`)
+    }
+
+    const insertText = `INSERT INTO ${this.datasetName} (${insertFields.join(', ')}) VALUES (${placeholders.join(', ')}) RETURNING id`
+
+    return {
+      text: currentQuery ? `${currentQuery} ${insertText}` : insertText,
+      values: insertValues,
+    }
   }
 
   insertItem () {
@@ -195,9 +308,6 @@ class Item {
           const uri = `/v1/datasets/${this.datasetName}/items/${result.rows[0].id}`
           const msg = { statusCode: '201', message: 'CREATED', uri: uri, itemId: result.rows[0].id }
           return resolve(msg)
-          // if not then
-          // let msg = {statusCode: '422', message: 'UNPROCESSABLE ENTITY'};
-          // return resolve(msg);
         })
         .catch(err => {
           logger.error(query)
